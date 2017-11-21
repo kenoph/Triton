@@ -102,7 +102,9 @@ namespace triton {
            * **item1**: <addr:size><br>
            * **item2**: AST node
            */
-          std::map<std::pair<triton::uint64, triton::uint32>, triton::ast::AbstractNode*> alignedMemoryReference;
+          // Here is a weak ptr from symbolicExpressions
+          // FIXME: with memory handling of symbolicExpressions
+          std::map<std::pair<triton::uint64, triton::uint32>, SymbolicExpression*> alignedMemoryReference;
 
         private:
           //! Architecture API
@@ -150,10 +152,10 @@ namespace triton {
           void removeSymbolicExpression(triton::usize symExprId);
 
           //! Adds an aligned entry.
-          void addAlignedMemory(triton::uint64 address, triton::uint32 size, triton::ast::AbstractNode* node);
+          void addAlignedMemory(triton::uint64 address, triton::uint32 size, SymbolicExpression* expr);
 
           //! Gets an aligned entry.
-          triton::ast::AbstractNode* getAlignedMemory(triton::uint64 address, triton::uint32 size);
+          triton::engines::symbolic::SymbolicExpression* getAlignedMemory(triton::uint64 address, triton::uint32 size);
 
           //! Checks if the aligned memory is recored.
           bool isAlignedMemory(triton::uint64 address, triton::uint32 size);

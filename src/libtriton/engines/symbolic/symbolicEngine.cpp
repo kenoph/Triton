@@ -236,7 +236,8 @@ namespace triton {
 
 
       /* Gets an aligned entry. */
-      triton::ast::AbstractNode* SymbolicEngine::getAlignedMemory(triton::uint64 address, triton::uint32 size) {
+      triton::engines::symbolic::SymbolicExpression* SymbolicEngine::getAlignedMemory(triton::uint64 address, triton::uint32 size) {
+        // FIXME: Should we change this signature?
         if (this->isAlignedMemory(address, size))
           return this->alignedMemoryReference[std::make_pair(address, size)];
         return nullptr;
@@ -252,10 +253,10 @@ namespace triton {
 
 
       /* Adds an aligned memory */
-      void SymbolicEngine::addAlignedMemory(triton::uint64 address, triton::uint32 size, triton::ast::AbstractNode* node) {
+      void SymbolicEngine::addAlignedMemory(triton::uint64 address, triton::uint32 size, SymbolicExpression* expr) {
         this->removeAlignedMemory(address, size);
-        if (!(this->modes.isModeEnabled(triton::modes::ONLY_ON_SYMBOLIZED) && node->isSymbolized() == false))
-          this->alignedMemoryReference[std::make_pair(address, size)] = node;
+        if (!(this->modes.isModeEnabled(triton::modes::ONLY_ON_SYMBOLIZED) && expr->getAst()->isSymbolized() == false))
+          this->alignedMemoryReference[std::make_pair(address, size)] = expr;
       }
 
 
@@ -574,8 +575,10 @@ namespace triton {
         this->setConcreteSymbolicVariableValue(*symVar, cv);
 
         /* Record the aligned symbolic variable for a symbolic optimization */
-        if (this->modes.isModeEnabled(triton::modes::ALIGNED_MEMORY))
-          this->addAlignedMemory(memAddr, symVarSize, symVarNode);
+        if (this->modes.isModeEnabled(triton::modes::ALIGNED_MEMORY)) {
+          auto* se = this->newSymbolicExpression(symVarNode, triton::engines::symbolic::MEM, "aligned Byte reference");
+          this->addAlignedMemory(memAddr, symVarSize, se);
+        }
 
         /*  Split expression in bytes */
         for (triton::sint32 index = symVarSize-1; index >= 0; index--) {
@@ -715,7 +718,7 @@ namespace triton {
          * If the memory access is aligned, don't split the memory.
          */
         if (this->modes.isModeEnabled(triton::modes::ALIGNED_MEMORY) && this->isAlignedMemory(address, size))
-          return this->getAlignedMemory(address, size);
+          return this->getAlignedMemory(address, size)->getAst();
 
         /* Iterate on every memory cells to use their symbolic or concrete values */
         while (size) {
@@ -820,8 +823,10 @@ namespace triton {
         triton::uint32 writeSize = mem.getSize();
 
         /* Record the aligned memory for a symbolic optimization */
-        if (this->modes.isModeEnabled(triton::modes::ALIGNED_MEMORY))
-          this->addAlignedMemory(address, writeSize, node);
+        if (this->modes.isModeEnabled(triton::modes::ALIGNED_MEMORY)) {
+          SymbolicExpression* se = this->newSymbolicExpression(node, triton::engines::symbolic::MEM, "Aligned Byte reference - " + comment);
+          this->addAlignedMemory(address, writeSize, se);
+        }
 
         /*
          * As the x86's memory can be accessed without alignment, each byte of the
@@ -975,7 +980,7 @@ namespace triton {
 
         /* Record the aligned memory for a symbolic optimization */
         if (this->modes.isModeEnabled(triton::modes::ALIGNED_MEMORY))
-          this->addAlignedMemory(address, writeSize, node);
+          this->addAlignedMemory(address, writeSize, se);
 
         /*
          * As the x86's memory can be accessed without alignment, each byte of the
