@@ -8,7 +8,6 @@
 #ifndef TRITON_Z3INTERFACE_HPP
 #define TRITON_Z3INTERFACE_HPP
 
-#include <triton/symbolicEngine.hpp>
 #include <triton/tritonTypes.hpp>
 
 
@@ -28,24 +27,18 @@ namespace triton {
    *  @{
    */
 
-    //! \class Z3Interface
+    //! \ingroup ast
+    //! \addtogroup Z3Interface
     /*! \brief The interface between Triton and Z3 */
-    class Z3Interface {
-      private:
-        //! Symbolic Engine API
-        triton::engines::symbolic::SymbolicEngine* symbolicEngine;
-
-      public:
-        //! Constructor.
-        Z3Interface(triton::engines::symbolic::SymbolicEngine* symbolicEngine);
-
+    namespace Z3Interface {
         //! Converts a Triton's AST to a Z3's AST, perform a Z3 simplification and returns a Triton's AST.
-        triton::ast::AbstractNode* simplify(triton::ast::AbstractNode* node) const;
+        triton::ast::AbstractNode* simplify(triton::ast::AbstractNode* node);
 
         //! Evaluates a Triton's AST via Z3 and returns a concrete value.
-        triton::uint512 evaluate(triton::ast::AbstractNode *node) const;
-    };
+        triton::uint512 evaluate(triton::ast::AbstractNode *node);
 
+    /*! @} End of Z3Interface namespace */
+    };
   /*! @} End of ast namespace */
   };
 /*! @} End of triton namespace */

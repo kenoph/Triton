@@ -16,11 +16,8 @@
 namespace triton {
   namespace ast {
 
-    Z3ToTritonAst::Z3ToTritonAst(triton::engines::symbolic::SymbolicEngine* symbolicEngine, AstContext& astCtxt)
-      : symbolicEngine(symbolicEngine),
-        astCtxt(astCtxt) {
-      if (symbolicEngine == nullptr)
-        throw triton::exceptions::AstTranslations("Z3ToTritonAst::Z3ToTritonAst(): The symbolicEngine API cannot be null.");
+    Z3ToTritonAst::Z3ToTritonAst(AstContext& astCtxt)
+      : astCtxt(astCtxt) {
     }
 
 
@@ -399,10 +396,12 @@ namespace triton {
         /* Variable or string */
         case Z3_OP_UNINTERPRETED: {
           std::string name = function.name().str();
-          triton::engines::symbolic::SymbolicVariable* symVar = this->symbolicEngine->getSymbolicVariableFromName(name);
+          auto vars = this->astCtxt.getAstGarbageCollector().getAstVariableNode(name);
 
-          if (symVar)
-            node = this->astCtxt.variable(symVar->getName(), symVar->getSize());
+          if (!vars.empty())
+            // FIXME: Check every vars have the same size.
+            // FIXME: May be we could use this to make variable unique
+            node = vars[0];
           else
             node = this->astCtxt.string(name);
 

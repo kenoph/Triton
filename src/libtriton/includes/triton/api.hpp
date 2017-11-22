@@ -25,7 +25,6 @@
 #include <triton/symbolicEngine.hpp>
 #include <triton/taintEngine.hpp>
 #include <triton/tritonTypes.hpp>
-#include <triton/z3Interface.hpp>
 
 
 
@@ -61,10 +60,6 @@ namespace triton {
 
         //! The IR builder.
         triton::arch::IrBuilder* irBuilder = nullptr;
-
-        //! The Z3 interface between Triton and Z3.
-        triton::ast::Z3Interface* z3Interface = nullptr;
-
 
       public:
         //! Constructor of the API.
@@ -530,9 +525,6 @@ namespace triton {
 
 
         /* Z3 interface API ============================================================================== */
-
-        //! [**z3 api**] - Raises an exception if the z3 interface is not initialized.
-        void checkZ3Interface(void) const;
 
         //! [**z3 api**] - Evaluates a Triton's AST via Z3 and returns a concrete value.
         triton::uint512 evaluateAstViaZ3(triton::ast::AbstractNode* node) const;

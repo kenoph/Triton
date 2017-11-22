@@ -8,6 +8,7 @@
 #include <triton/api.hpp>
 #include <triton/exceptions.hpp>
 #include <triton/solverEngine.hpp>
+#include <triton/z3Interface.hpp>
 
 #include <list>
 #include <map>
@@ -395,10 +396,6 @@ namespace triton {
     this->irBuilder = new(std::nothrow) triton::arch::IrBuilder(&this->arch, this->modes, this->astCtxt, this->symbolic, this->taint);
     if (this->irBuilder == nullptr)
       throw triton::exceptions::API("API::initEngines(): No enough memory.");
-
-    this->z3Interface = new(std::nothrow) triton::ast::Z3Interface(this->symbolic);
-    if (this->z3Interface == nullptr)
-      throw triton::exceptions::API("API::initEngines(): No enough memory.");
   }
 
 
@@ -407,12 +404,10 @@ namespace triton {
       delete this->irBuilder;
       delete this->symbolic;
       delete this->taint;
-      delete this->z3Interface;
 
       this->irBuilder           = nullptr;
       this->symbolic            = nullptr;
       this->taint               = nullptr;
-      this->z3Interface         = nullptr;
     }
 
     // Use default modes.
@@ -975,21 +970,13 @@ namespace triton {
 
   /* Z3 interface API ============================================================================== */
 
-  void API::checkZ3Interface(void) const {
-    if (!this->z3Interface)
-      throw triton::exceptions::API("API::checkZ3Interface(): Z3 interface is undefined.");
-  }
-
-
   triton::uint512 API::evaluateAstViaZ3(triton::ast::AbstractNode* node) const {
-    this->checkZ3Interface();
-    return this->z3Interface->evaluate(node);
+    return triton::ast::Z3Interface::evaluate(node);
   }
 
 
   triton::ast::AbstractNode* API::processZ3Simplification(triton::ast::AbstractNode* node) const {
-    this->checkZ3Interface();
-    return this->z3Interface->simplify(node);
+    return triton::ast::Z3Interface::simplify(node);
   }
 
 
