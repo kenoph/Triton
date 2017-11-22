@@ -396,13 +396,9 @@ namespace triton {
         /* Variable or string */
         case Z3_OP_UNINTERPRETED: {
           std::string name = function.name().str();
-          auto vars = this->astCtxt.getAstGarbageCollector().getAstVariableNode(name);
+          node = this->astCtxt.getAstGarbageCollector().getAstVariableNode(name);
 
-          if (!vars.empty())
-            // FIXME: Check every vars have the same size.
-            // FIXME: May be we could use this to make variable unique
-            node = vars[0];
-          else
+          if (!node)
             node = this->astCtxt.string(name);
 
           break;

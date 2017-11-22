@@ -111,7 +111,9 @@ namespace triton {
 
 
     void AstGarbageCollector::recordVariableAstNode(const std::string& name, triton::ast::AbstractNode* node) {
-      this->variableNodes[name].push_back(node);
+      if(!this->variableNodes.emplace(name, node).second) {
+        throw triton::exceptions::Ast("Can't register this variable as it already exists");
+      }
     }
 
 
@@ -120,16 +122,16 @@ namespace triton {
     }
 
 
-    const std::map<std::string, std::vector<triton::ast::AbstractNode*>>& AstGarbageCollector::getAstVariableNodes(void) const {
+    const std::map<std::string, triton::ast::AbstractNode*>& AstGarbageCollector::getAstVariableNodes(void) const {
       return this->variableNodes;
     }
 
 
-    std::vector<triton::ast::AbstractNode*> AstGarbageCollector::getAstVariableNode(const std::string& name) const {
+    triton::ast::AbstractNode* AstGarbageCollector::getAstVariableNode(const std::string& name) const {
       auto it = this->variableNodes.find(name);
       if (it != this->variableNodes.end())
         return it->second;
-      return {};
+      return nullptr;
     }
 
 
@@ -143,7 +145,7 @@ namespace triton {
     }
 
 
-    void AstGarbageCollector::setAstVariableNodes(const std::map<std::string, std::vector<triton::ast::AbstractNode*>>& nodes) {
+    void AstGarbageCollector::setAstVariableNodes(const std::map<std::string, triton::ast::AbstractNode*>& nodes) {
       this->variableNodes = nodes;
     }
 

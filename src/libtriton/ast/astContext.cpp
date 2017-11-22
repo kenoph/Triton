@@ -440,16 +440,27 @@ namespace triton {
 
 
     AbstractNode* AstContext::variable(std::string const& varName, triton::uint32 size) {
-      AbstractNode* ret  = nullptr;
-      AbstractNode* node = new(std::nothrow) VariableNode(varName, size, *this);
+      // try to get node from variable pool
+      AbstractNode* node = this->astGarbageCollector.getAstVariableNode(varName);
 
-      if (node == nullptr)
-        throw triton::exceptions::Ast("Node builders - Not enough memory");
+      if(node == nullptr) {
+        // if not found, create a new variable node
+        node = new(std::nothrow) VariableNode(varName, size, *this);
 
-      ret = this->astGarbageCollector.recordAstNode(node);
-      this->astGarbageCollector.recordVariableAstNode(varName, ret);
+        if (node == nullptr)
+          throw triton::exceptions::Ast("Node builders - Not enough memory");
 
-      return ret;
+        // and register this variable node in the variable pool
+        this->astGarbageCollector.recordVariableAstNode(varName, node);
+        // regsiter the node
+        return this->astGarbageCollector.recordAstNode(node);
+      }
+
+      if(node->getBitvectorSize() != size)
+        throw triton::exceptions::Ast("Node builders - Missmatching variable size.");
+
+      // This node already exist, just return it
+      return node;
     }
 
 
@@ -488,9 +499,8 @@ namespace triton {
       for (auto& kv: this->astGarbageCollector.getAstVariableNodes()) {
         if (kv.first == name) {
           assert(kv.second[0]->getType() == triton::ast::VARIABLE_NODE);
-          this->valueMapping[dynamic_cast<VariableNode*>(kv.second[0])->getVarName()] = value;
-          for (auto* N: kv.second)
-            N->init();
+          this->valueMapping[dynamic_cast<VariableNode*>(kv.second)->getVarName()] = value;
+          kv.second->init();
           return;
         }
       }

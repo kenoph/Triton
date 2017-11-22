@@ -492,12 +492,12 @@ namespace triton {
   }
 
 
-  const std::map<std::string, std::vector<triton::ast::AbstractNode*>>& API::getAstVariableNodes(void) const {
+  const std::map<std::string, triton::ast::AbstractNode*>& API::getAstVariableNodes(void) const {
     return this->astCtxt.getAstGarbageCollector().getAstVariableNodes();
   }
 
 
-  std::vector<triton::ast::AbstractNode*> API::getAstVariableNode(const std::string& name) const {
+  triton::ast::AbstractNode* API::getAstVariableNode(const std::string& name) const {
     return this->astCtxt.getAstGarbageCollector().getAstVariableNode(name);
   }
 
@@ -507,7 +507,7 @@ namespace triton {
   }
 
 
-  void API::setAstVariableNodes(const std::map<std::string, std::vector<triton::ast::AbstractNode*>>& nodes) {
+  void API::setAstVariableNodes(const std::map<std::string, triton::ast::AbstractNode*>& nodes) {
     this->astCtxt.getAstGarbageCollector().setAstVariableNodes(nodes);
   }
 
