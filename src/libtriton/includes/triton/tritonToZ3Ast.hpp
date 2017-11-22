@@ -11,7 +11,6 @@
 #include <z3++.h>
 
 #include <triton/ast.hpp>
-#include <triton/symbolicEngine.hpp>
 #include <triton/tritonTypes.hpp>
 
 
@@ -35,9 +34,6 @@ namespace triton {
     /*! \brief Converts a Triton's AST to Z3's AST. */
     class TritonToZ3Ast {
       private:
-        //! Symbolic Engine API
-        triton::engines::symbolic::SymbolicEngine* symbolicEngine;
-
         //! This flag define if the conversion is used to evaluated a node or not.
         bool isEval;
 
@@ -56,7 +52,7 @@ namespace triton {
 
       public:
         //! Constructor.
-        TritonToZ3Ast(triton::engines::symbolic::SymbolicEngine* symbolicEngine, bool eval=true);
+        TritonToZ3Ast(bool eval=true);
 
         //! Converts to Z3's AST
         z3::expr convert(triton::ast::AbstractNode* node);

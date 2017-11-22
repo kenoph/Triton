@@ -21,7 +21,7 @@
 #include <triton/operandWrapper.hpp>
 #include <triton/register.hpp>
 #include <triton/registers_e.hpp>
-#include <triton/solverEngine.hpp>
+#include <triton/solverModel.hpp>
 #include <triton/symbolicEngine.hpp>
 #include <triton/taintEngine.hpp>
 #include <triton/tritonTypes.hpp>
@@ -55,9 +55,6 @@ namespace triton {
 
         //! The symbolic engine.
         triton::engines::symbolic::SymbolicEngine* symbolic = nullptr;
-
-        //! The solver engine.
-        triton::engines::solver::SolverEngine* solver = nullptr;
 
         //! The AST Context interface.
         triton::ast::AstContext astCtxt;
@@ -511,9 +508,6 @@ namespace triton {
 
 
         /* Solver engine API ============================================================================= */
-
-        //! [**solver api**] - Raises an exception if the solver engine is not initialized.
-        void checkSolver(void) const;
 
         /*!
          * \brief [**solver api**] - Computes and returns a model from a symbolic constraint.

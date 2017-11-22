@@ -7,6 +7,7 @@
 
 #include <triton/api.hpp>
 #include <triton/exceptions.hpp>
+#include <triton/solverEngine.hpp>
 
 #include <list>
 #include <map>
@@ -387,10 +388,6 @@ namespace triton {
     if (this->symbolic == nullptr)
       throw triton::exceptions::API("API::initEngines(): No enough memory.");
 
-    this->solver = new(std::nothrow) triton::engines::solver::SolverEngine(this->symbolic);
-    if (this->solver == nullptr)
-      throw triton::exceptions::API("API::initEngines(): No enough memory.");
-
     this->taint = new(std::nothrow) triton::engines::taint::TaintEngine(this->symbolic, *this->getCpu());
     if (this->taint == nullptr)
       throw triton::exceptions::API("API::initEngines(): No enough memory.");
@@ -408,13 +405,11 @@ namespace triton {
   void API::removeEngines(void) {
     if (this->isArchitectureValid()) {
       delete this->irBuilder;
-      delete this->solver;
       delete this->symbolic;
       delete this->taint;
       delete this->z3Interface;
 
       this->irBuilder           = nullptr;
-      this->solver              = nullptr;
       this->symbolic            = nullptr;
       this->taint               = nullptr;
       this->z3Interface         = nullptr;
@@ -967,24 +962,13 @@ namespace triton {
   }
 
 
-
-  /* Solver engine API ============================================================================= */
-
-  void API::checkSolver(void) const {
-    if (!this->solver)
-      throw triton::exceptions::API("API::checkSolver(): Solver engine is undefined.");
-  }
-
-
   std::map<triton::uint32, triton::engines::solver::SolverModel> API::getModel(triton::ast::AbstractNode* node) const {
-    this->checkSolver();
-    return this->solver->getModel(node);
+    return triton::engines::solver::SolverEngine::getModel(node);
   }
 
 
   std::list<std::map<triton::uint32, triton::engines::solver::SolverModel>> API::getModels(triton::ast::AbstractNode* node, triton::uint32 limit) const {
-    this->checkSolver();
-    return this->solver->getModels(node, limit);
+    return triton::engines::solver::SolverEngine::getModels(node, limit);
   }
 
 

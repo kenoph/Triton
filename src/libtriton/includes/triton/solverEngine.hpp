@@ -17,7 +17,6 @@
 
 #include <triton/ast.hpp>
 #include <triton/solverModel.hpp>
-#include <triton/symbolicEngine.hpp>
 #include <triton/tritonTypes.hpp>
 
 
@@ -43,16 +42,12 @@ namespace triton {
      *  @{
      */
 
-      //! \class SolverEngine
-      /*! \brief The solver engine class. */
-      class SolverEngine {
-        private:
-          //! Symbolic Engine API
-          triton::engines::symbolic::SymbolicEngine* symbolicEngine;
-
-        public:
-          //! Constructor.
-          SolverEngine(triton::engines::symbolic::SymbolicEngine* symbolicEngine);
+      /*! 
+       * \ingroup solver
+       * \addtogroup SolverEngine
+       * @{
+       */
+      namespace SolverEngine {
 
           //! Computes and returns a model from a symbolic constraint.
           /*! \brief map of symbolic variable id -> model
@@ -61,7 +56,7 @@ namespace triton {
            * **item1**: symbolic variable id<br>
            * **item2**: model
            */
-          std::map<triton::uint32, SolverModel> getModel(triton::ast::AbstractNode* node) const;
+          std::map<triton::uint32, SolverModel> getModel(triton::ast::AbstractNode* node);
 
           //! Computes and returns several models from a symbolic constraint. The `limit` is the number of models returned.
           /*! \brief list of map of symbolic variable id -> model
@@ -70,7 +65,8 @@ namespace triton {
            * **item1**: symbolic variable id<br>
            * **item2**: model
            */
-          std::list<std::map<triton::uint32, SolverModel>> getModels(triton::ast::AbstractNode* node, triton::uint32 limit) const;
+          std::list<std::map<triton::uint32, SolverModel>> getModels(triton::ast::AbstractNode* node, triton::uint32 limit);
+      /*! @} End of SolverEngine namespace */
       };
 
     /*! @} End of solver namespace */

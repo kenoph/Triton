@@ -14,14 +14,10 @@
 namespace triton {
   namespace ast {
 
-    TritonToZ3Ast::TritonToZ3Ast(triton::engines::symbolic::SymbolicEngine* symbolicEngine, bool eval)
-      : context() {
-      if (symbolicEngine == nullptr)
-        throw triton::exceptions::AstTranslations("TritonToZ3Ast::TritonToZ3Ast(): The symbolicEngine API cannot be null.");
-
-      this->symbolicEngine = symbolicEngine;
-      this->isEval = eval;
-    }
+    TritonToZ3Ast::TritonToZ3Ast(bool eval)
+      : isEval(eval)
+      , context()
+    {}
 
 
     triton::__uint TritonToZ3Ast::getUintValue(const z3::expr& expr) {
@@ -277,21 +273,19 @@ namespace triton {
         }
 
         case VARIABLE_NODE: {
-          std::string const& varName = reinterpret_cast<triton::ast::VariableNode*>(node)->getVarName();
-          triton::engines::symbolic::SymbolicVariable* symVar = this->symbolicEngine->getSymbolicVariableFromName(varName);
-
-          if (symVar == nullptr)
-            throw triton::exceptions::AstTranslations("TritonToZ3Ast::convert(): [VARIABLE_NODE] Can't get the symbolic variable (nullptr).");
+          auto *vnode = reinterpret_cast<triton::ast::VariableNode*>(node);
+          triton::uint32 varSize = vnode->getBitvectorSize();
+          std::string const& varName = vnode->getVarName();
 
           /* If the conversion is used to evaluate a node, we concretize symbolic variables */
           if (this->isEval) {
             triton::uint512 value = reinterpret_cast<triton::ast::VariableNode*>(node)->evaluate();
             std::string strValue(value);
-            return this->context.bv_val(strValue.c_str(), symVar->getSize());
+            return this->context.bv_val(varName.c_str(), varSize);
           }
 
           /* Otherwise, we keep the symbolic variables for a real conversion */
-          return this->context.bv_const(symVar->getName().c_str(), symVar->getSize());
+          return this->context.bv_const(varName.c_str(), varSize);
         }
 
         case ZX_NODE: {

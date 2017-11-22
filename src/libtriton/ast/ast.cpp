@@ -13,6 +13,7 @@
 #include <triton/astRepresentation.hpp>
 #include <triton/exceptions.hpp>
 #include <triton/tritonToZ3Ast.hpp>
+#include <triton/cpuSize.hpp>
 
 
 
