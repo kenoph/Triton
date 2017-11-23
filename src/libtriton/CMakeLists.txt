@@ -82,6 +82,7 @@ set(LIBTRITON_SOURCE_FILES
     engines/symbolic/symbolicExpression.cpp
     engines/symbolic/symbolicSimplification.cpp
     engines/symbolic/symbolicVariable.cpp
+    engines/symbolic/symbolicValue.cpp
     engines/taint/taintEngine.cpp
     modes/modes.cpp
     os/unix/syscallNumberToString.cpp

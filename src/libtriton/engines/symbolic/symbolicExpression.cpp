@@ -21,37 +21,10 @@ namespace triton {
     namespace symbolic {
 
       SymbolicExpression::SymbolicExpression(triton::ast::AbstractNode* node, triton::usize id, symkind_e kind, const std::string& comment)
-        : originRegister() {
-        this->comment       = comment;
-        this->ast           = node;
-        this->id            = id;
-        this->isTainted     = false;
-        this->kind          = kind;
-      }
-
-
-      triton::ast::AbstractNode* SymbolicExpression::getAst(void) const {
-        if (this->ast == nullptr)
-          throw triton::exceptions::SymbolicExpression("SymbolicExpression::getAst(): No AST defined.");
-        return this->ast;
-      }
-
-
-      triton::ast::AbstractNode* SymbolicExpression::getNewAst(void) const {
-        if (this->ast == nullptr)
-          throw triton::exceptions::SymbolicExpression("SymbolicExpression::getNewAst(): No AST defined.");
-        return triton::ast::newInstance(this->ast);
-      }
-
-
-      const std::string& SymbolicExpression::getComment(void) const {
-        return this->comment;
-      }
-
-
-      triton::usize SymbolicExpression::getId(void) const {
-        return this->id;
-      }
+        : SymbolicValue(node, id, kind, comment),
+        originRegister(),
+        isTainted(false)
+      {}
 
 
       std::string SymbolicExpression::getFormattedId(void) const {
@@ -85,11 +58,6 @@ namespace triton {
       }
 
 
-      symkind_e SymbolicExpression::getKind(void) const {
-        return this->kind;
-      }
-
-
       const triton::arch::MemoryAccess& SymbolicExpression::getOriginMemory(void) const {
         return this->originMemory;
       }
@@ -100,23 +68,6 @@ namespace triton {
       }
 
 
-      void SymbolicExpression::setAst(triton::ast::AbstractNode* node) {
-        node->setParent(this->ast->getParents());
-        this->ast = node;
-        this->ast->init();
-      }
-
-
-      void SymbolicExpression::setComment(const std::string& comment) {
-        this->comment = comment;
-      }
-
-
-      void SymbolicExpression::setKind(symkind_e k) {
-        this->kind = k;
-      }
-
-
       void SymbolicExpression::setOriginMemory(const triton::arch::MemoryAccess& mem) {
         this->originMemory = mem;
       }
@@ -124,23 +75,6 @@ namespace triton {
 
       void SymbolicExpression::setOriginRegister(const triton::arch::Register& reg) {
         this->originRegister = reg;
-      }
-
-
-      bool SymbolicExpression::isRegister(void) const {
-        return (this->kind == triton::engines::symbolic::REG);
-      }
-
-
-      bool SymbolicExpression::isMemory(void) const {
-        return (this->kind == triton::engines::symbolic::MEM);
-      }
-
-
-      bool SymbolicExpression::isSymbolized(void) const {
-        if (this->ast == nullptr)
-          return false;
-        return this->ast->isSymbolized();
       }
 
 
