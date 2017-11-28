@@ -14,6 +14,8 @@
 #include <triton/symbolicValue.hpp>
 #include <triton/tritonTypes.hpp>
 
+#include <triton/astContext.hpp>
+
 
 
 //! The Triton namespace
@@ -60,7 +62,8 @@ namespace triton {
 
         public:
           //! Constructor.
-          SymbolicVariable(symkind_e kind,
+          SymbolicVariable(triton::ast::AstContext& astCtxt,
+                           symkind_e kind,
                            triton::uint64 kindValue,
                            triton::usize id,
                            triton::uint32 size,

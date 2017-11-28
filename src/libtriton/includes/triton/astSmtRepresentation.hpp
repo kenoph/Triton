@@ -9,6 +9,7 @@
 #define TRITON_ASTSMTREPRESENTATION_HPP
 
 #include <iostream>
+
 #include <triton/astRepresentationInterface.hpp>
 #include <triton/ast.hpp>
 

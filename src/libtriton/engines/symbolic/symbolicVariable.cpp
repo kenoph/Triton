@@ -15,12 +15,13 @@ namespace triton {
   namespace engines {
     namespace symbolic {
 
-      SymbolicVariable::SymbolicVariable(symkind_e kind,
+      SymbolicVariable::SymbolicVariable(triton::ast::AstContext& astCtxt,
+                                         symkind_e kind,
                                          triton::uint64 kindValue,
                                          triton::usize id,
                                          triton::uint32 size,
                                          const std::string& comment):
-      SymbolicValue(nullptr, id, kind, comment),
+      SymbolicValue(astCtxt.variable(TRITON_SYMVAR_NAME + std::to_string(id), size), id, kind, comment),
       name(TRITON_SYMVAR_NAME + std::to_string(id)),
       kindValue(kindValue),
       size(size)

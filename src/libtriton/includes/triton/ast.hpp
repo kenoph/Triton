@@ -17,7 +17,6 @@
 #include <vector>
 
 #include <triton/astEnums.hpp>
-#include <triton/symbolicVariable.hpp>
 #include <triton/tritonTypes.hpp>
 
 
