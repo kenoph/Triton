@@ -127,7 +127,7 @@ namespace triton {
     }
 
 
-    std::set<std::pair<triton::arch::MemoryAccess, triton::ast::AbstractNode*>>& Instruction::getLoadAccess(void) {
+    std::set<std::pair<triton::arch::MemoryAccess, triton::engines::symbolic::SymbolicExpression*>>& Instruction::getLoadAccess(void) {
       return this->loadAccess;
     }
 
@@ -152,8 +152,8 @@ namespace triton {
     }
 
 
-    void Instruction::setLoadAccess(const triton::arch::MemoryAccess& mem, triton::ast::AbstractNode* node) {
-      this->loadAccess.insert(std::make_pair(mem, node));
+    void Instruction::setLoadAccess(const triton::arch::MemoryAccess& mem, triton::engines::symbolic::SymbolicExpression* expr) {
+      this->loadAccess.insert(std::make_pair(mem, expr));
     }
 
 

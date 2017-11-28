@@ -240,6 +240,12 @@ namespace triton {
       items.clear();
     }
 
+    void IrBuilder::collectNodes(std::set<triton::ast::AbstractNode*>& uniqueNodes, std::set<std::pair<triton::arch::MemoryAccess, triton::engines::symbolic::SymbolicExpression*> >& items) const {
+      for (const auto& item : items)
+        this->astGarbageCollector.extractUniqueAstNodes(uniqueNodes, std::get<1>(item)->getAst());
+      items.clear();
+    }
+
 
     void IrBuilder::collectNodes(std::set<triton::ast::AbstractNode*>& uniqueNodes, std::vector<triton::arch::OperandWrapper>& operands, bool gc) const {
       for (auto& operand : operands) {

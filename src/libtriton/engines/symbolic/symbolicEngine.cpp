@@ -348,7 +348,7 @@ namespace triton {
 
       /* Returns the symbolic memory value */
       triton::uint512 SymbolicEngine::getSymbolicMemoryValue(const triton::arch::MemoryAccess& mem) {
-        triton::ast::AbstractNode* node = this->buildSymbolicMemory(mem);
+        triton::ast::AbstractNode* node = this->buildSymbolicMemory(mem)->getAst();
         return node->evaluate();
       }
 
@@ -665,7 +665,8 @@ namespace triton {
       triton::ast::AbstractNode* SymbolicEngine::buildSymbolicOperand(const triton::arch::OperandWrapper& op) {
         switch (op.getType()) {
           case triton::arch::OP_IMM: return this->buildSymbolicImmediate(op.getConstImmediate());
-          case triton::arch::OP_MEM: return this->buildSymbolicMemory(op.getConstMemory());
+                                     // FIXME
+          case triton::arch::OP_MEM: return this->buildSymbolicMemory(op.getConstMemory())->getAst();
           case triton::arch::OP_REG: return this->buildSymbolicRegister(op.getConstRegister());
           default:
             throw triton::exceptions::SymbolicEngine("SymbolicEngine::buildSymbolicOperand(): Invalid operand.");
@@ -677,7 +678,8 @@ namespace triton {
       triton::ast::AbstractNode* SymbolicEngine::buildSymbolicOperand(triton::arch::Instruction& inst, const triton::arch::OperandWrapper& op) {
         switch (op.getType()) {
           case triton::arch::OP_IMM: return this->buildSymbolicImmediate(inst, op.getConstImmediate());
-          case triton::arch::OP_MEM: return this->buildSymbolicMemory(inst, op.getConstMemory());
+                                     // FIXME
+          case triton::arch::OP_MEM: return this->buildSymbolicMemory(inst, op.getConstMemory())->getAst();
           case triton::arch::OP_REG: return this->buildSymbolicRegister(inst, op.getConstRegister());
           default:
             throw triton::exceptions::SymbolicEngine("SymbolicEngine::buildSymbolicOperand(): Invalid operand.");
@@ -701,7 +703,7 @@ namespace triton {
 
 
       /* Returns a symbolic memory */
-      triton::ast::AbstractNode* SymbolicEngine::buildSymbolicMemory(const triton::arch::MemoryAccess& mem) {
+      triton::engines::symbolic::SymbolicExpression* SymbolicEngine::buildSymbolicMemory(const triton::arch::MemoryAccess& mem) {
         std::list<triton::ast::AbstractNode*> opVec;
 
         triton::ast::AbstractNode* tmp            = nullptr;
@@ -718,7 +720,7 @@ namespace triton {
          * If the memory access is aligned, don't split the memory.
          */
         if (this->modes.isModeEnabled(triton::modes::ALIGNED_MEMORY) && this->isAlignedMemory(address, size))
-          return this->getAlignedMemory(address, size)->getAst();
+          return this->getAlignedMemory(address, size);
 
         /* Iterate on every memory cells to use their symbolic or concrete values */
         while (size) {
@@ -751,14 +753,15 @@ namespace triton {
             break;
         }
 
-        return tmp;
+        return this->newSymbolicExpression(tmp, triton::engines::symbolic::MEM, "SymbolicMemory");
       }
 
 
       /* Returns a symbolic memory and defines the memory as input of the instruction */
-      triton::ast::AbstractNode* SymbolicEngine::buildSymbolicMemory(triton::arch::Instruction& inst, const triton::arch::MemoryAccess& mem) {
-        triton::ast::AbstractNode* node = this->buildSymbolicMemory(mem);
-        inst.setLoadAccess(mem, node);
+      triton::engines::symbolic::SymbolicExpression* SymbolicEngine::buildSymbolicMemory(triton::arch::Instruction& inst, const triton::arch::MemoryAccess& mem) {
+        triton::engines::symbolic::SymbolicExpression* se = this->buildSymbolicMemory(mem);
+        inst.setLoadAccess(mem, se);
+        inst.addSymbolicExpression(se);
 
         /* Set implicit read of the base register (LEA) */
         if (this->architecture->isRegisterValid(mem.getConstBaseRegister()))
@@ -768,7 +771,7 @@ namespace triton {
         if (this->architecture->isRegisterValid(mem.getConstIndexRegister()))
           this->buildSymbolicRegister(inst, mem.getConstIndexRegister());
 
-        return node;
+        return se;
       }
 
 

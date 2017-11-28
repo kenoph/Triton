@@ -67,7 +67,7 @@ namespace triton {
         triton::uint32 prefix;
 
         //! Implicit and explicit load access (read). This field is set at the semantics level.
-        std::set<std::pair<triton::arch::MemoryAccess, triton::ast::AbstractNode*>> loadAccess;
+        std::set<std::pair<triton::arch::MemoryAccess, triton::engines::symbolic::SymbolicExpression*>> loadAccess;
 
         //! Implicit and explicit store access (write). This field is set at the semantics level.
         std::set<std::pair<triton::arch::MemoryAccess, triton::ast::AbstractNode*>> storeAccess;
@@ -143,7 +143,7 @@ namespace triton {
         triton::uint32 getPrefix(void) const;
 
         //! Returns the list of all implicit and explicit load access
-        std::set<std::pair<triton::arch::MemoryAccess, triton::ast::AbstractNode*>>& getLoadAccess(void);
+        std::set<std::pair<triton::arch::MemoryAccess, triton::engines::symbolic::SymbolicExpression*>>& getLoadAccess(void);
 
         //! Returns the list of all implicit and explicit store access
         std::set<std::pair<triton::arch::MemoryAccess, triton::ast::AbstractNode*>>& getStoreAccess(void);
@@ -164,7 +164,7 @@ namespace triton {
         triton::uint32 getSize(void) const;
 
         //! Sets a load access.
-        void setLoadAccess(const triton::arch::MemoryAccess& mem, triton::ast::AbstractNode* node);
+        void setLoadAccess(const triton::arch::MemoryAccess& mem, triton::engines::symbolic::SymbolicExpression* node);
 
         //! Removes a load access.
         void removeLoadAccess(const triton::arch::MemoryAccess& mem);

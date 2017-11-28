@@ -221,10 +221,10 @@ namespace triton {
           triton::ast::AbstractNode* buildSymbolicImmediate(triton::arch::Instruction& inst, const triton::arch::Immediate& imm);
 
           //! Returns a symbolic memory.
-          triton::ast::AbstractNode* buildSymbolicMemory(const triton::arch::MemoryAccess& mem);
+          triton::engines::symbolic::SymbolicExpression* buildSymbolicMemory(const triton::arch::MemoryAccess& mem);
 
           //! Returns a symbolic memory and defines the memory as input of the instruction.
-          triton::ast::AbstractNode* buildSymbolicMemory(triton::arch::Instruction& inst, const triton::arch::MemoryAccess& mem);
+          triton::engines::symbolic::SymbolicExpression* buildSymbolicMemory(triton::arch::Instruction& inst, const triton::arch::MemoryAccess& mem);
 
           //! Returns a symbolic register.
           triton::ast::AbstractNode* buildSymbolicRegister(const triton::arch::Register& reg);

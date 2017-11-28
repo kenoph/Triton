@@ -654,13 +654,15 @@ namespace triton {
 
   triton::ast::AbstractNode* API::buildSymbolicMemory(const triton::arch::MemoryAccess& mem) {
     this->checkSymbolic();
-    return this->symbolic->buildSymbolicMemory(mem);
+    // FIXME: Should we change the interface?
+    return this->symbolic->buildSymbolicMemory(mem)->getAst();
   }
 
 
   triton::ast::AbstractNode* API::buildSymbolicMemory(triton::arch::Instruction& inst, const triton::arch::MemoryAccess& mem) {
     this->checkSymbolic();
-    return this->symbolic->buildSymbolicMemory(inst, mem);
+    // FIXME: Should we change the interface
+    return this->symbolic->buildSymbolicMemory(inst, mem)->getAst();
   }
 
 
