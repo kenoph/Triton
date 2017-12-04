@@ -668,13 +668,15 @@ namespace triton {
 
   triton::ast::AbstractNode* API::buildSymbolicRegister(const triton::arch::Register& reg) {
     this->checkSymbolic();
-    return this->symbolic->buildSymbolicRegister(reg);
+    // FIXME: Should we change the interface?
+    return this->symbolic->buildSymbolicRegister(reg)->getAst();
   }
 
 
   triton::ast::AbstractNode* API::buildSymbolicRegister(triton::arch::Instruction& inst, const triton::arch::Register& reg) {
     this->checkSymbolic();
-    return this->symbolic->buildSymbolicRegister(inst, reg);
+    // FIXME: Should we change the interface?
+    return this->symbolic->buildSymbolicRegister(inst, reg)->getAst();
   }
 
 

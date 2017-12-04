@@ -45,22 +45,22 @@ True
 >>> for expr in inst.getSymbolicExpressions():
 ...     print expr
 ...
-ref!0 = (bvxor (_ bv12345 64) (_ bv67890 64)) ; XOR operation
-ref!1 = (_ bv0 1) ; Clears carry flag
-ref!2 = (_ bv0 1) ; Clears overflow flag
-ref!3 = (bvxor (bvxor (bvxor (bvxor (bvxor (bvxor (bvxor (bvxor (_ bv1 1) ((_ extract 0 0) (bvlshr ((_ extract 7 0) ref!0) (_ bv0 8)))) ((_ extract 0 0) (bvlshr ((_ extract 7 0) ref!0) (_ bv1 8)))) ((_ extract 0 0) (bvlshr ((_ extract 7 0) ref!0) (_ bv2 8)))) ((_ extract 0 0) (bvlshr ((_ extract 7 0) ref!0) (_ bv3 8)))) ((_ extract 0 0) (bvlshr ((_ extract 7 0) ref!0) (_ bv4 8)))) ((_ extract 0 0) (bvlshr ((_ extract 7 0) ref!0) (_ bv5 8)))) ((_ extract 0 0) (bvlshr ((_ extract 7 0) ref!0) (_ bv6 8)))) ((_ extract 0 0) (bvlshr ((_ extract 7 0) ref!0) (_ bv7 8)))) ; Parity flag
-ref!4 = ((_ extract 63 63) ref!0) ; Sign flag
-ref!5 = (ite (= ref!0 (_ bv0 64)) (_ bv1 1) (_ bv0 1)) ; Zero flag
-ref!6 = (_ bv4194307 64) ; Program Counter
+ref!2 = (bvxor (_ bv12345 64) (_ bv67890 64)) ; XOR operation
+ref!3 = (_ bv0 1) ; Clears carry flag
+ref!4 = (_ bv0 1) ; Clears overflow flag
+ref!5 = (bvxor (bvxor (bvxor (bvxor (bvxor (bvxor (bvxor (bvxor (_ bv1 1) ((_ extract 0 0) (bvlshr ((_ extract 7 0) ref!2) (_ bv0 8)))) ((_ extract 0 0) (bvlshr ((_ extract 7 0) ref!2) (_ bv1 8)))) ((_ extract 0 0) (bvlshr ((_ extract 7 0) ref!2) (_ bv2 8)))) ((_ extract 0 0) (bvlshr ((_ extract 7 0) ref!2) (_ bv3 8)))) ((_ extract 0 0) (bvlshr ((_ extract 7 0) ref!2) (_ bv4 8)))) ((_ extract 0 0) (bvlshr ((_ extract 7 0) ref!2) (_ bv5 8)))) ((_ extract 0 0) (bvlshr ((_ extract 7 0) ref!2) (_ bv6 8)))) ((_ extract 0 0) (bvlshr ((_ extract 7 0) ref!2) (_ bv7 8)))) ; Parity flag
+ref!6 = ((_ extract 63 63) ref!2) ; Sign flag
+ref!7 = (ite (= ref!2 (_ bv0 64)) (_ bv1 1) (_ bv0 1)) ; Zero flag
+ref!8 = (_ bv4194307 64) ; Program Counter
 
 >>> expr_1 = inst.getSymbolicExpressions()[0]
 >>> expr_1 # doctest: +ELLIPSIS
 <SymbolicExpression object at 0x...>
 >>> print expr_1
-ref!0 = (bvxor (_ bv12345 64) (_ bv67890 64)) ; XOR operation
+ref!2 = (bvxor (_ bv12345 64) (_ bv67890 64)) ; XOR operation
 
 >>> print expr_1.getId()
-0
+2
 
 >>> ast = expr_1.getAst()
 >>> ast # doctest: +ELLIPSIS

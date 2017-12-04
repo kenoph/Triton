@@ -137,7 +137,7 @@ namespace triton {
     }
 
 
-    std::set<std::pair<triton::arch::Register, triton::ast::AbstractNode*>>& Instruction::getReadRegisters(void) {
+    std::set<std::pair<triton::arch::Register, triton::engines::symbolic::SymbolicExpression*>>& Instruction::getReadRegisters(void) {
       return this->readRegisters;
     }
 
@@ -186,7 +186,7 @@ namespace triton {
     }
 
 
-    void Instruction::setReadRegister(const triton::arch::Register& reg, triton::ast::AbstractNode* node) {
+    void Instruction::setReadRegister(const triton::arch::Register& reg, triton::engines::symbolic::SymbolicExpression* node) {
       this->readRegisters.insert(std::make_pair(reg, node));
     }
 

@@ -119,7 +119,7 @@ The only way to jump from a reference node to the targeted node is to use the tr
 >>> zfId = ctxt.getSymbolicRegisterId(ctxt.registers.zf)
 >>> partialTree = ctxt.getSymbolicExpressionFromId(zfId).getAst()
 >>> print partialTree
-(ite (= ref!0 (_ bv0 64)) (_ bv1 1) (_ bv0 1))
+(ite (= ref!2 (_ bv0 64)) (_ bv1 1) (_ bv0 1))
 
 >>> fullTree = ctxt.unrollAst(partialTree)
 >>> print fullTree
@@ -150,14 +150,14 @@ True
 >>> for expr in inst.getSymbolicExpressions():
 ...     print expr
 ...
-ref_0 = ((0x1122334455667788 + 0x8877665544332211) & 0xFFFFFFFFFFFFFFFF) # ADD operation
-ref_1 = (0x1 if (0x10 == (0x10 & (ref_0 ^ (0x1122334455667788 ^ 0x8877665544332211)))) else 0x0) # Adjust flag
-ref_2 = ((((0x1122334455667788 & 0x8877665544332211) ^ (((0x1122334455667788 ^ 0x8877665544332211) ^ ref_0) & (0x1122334455667788 ^ 0x8877665544332211))) >> 63) & 0x1) # Carry flag
-ref_3 = ((((0x1122334455667788 ^ (~(0x8877665544332211) & 0xFFFFFFFFFFFFFFFF)) & (0x1122334455667788 ^ ref_0)) >> 63) & 0x1) # Overflow flag
-ref_4 = ((((((((0x1 ^ (((ref_0 & 0xFF) >> 0x0) & 0x1)) ^ (((ref_0 & 0xFF) >> 0x1) & 0x1)) ^ (((ref_0 & 0xFF) >> 0x2) & 0x1)) ^ (((ref_0 & 0xFF) >> 0x3) & 0x1)) ^ (((ref_0 & 0xFF) >> 0x4) & 0x1)) ^ (((ref_0 & 0xFF) >> 0x5) & 0x1)) ^ (((ref_0 & 0xFF) >> 0x6) & 0x1)) ^ (((ref_0 & 0xFF) >> 0x7) & 0x1)) # Parity flag
-ref_5 = ((ref_0 >> 63) & 0x1) # Sign flag
-ref_6 = (0x1 if (ref_0 == 0x0) else 0x0) # Zero flag
-ref_7 = 0x400003 # Program Counter
+ref_2 = ((0x1122334455667788 + 0x8877665544332211) & 0xFFFFFFFFFFFFFFFF) # ADD operation
+ref_3 = (0x1 if (0x10 == (0x10 & (ref_2 ^ (0x1122334455667788 ^ 0x8877665544332211)))) else 0x0) # Adjust flag
+ref_4 = ((((0x1122334455667788 & 0x8877665544332211) ^ (((0x1122334455667788 ^ 0x8877665544332211) ^ ref_2) & (0x1122334455667788 ^ 0x8877665544332211))) >> 63) & 0x1) # Carry flag
+ref_5 = ((((0x1122334455667788 ^ (~(0x8877665544332211) & 0xFFFFFFFFFFFFFFFF)) & (0x1122334455667788 ^ ref_2)) >> 63) & 0x1) # Overflow flag
+ref_6 = ((((((((0x1 ^ (((ref_2 & 0xFF) >> 0x0) & 0x1)) ^ (((ref_2 & 0xFF) >> 0x1) & 0x1)) ^ (((ref_2 & 0xFF) >> 0x2) & 0x1)) ^ (((ref_2 & 0xFF) >> 0x3) & 0x1)) ^ (((ref_2 & 0xFF) >> 0x4) & 0x1)) ^ (((ref_2 & 0xFF) >> 0x5) & 0x1)) ^ (((ref_2 & 0xFF) >> 0x6) & 0x1)) ^ (((ref_2 & 0xFF) >> 0x7) & 0x1)) # Parity flag
+ref_7 = ((ref_2 >> 63) & 0x1) # Sign flag
+ref_8 = (0x1 if (ref_2 == 0x0) else 0x0) # Zero flag
+ref_9 = 0x400003 # Program Counter
 
 ~~~~~~~~~~~~~
 

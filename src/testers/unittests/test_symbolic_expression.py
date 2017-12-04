@@ -41,7 +41,7 @@ class TestSymbolicExpression(unittest.TestCase):
 
     def test_getId(self):
         """Test getId"""
-        self.assertEqual(self.expr1.getId(), 0)
+        self.assertEqual(self.expr1.getId(), 2)
 
     def test_getKind(self):
         """Test getKind"""

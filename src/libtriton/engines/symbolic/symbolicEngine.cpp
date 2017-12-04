@@ -366,7 +366,7 @@ namespace triton {
 
       /* Returns the symbolic register value */
       triton::uint512 SymbolicEngine::getSymbolicRegisterValue(const triton::arch::Register& reg) {
-        triton::ast::AbstractNode* node = this->buildSymbolicRegister(reg);
+        triton::ast::AbstractNode* node = this->buildSymbolicRegister(reg)->getAst();
         return node->evaluate();
       }
 
@@ -667,7 +667,8 @@ namespace triton {
           case triton::arch::OP_IMM: return this->buildSymbolicImmediate(op.getConstImmediate());
                                      // FIXME
           case triton::arch::OP_MEM: return this->buildSymbolicMemory(op.getConstMemory())->getAst();
-          case triton::arch::OP_REG: return this->buildSymbolicRegister(op.getConstRegister());
+                                     // FIXME
+          case triton::arch::OP_REG: return this->buildSymbolicRegister(op.getConstRegister())->getAst();
           default:
             throw triton::exceptions::SymbolicEngine("SymbolicEngine::buildSymbolicOperand(): Invalid operand.");
         }
@@ -680,7 +681,8 @@ namespace triton {
           case triton::arch::OP_IMM: return this->buildSymbolicImmediate(inst, op.getConstImmediate());
                                      // FIXME
           case triton::arch::OP_MEM: return this->buildSymbolicMemory(inst, op.getConstMemory())->getAst();
-          case triton::arch::OP_REG: return this->buildSymbolicRegister(inst, op.getConstRegister());
+                                     // FIXME
+          case triton::arch::OP_REG: return this->buildSymbolicRegister(inst, op.getConstRegister())->getAst();
           default:
             throw triton::exceptions::SymbolicEngine("SymbolicEngine::buildSymbolicOperand(): Invalid operand.");
         }
@@ -776,7 +778,7 @@ namespace triton {
 
 
       /* Returns a symbolic register */
-      triton::ast::AbstractNode* SymbolicEngine::buildSymbolicRegister(const triton::arch::Register& reg) {
+      triton::engines::symbolic::SymbolicExpression* SymbolicEngine::buildSymbolicRegister(const triton::arch::Register& reg) {
         triton::ast::AbstractNode* op = nullptr;
         triton::usize symReg          = this->getSymbolicRegisterId(reg);
         triton::uint32 bvSize         = reg.getBitSize();
@@ -791,16 +793,20 @@ namespace triton {
         else
           op = this->astCtxt.bv(this->architecture->getConcreteRegisterValue(reg), bvSize);
 
-        return op;
+        // FIXME: Could we just return the old SymExpr?
+        return this->newSymbolicExpression(op, triton::engines::symbolic::REG, "Symbolic Register");
       }
 
 
       /* Returns a symbolic register and defines the register as input of the instruction */
-      triton::ast::AbstractNode* SymbolicEngine::buildSymbolicRegister(triton::arch::Instruction& inst, const triton::arch::Register& reg) {
-        triton::ast::AbstractNode* node = this->buildSymbolicRegister(reg);
-        inst.setReadRegister(reg, node);
+      triton::engines::symbolic::SymbolicExpression* SymbolicEngine::buildSymbolicRegister(triton::arch::Instruction& inst, const triton::arch::Register& reg) {
+        triton::engines::symbolic::SymbolicExpression* expr = this->buildSymbolicRegister(reg);
+        inst.setReadRegister(reg, expr);
+        // FIXME What should we do here? buildSymbolicRegister doesn't build any "real symbolicExpression" so should we save this dummy one? and then, should we use
+        // a reference Node for later use?
+//        inst.addSymbolicExpression(expr);
 
-        return node;
+        return expr;
       }
 
 
@@ -887,7 +893,7 @@ namespace triton {
       SymbolicExpression* SymbolicEngine::createSymbolicRegisterExpression(triton::arch::Instruction& inst, triton::ast::AbstractNode* node, const triton::arch::Register& reg, const std::string& comment) {
         const triton::arch::Register& parentReg   = this->architecture->getParentRegister(reg);
         triton::ast::AbstractNode* finalExpr      = nullptr;
-        triton::ast::AbstractNode* origReg        = nullptr;
+        triton::engines::symbolic::SymbolicExpression* origReg        = nullptr;
         triton::uint32 regSize                    = reg.getSize();
 
         if (this->architecture->isFlag(reg))
@@ -899,17 +905,17 @@ namespace triton {
         switch (regSize) {
           case BYTE_SIZE:
             if (reg.getLow() == 0) {
-              finalExpr = this->astCtxt.concat(this->astCtxt.extract((this->architecture->registerBitSize() - 1), BYTE_SIZE_BIT, origReg), node);
+              finalExpr = this->astCtxt.concat(this->astCtxt.extract((this->architecture->registerBitSize() - 1), BYTE_SIZE_BIT, origReg->getAst()), node);
             }
             else {
-              finalExpr = this->astCtxt.concat(this->astCtxt.extract((this->architecture->registerBitSize() - 1), WORD_SIZE_BIT, origReg),
-                            this->astCtxt.concat(node, this->astCtxt.extract((BYTE_SIZE_BIT - 1), 0, origReg))
+              finalExpr = this->astCtxt.concat(this->astCtxt.extract((this->architecture->registerBitSize() - 1), WORD_SIZE_BIT, origReg->getAst()),
+                            this->astCtxt.concat(node, this->astCtxt.extract((BYTE_SIZE_BIT - 1), 0, origReg->getAst()))
                           );
             }
             break;
 
           case WORD_SIZE:
-            finalExpr = this->astCtxt.concat(this->astCtxt.extract((this->architecture->registerBitSize() - 1), WORD_SIZE_BIT, origReg), node);
+            finalExpr = this->astCtxt.concat(this->astCtxt.extract((this->architecture->registerBitSize() - 1), WORD_SIZE_BIT, origReg->getAst()), node);
             break;
 
           case DWORD_SIZE:
@@ -1090,13 +1096,13 @@ namespace triton {
           /* Initialize the AST of the memory access (LEA) -> ((pc + base) + (index * scale) + disp) */
           auto leaAst = this->astCtxt.bvadd(
                           (mem.getPcRelative() ? this->astCtxt.bv(mem.getPcRelative(), bitSize) :
-                            (this->architecture->isRegisterValid(base) ? this->buildSymbolicRegister(base) :
+                            (this->architecture->isRegisterValid(base) ? this->buildSymbolicRegister(base)->getAst() :
                               this->astCtxt.bv(0, bitSize)
                             )
                           ),
                           this->astCtxt.bvadd(
                             this->astCtxt.bvmul(
-                              (this->architecture->isRegisterValid(index) ? this->buildSymbolicRegister(index) : this->astCtxt.bv(0, bitSize)),
+                              (this->architecture->isRegisterValid(index) ? this->buildSymbolicRegister(index)->getAst() : this->astCtxt.bv(0, bitSize)),
                               this->astCtxt.bv(scaleValue, bitSize)
                             ),
                             this->astCtxt.bv(dispValue, bitSize)

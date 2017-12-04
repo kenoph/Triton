@@ -65,6 +65,7 @@ namespace triton {
         template <typename T> void collectNodes(std::set<triton::ast::AbstractNode*>& uniqueNodes, T& items) const;
 
         void collectNodes(std::set<triton::ast::AbstractNode*>& uniqueNodes, std::set<std::pair<triton::arch::MemoryAccess, triton::engines::symbolic::SymbolicExpression*> >& items) const;
+        void collectNodes(std::set<triton::ast::AbstractNode*>& uniqueNodes, std::set<std::pair<triton::arch::Register, triton::engines::symbolic::SymbolicExpression*> >& items) const;
 
         //! Collects nodes from operands.
         void collectNodes(std::set<triton::ast::AbstractNode*>& uniqueNodes, std::vector<triton::arch::OperandWrapper>& operands, bool gc) const;
