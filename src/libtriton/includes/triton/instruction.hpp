@@ -76,7 +76,7 @@ namespace triton {
         std::set<std::pair<triton::arch::Register, triton::engines::symbolic::SymbolicExpression*>> readRegisters;
 
         //! Implicit and explicit register outputs (write). This field is set at the semantics level.
-        std::set<std::pair<triton::arch::Register, triton::ast::AbstractNode*>> writtenRegisters;
+        std::set<std::pair<triton::arch::Register, triton::engines::symbolic::SymbolicExpression*>> writtenRegisters;
 
         //! Implicit and explicit immediate inputs (read). This field is set at the semantics level.
         std::set<std::pair<triton::arch::Immediate, triton::ast::AbstractNode*>> readImmediates;
@@ -152,7 +152,7 @@ namespace triton {
         std::set<std::pair<triton::arch::Register, triton::engines::symbolic::SymbolicExpression*>>& getReadRegisters(void);
 
         //! Returns the list of all implicit and explicit register (flags includes) outputs (write)
-        std::set<std::pair<triton::arch::Register, triton::ast::AbstractNode*>>& getWrittenRegisters(void);
+        std::set<std::pair<triton::arch::Register, triton::engines::symbolic::SymbolicExpression*>>& getWrittenRegisters(void);
 
         //! Returns the list of all implicit and explicit immediate inputs (read)
         std::set<std::pair<triton::arch::Immediate, triton::ast::AbstractNode*>>& getReadImmediates(void);
@@ -182,7 +182,7 @@ namespace triton {
         void removeReadRegister(const triton::arch::Register& reg);
 
         //! Sets a written register.
-        void setWrittenRegister(const triton::arch::Register& reg, triton::ast::AbstractNode* node);
+        void setWrittenRegister(const triton::arch::Register& reg, triton::engines::symbolic::SymbolicExpression* node);
 
         //! Removes a written register.
         void removeWrittenRegister(const triton::arch::Register& reg);

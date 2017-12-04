@@ -930,7 +930,8 @@ namespace triton {
         triton::engines::symbolic::SymbolicExpression* se = this->newSymbolicExpression(finalExpr, triton::engines::symbolic::REG, comment);
         this->assignSymbolicExpressionToRegister(se, parentReg);
         inst.addSymbolicExpression(se);
-        inst.setWrittenRegister(reg, node);
+        // FIXME: Should it be a new SymbolicExpression from node?
+        inst.setWrittenRegister(reg, se);
 
         return se;
       }
@@ -944,7 +945,7 @@ namespace triton {
         triton::engines::symbolic::SymbolicExpression *se = this->newSymbolicExpression(node, triton::engines::symbolic::REG, comment);
         this->assignSymbolicExpressionToRegister(se, flag);
         inst.addSymbolicExpression(se);
-        inst.setWrittenRegister(flag, node);
+        inst.setWrittenRegister(flag, se);
 
         return se;
       }

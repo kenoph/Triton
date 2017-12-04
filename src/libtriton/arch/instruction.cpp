@@ -142,7 +142,7 @@ namespace triton {
     }
 
 
-    std::set<std::pair<triton::arch::Register, triton::ast::AbstractNode*>>& Instruction::getWrittenRegisters(void) {
+    std::set<std::pair<triton::arch::Register, triton::engines::symbolic::SymbolicExpression*>>& Instruction::getWrittenRegisters(void) {
       return this->writtenRegisters;
     }
 
@@ -203,7 +203,7 @@ namespace triton {
     }
 
 
-    void Instruction::setWrittenRegister(const triton::arch::Register& reg, triton::ast::AbstractNode* node) {
+    void Instruction::setWrittenRegister(const triton::arch::Register& reg, triton::engines::symbolic::SymbolicExpression* node) {
       this->writtenRegisters.insert(std::make_pair(reg, node));
     }
 
