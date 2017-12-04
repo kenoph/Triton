@@ -826,9 +826,17 @@ namespace triton {
         triton::uint32 writeSize = mem.getSize();
 
         /* Record the aligned memory for a symbolic optimization */
+        // Add a full expression if it doesn't already exists to represent aligned memory
+        SymbolicExpression* aligned_se = nullptr;
+        if(auto* RN = dynamic_cast<triton::ast::ReferenceNode*>(node))
+          aligned_se = this->getSymbolicExpressionFromId(RN->getId());
+        else {
+          aligned_se = this->newSymbolicExpression(node, triton::engines::symbolic::MEM, "Aligned Byte reference - " + comment);
+          inst.addSymbolicExpression(aligned_se);
+        }
+
         if (this->modes.isModeEnabled(triton::modes::ALIGNED_MEMORY)) {
-          SymbolicExpression* se = this->newSymbolicExpression(node, triton::engines::symbolic::MEM, "Aligned Byte reference - " + comment);
-          this->addAlignedMemory(address, writeSize, se);
+          this->addAlignedMemory(address, writeSize, aligned_se);
         }
 
         /*
@@ -853,7 +861,8 @@ namespace triton {
           /* Synchronize the concrete state */
           this->architecture->setConcreteMemoryValue(mem, tmp->evaluate());
           /* Define the memory store */
-          inst.setStoreAccess(mem, node);
+          inst.setStoreAccess(mem, aligned_se);
+          // FIXME: se or aligned_se
           return se;
         }
 
@@ -867,7 +876,8 @@ namespace triton {
         se->setOriginMemory(triton::arch::MemoryAccess(address, mem.getSize()));
 
         /* Define the memory store */
-        inst.setStoreAccess(mem, node);
+        // FIXME: se or aligned_se?
+        inst.setStoreAccess(mem, aligned_se);
         inst.addSymbolicExpression(se);
         return se;
       }

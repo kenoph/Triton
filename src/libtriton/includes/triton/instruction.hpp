@@ -70,7 +70,7 @@ namespace triton {
         std::set<std::pair<triton::arch::MemoryAccess, triton::engines::symbolic::SymbolicExpression*>> loadAccess;
 
         //! Implicit and explicit store access (write). This field is set at the semantics level.
-        std::set<std::pair<triton::arch::MemoryAccess, triton::ast::AbstractNode*>> storeAccess;
+        std::set<std::pair<triton::arch::MemoryAccess, triton::engines::symbolic::SymbolicExpression*>> storeAccess;
 
         //! Implicit and explicit register inputs (read). This field is set at the semantics level.
         std::set<std::pair<triton::arch::Register, triton::ast::AbstractNode*>> readRegisters;
@@ -146,7 +146,7 @@ namespace triton {
         std::set<std::pair<triton::arch::MemoryAccess, triton::engines::symbolic::SymbolicExpression*>>& getLoadAccess(void);
 
         //! Returns the list of all implicit and explicit store access
-        std::set<std::pair<triton::arch::MemoryAccess, triton::ast::AbstractNode*>>& getStoreAccess(void);
+        std::set<std::pair<triton::arch::MemoryAccess, triton::engines::symbolic::SymbolicExpression*>>& getStoreAccess(void);
 
         //! Returns the list of all implicit and explicit register (flags includes) inputs (read)
         std::set<std::pair<triton::arch::Register, triton::ast::AbstractNode*>>& getReadRegisters(void);
@@ -170,7 +170,7 @@ namespace triton {
         void removeLoadAccess(const triton::arch::MemoryAccess& mem);
 
         //! Sets a store access.
-        void setStoreAccess(const triton::arch::MemoryAccess& mem, triton::ast::AbstractNode* node);
+        void setStoreAccess(const triton::arch::MemoryAccess& mem, triton::engines::symbolic::SymbolicExpression* node);
 
         //! Removes a store access.
         void removeStoreAccess(const triton::arch::MemoryAccess& mem);

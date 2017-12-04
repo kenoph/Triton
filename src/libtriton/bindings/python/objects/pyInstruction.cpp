@@ -308,7 +308,8 @@ namespace triton {
           for (auto it = storeAccess.cbegin(); it != storeAccess.cend(); it++) {
             PyObject* item = xPyTuple_New(2);
             PyTuple_SetItem(item, 0, PyMemoryAccess(std::get<0>(*it)));
-            PyTuple_SetItem(item, 1, PyAstNode(std::get<1>(*it)));
+            // FIXME: Should we fix the interface?
+            PyTuple_SetItem(item, 1, PyAstNode(std::get<1>(*it)->getAst()));
             PyList_SetItem(ret, index++, item);
           }
 
