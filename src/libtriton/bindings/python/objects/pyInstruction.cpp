@@ -380,7 +380,7 @@ namespace triton {
           for (auto it = readImmediates.cbegin(); it != readImmediates.cend(); it++) {
             PyObject* item = xPyTuple_New(2);
             PyTuple_SetItem(item, 0, PyImmediate(std::get<0>(*it)));
-            PyTuple_SetItem(item, 1, PyAstNode(std::get<1>(*it)));
+            PyTuple_SetItem(item, 1, PyAstNode(std::get<1>(*it)->getAst()));
             PyList_SetItem(ret, index++, item);
           }
 

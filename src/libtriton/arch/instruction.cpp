@@ -147,7 +147,7 @@ namespace triton {
     }
 
 
-    std::set<std::pair<triton::arch::Immediate, triton::ast::AbstractNode*>>& Instruction::getReadImmediates(void) {
+    std::set<std::pair<triton::arch::Immediate, triton::engines::symbolic::SymbolicExpression*>>& Instruction::getReadImmediates(void) {
       return this->readImmediates;
     }
 
@@ -220,7 +220,7 @@ namespace triton {
     }
 
 
-    void Instruction::setReadImmediate(const triton::arch::Immediate& imm, triton::ast::AbstractNode* node) {
+    void Instruction::setReadImmediate(const triton::arch::Immediate& imm, triton::engines::symbolic::SymbolicExpression* node) {
       this->readImmediates.insert(std::make_pair(imm, node));
     }
 

@@ -5490,7 +5490,7 @@ namespace triton {
         /* Create symbolic operands */
 
         /* Displacement */
-        auto op2 = this->symbolicEngine->buildSymbolicImmediate(inst, srcDisp);
+        auto op2 = this->symbolicEngine->buildSymbolicImmediate(inst, srcDisp)->getAst();
         if (leaSize > srcDisp.getBitSize())
           op2 = this->astCtxt.zx(leaSize - srcDisp.getBitSize(), op2);
 
@@ -5513,7 +5513,7 @@ namespace triton {
           op4 = this->astCtxt.bv(0, leaSize);
 
         /* Scale */
-        auto op5 = this->symbolicEngine->buildSymbolicImmediate(inst, srcScale);
+        auto op5 = this->symbolicEngine->buildSymbolicImmediate(inst, srcScale)->getAst();
         if (leaSize > srcScale.getBitSize())
           op5 = this->astCtxt.zx(leaSize - srcScale.getBitSize(), op5);
 
@@ -9982,7 +9982,7 @@ namespace triton {
         /* Create the semantics - side effect */
         if (inst.operands.size() > 0) {
           auto offset = inst.operands[0].getImmediate();
-          this->symbolicEngine->buildSymbolicImmediate(inst, offset);
+          this->symbolicEngine->buildSymbolicImmediate(inst, offset)->getAst();
           alignAddStack_s(inst, static_cast<triton::uint32>(offset.getValue()));
         }
 

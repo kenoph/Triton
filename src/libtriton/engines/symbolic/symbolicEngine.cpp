@@ -664,7 +664,8 @@ namespace triton {
       /* Returns a symbolic operand based on the abstract wrapper. */
       triton::ast::AbstractNode* SymbolicEngine::buildSymbolicOperand(const triton::arch::OperandWrapper& op) {
         switch (op.getType()) {
-          case triton::arch::OP_IMM: return this->buildSymbolicImmediate(op.getConstImmediate());
+          // FIXME
+          case triton::arch::OP_IMM: return this->buildSymbolicImmediate(op.getConstImmediate())->getAst();
                                      // FIXME
           case triton::arch::OP_MEM: return this->buildSymbolicMemory(op.getConstMemory())->getAst();
                                      // FIXME
@@ -678,7 +679,8 @@ namespace triton {
       /* Returns a symbolic operand based on the abstract wrapper. */
       triton::ast::AbstractNode* SymbolicEngine::buildSymbolicOperand(triton::arch::Instruction& inst, const triton::arch::OperandWrapper& op) {
         switch (op.getType()) {
-          case triton::arch::OP_IMM: return this->buildSymbolicImmediate(inst, op.getConstImmediate());
+          // FIXME
+          case triton::arch::OP_IMM: return this->buildSymbolicImmediate(inst, op.getConstImmediate())->getAst();
                                      // FIXME
           case triton::arch::OP_MEM: return this->buildSymbolicMemory(inst, op.getConstMemory())->getAst();
                                      // FIXME
@@ -690,17 +692,20 @@ namespace triton {
 
 
       /* Returns a symbolic immediate */
-      triton::ast::AbstractNode* SymbolicEngine::buildSymbolicImmediate(const triton::arch::Immediate& imm) {
+      triton::engines::symbolic::SymbolicExpression* SymbolicEngine::buildSymbolicImmediate(const triton::arch::Immediate& imm) {
         triton::ast::AbstractNode* node = this->astCtxt.bv(imm.getValue(), imm.getBitSize());
-        return node;
+        return this->newSymbolicExpression(node, triton::engines::symbolic::IMM, "SymbolicImmediate");
       }
 
 
       /* Returns a symbolic immediate and defines the immediate as input of the instruction */
-      triton::ast::AbstractNode* SymbolicEngine::buildSymbolicImmediate(triton::arch::Instruction& inst, const triton::arch::Immediate& imm) {
-        triton::ast::AbstractNode* node = this->buildSymbolicImmediate(imm);
-        inst.setReadImmediate(imm, node);
-        return node;
+      triton::engines::symbolic::SymbolicExpression* SymbolicEngine::buildSymbolicImmediate(triton::arch::Instruction& inst, const triton::arch::Immediate& imm) {
+        triton::engines::symbolic::SymbolicExpression* se = this->buildSymbolicImmediate(imm);
+        inst.setReadImmediate(imm, se);
+        // FIXME What should we do here? buildSymbolicImmediate doesn't build any "real symbolicExpression" so should we save this dummy one? and then, should we use
+        // a reference Node for later use?
+        // inst.addSymbolicExpression(se);
+        return se;
       }
 
 

@@ -79,7 +79,7 @@ namespace triton {
         std::set<std::pair<triton::arch::Register, triton::engines::symbolic::SymbolicExpression*>> writtenRegisters;
 
         //! Implicit and explicit immediate inputs (read). This field is set at the semantics level.
-        std::set<std::pair<triton::arch::Immediate, triton::ast::AbstractNode*>> readImmediates;
+        std::set<std::pair<triton::arch::Immediate, triton::engines::symbolic::SymbolicExpression*>> readImmediates;
 
         //! True if this instruction is a branch. This field is set at the disassembly level.
         bool branch;
@@ -155,7 +155,7 @@ namespace triton {
         std::set<std::pair<triton::arch::Register, triton::engines::symbolic::SymbolicExpression*>>& getWrittenRegisters(void);
 
         //! Returns the list of all implicit and explicit immediate inputs (read)
-        std::set<std::pair<triton::arch::Immediate, triton::ast::AbstractNode*>>& getReadImmediates(void);
+        std::set<std::pair<triton::arch::Immediate, triton::engines::symbolic::SymbolicExpression*>>& getReadImmediates(void);
 
         //! Sets the opcode of the instruction.
         void setOpcode(const triton::uint8* opcode, triton::uint32 size);
@@ -188,7 +188,7 @@ namespace triton {
         void removeWrittenRegister(const triton::arch::Register& reg);
 
         //! Sets a read immediate.
-        void setReadImmediate(const triton::arch::Immediate& imm, triton::ast::AbstractNode* node);
+        void setReadImmediate(const triton::arch::Immediate& imm, triton::engines::symbolic::SymbolicExpression* node);
 
         //! Removes a read immediate.
         void removeReadImmediate(const triton::arch::Immediate& imm);

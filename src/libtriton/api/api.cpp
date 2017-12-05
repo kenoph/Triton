@@ -642,13 +642,15 @@ namespace triton {
 
   triton::ast::AbstractNode* API::buildSymbolicImmediate(const triton::arch::Immediate& imm) {
     this->checkSymbolic();
-    return this->symbolic->buildSymbolicImmediate(imm);
+    // FIXME: Should we change the interface?
+    return this->symbolic->buildSymbolicImmediate(imm)->getAst();
   }
 
 
   triton::ast::AbstractNode* API::buildSymbolicImmediate(triton::arch::Instruction& inst, const triton::arch::Immediate& imm) {
     this->checkSymbolic();
-    return this->symbolic->buildSymbolicImmediate(inst, imm);
+    // FIXME: Should we change the interface?
+    return this->symbolic->buildSymbolicImmediate(inst, imm)->getAst();
   }
 
 

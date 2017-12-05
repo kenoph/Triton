@@ -215,10 +215,10 @@ namespace triton {
           triton::ast::AbstractNode* buildSymbolicOperand(triton::arch::Instruction& inst, const triton::arch::OperandWrapper& op);
 
           //! Returns a symbolic immediate.
-          triton::ast::AbstractNode* buildSymbolicImmediate(const triton::arch::Immediate& imm);
+          triton::engines::symbolic::SymbolicExpression* buildSymbolicImmediate(const triton::arch::Immediate& imm);
 
           //! Returns a symbolic immediate and defines the immediate as input of the instruction.
-          triton::ast::AbstractNode* buildSymbolicImmediate(triton::arch::Instruction& inst, const triton::arch::Immediate& imm);
+          triton::engines::symbolic::SymbolicExpression* buildSymbolicImmediate(triton::arch::Instruction& inst, const triton::arch::Immediate& imm);
 
           //! Returns a symbolic memory.
           triton::engines::symbolic::SymbolicExpression* buildSymbolicMemory(const triton::arch::MemoryAccess& mem);

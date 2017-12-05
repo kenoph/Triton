@@ -48,7 +48,8 @@ namespace triton {
       enum symkind_e {
         UNDEF = 0, //!< Undefined
         REG,       //!< Assigned to a register.
-        MEM        //!< Assigned to a memory.
+        MEM,       //!< Assigned to a memory.
+        IMM        //!< Assigned to an immediate
       };
 
     /*! @} End of symbolic namespace */
