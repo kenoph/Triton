@@ -48,112 +48,112 @@ namespace triton {
 
       switch (node->getKind()) {
         case BVADD_NODE:
-          return to_expr(this->context, Z3_mk_bvadd(this->context, this->convert(node->getChildren()[0]), this->convert(node->getChildren()[1])));
+          return to_expr(this->context, Z3_mk_bvadd(this->context, this->convert(node->getChildren()[0].get()), this->convert(node->getChildren()[1].get())));
 
         case BVAND_NODE:
-          return to_expr(this->context, Z3_mk_bvand(this->context, this->convert(node->getChildren()[0]), this->convert(node->getChildren()[1])));
+          return to_expr(this->context, Z3_mk_bvand(this->context, this->convert(node->getChildren()[0].get()), this->convert(node->getChildren()[1].get())));
 
         case BVASHR_NODE:
-          return to_expr(this->context, Z3_mk_bvashr(this->context, this->convert(node->getChildren()[0]), this->convert(node->getChildren()[1])));
+          return to_expr(this->context, Z3_mk_bvashr(this->context, this->convert(node->getChildren()[0].get()), this->convert(node->getChildren()[1].get())));
 
         case BVLSHR_NODE:
-          return to_expr(this->context, Z3_mk_bvlshr(this->context, this->convert(node->getChildren()[0]), this->convert(node->getChildren()[1])));
+          return to_expr(this->context, Z3_mk_bvlshr(this->context, this->convert(node->getChildren()[0].get()), this->convert(node->getChildren()[1].get())));
 
         case BVMUL_NODE:
-          return to_expr(this->context, Z3_mk_bvmul(this->context, this->convert(node->getChildren()[0]), this->convert(node->getChildren()[1])));
+          return to_expr(this->context, Z3_mk_bvmul(this->context, this->convert(node->getChildren()[0].get()), this->convert(node->getChildren()[1].get())));
 
         case BVNAND_NODE:
-          return to_expr(this->context, Z3_mk_bvnand(this->context, this->convert(node->getChildren()[0]), this->convert(node->getChildren()[1])));
+          return to_expr(this->context, Z3_mk_bvnand(this->context, this->convert(node->getChildren()[0].get()), this->convert(node->getChildren()[1].get())));
 
         case BVNEG_NODE:
-          return to_expr(this->context, Z3_mk_bvneg(this->context, this->convert(node->getChildren()[0])));
+          return to_expr(this->context, Z3_mk_bvneg(this->context, this->convert(node->getChildren()[0].get())));
 
         case BVNOR_NODE:
-          return to_expr(this->context, Z3_mk_bvnor(this->context, this->convert(node->getChildren()[0]), this->convert(node->getChildren()[1])));
+          return to_expr(this->context, Z3_mk_bvnor(this->context, this->convert(node->getChildren()[0].get()), this->convert(node->getChildren()[1].get())));
 
         case BVNOT_NODE:
-          return to_expr(this->context, Z3_mk_bvnot(this->context, this->convert(node->getChildren()[0])));
+          return to_expr(this->context, Z3_mk_bvnot(this->context, this->convert(node->getChildren()[0].get())));
 
         case BVOR_NODE:
-          return to_expr(this->context, Z3_mk_bvor(this->context, this->convert(node->getChildren()[0]), this->convert(node->getChildren()[1])));
+          return to_expr(this->context, Z3_mk_bvor(this->context, this->convert(node->getChildren()[0].get()), this->convert(node->getChildren()[1].get())));
 
         case BVROL_NODE: {
-          triton::uint32 op1 = reinterpret_cast<triton::ast::DecimalNode*>(node->getChildren()[0])->getValue().convert_to<triton::uint32>();
-          return to_expr(this->context, Z3_mk_rotate_left(this->context, op1, this->convert(node->getChildren()[1])));
+          triton::uint32 op1 = reinterpret_cast<triton::ast::DecimalNode*>(node->getChildren()[0].get())->getValue().convert_to<triton::uint32>();
+          return to_expr(this->context, Z3_mk_rotate_left(this->context, op1, this->convert(node->getChildren()[1].get())));
         }
 
         case BVROR_NODE: {
-          triton::uint32 op1 = reinterpret_cast<triton::ast::DecimalNode*>(node->getChildren()[0])->getValue().convert_to<triton::uint32>();
-          return to_expr(this->context, Z3_mk_rotate_right(this->context, op1, this->convert(node->getChildren()[1])));
+          triton::uint32 op1 = reinterpret_cast<triton::ast::DecimalNode*>(node->getChildren()[0].get())->getValue().convert_to<triton::uint32>();
+          return to_expr(this->context, Z3_mk_rotate_right(this->context, op1, this->convert(node->getChildren()[1].get())));
         }
 
         case BVSDIV_NODE:
-          return to_expr(this->context, Z3_mk_bvsdiv(this->context, this->convert(node->getChildren()[0]), this->convert(node->getChildren()[1])));
+          return to_expr(this->context, Z3_mk_bvsdiv(this->context, this->convert(node->getChildren()[0].get()), this->convert(node->getChildren()[1].get())));
 
         case BVSGE_NODE:
-          return to_expr(this->context, Z3_mk_bvsge(this->context, this->convert(node->getChildren()[0]), this->convert(node->getChildren()[1])));
+          return to_expr(this->context, Z3_mk_bvsge(this->context, this->convert(node->getChildren()[0].get()), this->convert(node->getChildren()[1].get())));
 
         case BVSGT_NODE:
-          return to_expr(this->context, Z3_mk_bvsgt(this->context, this->convert(node->getChildren()[0]), this->convert(node->getChildren()[1])));
+          return to_expr(this->context, Z3_mk_bvsgt(this->context, this->convert(node->getChildren()[0].get()), this->convert(node->getChildren()[1].get())));
 
         case BVSHL_NODE:
-          return to_expr(this->context, Z3_mk_bvshl(this->context, this->convert(node->getChildren()[0]), this->convert(node->getChildren()[1])));
+          return to_expr(this->context, Z3_mk_bvshl(this->context, this->convert(node->getChildren()[0].get()), this->convert(node->getChildren()[1].get())));
 
         case BVSLE_NODE:
-          return to_expr(this->context, Z3_mk_bvsle(this->context, this->convert(node->getChildren()[0]), this->convert(node->getChildren()[1])));
+          return to_expr(this->context, Z3_mk_bvsle(this->context, this->convert(node->getChildren()[0].get()), this->convert(node->getChildren()[1].get())));
 
         case BVSLT_NODE:
-          return to_expr(this->context, Z3_mk_bvslt(this->context, this->convert(node->getChildren()[0]), this->convert(node->getChildren()[1])));
+          return to_expr(this->context, Z3_mk_bvslt(this->context, this->convert(node->getChildren()[0].get()), this->convert(node->getChildren()[1].get())));
 
         case BVSMOD_NODE:
-          return to_expr(this->context, Z3_mk_bvsmod(this->context, this->convert(node->getChildren()[0]), this->convert(node->getChildren()[1])));
+          return to_expr(this->context, Z3_mk_bvsmod(this->context, this->convert(node->getChildren()[0].get()), this->convert(node->getChildren()[1].get())));
 
         case BVSREM_NODE:
-          return to_expr(this->context, Z3_mk_bvsrem(this->context, this->convert(node->getChildren()[0]), this->convert(node->getChildren()[1])));
+          return to_expr(this->context, Z3_mk_bvsrem(this->context, this->convert(node->getChildren()[0].get()), this->convert(node->getChildren()[1].get())));
 
         case BVSUB_NODE:
-          return to_expr(this->context, Z3_mk_bvsub(this->context, this->convert(node->getChildren()[0]), this->convert(node->getChildren()[1])));
+          return to_expr(this->context, Z3_mk_bvsub(this->context, this->convert(node->getChildren()[0].get()), this->convert(node->getChildren()[1].get())));
 
         case BVUDIV_NODE:
-          return to_expr(this->context, Z3_mk_bvudiv(this->context, this->convert(node->getChildren()[0]), this->convert(node->getChildren()[1])));
+          return to_expr(this->context, Z3_mk_bvudiv(this->context, this->convert(node->getChildren()[0].get()), this->convert(node->getChildren()[1].get())));
 
         case BVUGE_NODE:
-          return to_expr(this->context, Z3_mk_bvuge(this->context, this->convert(node->getChildren()[0]), this->convert(node->getChildren()[1])));
+          return to_expr(this->context, Z3_mk_bvuge(this->context, this->convert(node->getChildren()[0].get()), this->convert(node->getChildren()[1].get())));
 
         case BVUGT_NODE:
-          return to_expr(this->context, Z3_mk_bvugt(this->context, this->convert(node->getChildren()[0]), this->convert(node->getChildren()[1])));
+          return to_expr(this->context, Z3_mk_bvugt(this->context, this->convert(node->getChildren()[0].get()), this->convert(node->getChildren()[1].get())));
 
         case BVULE_NODE:
-          return to_expr(this->context, Z3_mk_bvule(this->context, this->convert(node->getChildren()[0]), this->convert(node->getChildren()[1])));
+          return to_expr(this->context, Z3_mk_bvule(this->context, this->convert(node->getChildren()[0].get()), this->convert(node->getChildren()[1].get())));
 
         case BVULT_NODE:
-          return to_expr(this->context, Z3_mk_bvult(this->context, this->convert(node->getChildren()[0]), this->convert(node->getChildren()[1])));
+          return to_expr(this->context, Z3_mk_bvult(this->context, this->convert(node->getChildren()[0].get()), this->convert(node->getChildren()[1].get())));
 
         case BVUREM_NODE:
-          return to_expr(this->context, Z3_mk_bvurem(this->context, this->convert(node->getChildren()[0]), this->convert(node->getChildren()[1])));
+          return to_expr(this->context, Z3_mk_bvurem(this->context, this->convert(node->getChildren()[0].get()), this->convert(node->getChildren()[1].get())));
 
         case BVXNOR_NODE:
-          return to_expr(this->context, Z3_mk_bvxnor(this->context, this->convert(node->getChildren()[0]), this->convert(node->getChildren()[1])));
+          return to_expr(this->context, Z3_mk_bvxnor(this->context, this->convert(node->getChildren()[0].get()), this->convert(node->getChildren()[1].get())));
 
         case BVXOR_NODE:
-          return to_expr(this->context, Z3_mk_bvxor(this->context, this->convert(node->getChildren()[0]), this->convert(node->getChildren()[1])));
+          return to_expr(this->context, Z3_mk_bvxor(this->context, this->convert(node->getChildren()[0].get()), this->convert(node->getChildren()[1].get())));
 
         case BV_NODE: {
-          z3::expr value        = this->convert(node->getChildren()[0]);
-          z3::expr size         = this->convert(node->getChildren()[1]);
+          z3::expr value        = this->convert(node->getChildren()[0].get());
+          z3::expr size         = this->convert(node->getChildren()[1].get());
           triton::uint32 bvsize = static_cast<triton::uint32>(this->getUintValue(size));
           return this->context.bv_val(this->getStringValue(value).c_str(), bvsize);
         }
 
         case CONCAT_NODE: {
-          const std::vector<triton::ast::AbstractNode*>& children = node->getChildren();
+          const std::vector<std::shared_ptr<triton::ast::AbstractNode>>& children = node->getChildren();
 
-          z3::expr currentValue = this->convert(node->getChildren()[0]);
+          z3::expr currentValue = this->convert(node->getChildren()[0].get());
           z3::expr nextValue(this->context);
 
           // Child[0] is the LSB
           for (triton::uint32 idx = 1; idx < children.size(); idx++) {
-            nextValue = this->convert(children[idx]);
+            nextValue = this->convert(children[idx].get());
             currentValue = to_expr(this->context, Z3_mk_concat(this->context, currentValue, nextValue));
           }
 
@@ -166,20 +166,20 @@ namespace triton {
         }
 
         case DISTINCT_NODE: {
-          z3::expr op1 = this->convert(node->getChildren()[0]);
-          z3::expr op2 = this->convert(node->getChildren()[1]);
+          z3::expr op1 = this->convert(node->getChildren()[0].get());
+          z3::expr op2 = this->convert(node->getChildren()[1].get());
           Z3_ast ops[] = {op1, op2};
 
           return to_expr(this->context, Z3_mk_distinct(this->context, 2, ops));
         }
 
         case EQUAL_NODE:
-          return to_expr(this->context, Z3_mk_eq(this->context, this->convert(node->getChildren()[0]), this->convert(node->getChildren()[1])));
+          return to_expr(this->context, Z3_mk_eq(this->context, this->convert(node->getChildren()[0].get()), this->convert(node->getChildren()[1].get())));
 
         case EXTRACT_NODE: {
-          z3::expr high     = this->convert(node->getChildren()[0]);
-          z3::expr low      = this->convert(node->getChildren()[1]);
-          z3::expr value    = this->convert(node->getChildren()[2]);
+          z3::expr high     = this->convert(node->getChildren()[0].get());
+          z3::expr low      = this->convert(node->getChildren()[1].get());
+          z3::expr value    = this->convert(node->getChildren()[2].get());
           triton::uint32 hv = static_cast<triton::uint32>(this->getUintValue(high));
           triton::uint32 lv = static_cast<triton::uint32>(this->getUintValue(low));
 
@@ -187,24 +187,24 @@ namespace triton {
         }
 
         case ITE_NODE: {
-          z3::expr op1 = this->convert(node->getChildren()[0]); // condition
-          z3::expr op2 = this->convert(node->getChildren()[1]); // if true
-          z3::expr op3 = this->convert(node->getChildren()[2]); // if false
+          z3::expr op1 = this->convert(node->getChildren()[0].get()); // condition
+          z3::expr op2 = this->convert(node->getChildren()[1].get()); // if true
+          z3::expr op3 = this->convert(node->getChildren()[2].get()); // if false
 
           return to_expr(this->context, Z3_mk_ite(this->context, op1, op2, op3));
         }
 
         case LAND_NODE: {
-          const std::vector<triton::ast::AbstractNode*>& children = node->getChildren();
+          const std::vector<std::shared_ptr<triton::ast::AbstractNode>>& children = node->getChildren();
 
-          z3::expr currentValue = this->convert(node->getChildren()[0]);
+          z3::expr currentValue = this->convert(node->getChildren()[0].get());
           if (!currentValue.get_sort().is_bool()) {
             throw triton::exceptions::AstTranslations("TritonToZ3Ast::LandNode(): Land can be apply only on bool value.");
           }
           z3::expr nextValue(this->context);
 
           for (triton::uint32 idx = 1; idx < children.size(); idx++) {
-            nextValue = this->convert(children[idx]);
+            nextValue = this->convert(children[idx].get());
             if (!nextValue.get_sort().is_bool()) {
               throw triton::exceptions::AstTranslations("TritonToZ3Ast::LandNode(): Land can be apply only on bool value.");
             }
@@ -217,14 +217,14 @@ namespace triton {
 
 
         case LET_NODE: {
-          std::string symbol    = reinterpret_cast<triton::ast::StringNode*>(node->getChildren()[0])->getValue();
-          this->symbols[symbol] = node->getChildren()[1];
+          std::string symbol    = reinterpret_cast<triton::ast::StringNode*>(node->getChildren()[0].get())->getValue();
+          this->symbols[symbol] = node->getChildren()[1].get();
 
-          return this->convert(node->getChildren()[2]);
+          return this->convert(node->getChildren()[2].get());
         }
 
         case LNOT_NODE: {
-          z3::expr value = this->convert(node->getChildren()[0]);
+          z3::expr value = this->convert(node->getChildren()[0].get());
           if (!value.get_sort().is_bool()) {
             throw triton::exceptions::AstTranslations("TritonToZ3Ast::LnotNode(): Lnot can be apply only on bool value.");
           }
@@ -232,16 +232,16 @@ namespace triton {
         }
 
         case LOR_NODE: {
-          const std::vector<triton::ast::AbstractNode*>& children = node->getChildren();
+          const std::vector<std::shared_ptr<triton::ast::AbstractNode>>& children = node->getChildren();
 
-          z3::expr currentValue = this->convert(node->getChildren()[0]);
+          z3::expr currentValue = this->convert(node->getChildren()[0].get());
           if (!currentValue.get_sort().is_bool()) {
             throw triton::exceptions::AstTranslations("TritonToZ3Ast::LnotNode(): Lnot can be apply only on bool value.");
           }
           z3::expr nextValue(this->context);
 
           for (triton::uint32 idx = 1; idx < children.size(); idx++) {
-            nextValue = this->convert(children[idx]);
+            nextValue = this->convert(children[idx].get());
             if (!nextValue.get_sort().is_bool()) {
               throw triton::exceptions::AstTranslations("TritonToZ3Ast::LnotNode(): Lnot can be apply only on bool value.");
             }
@@ -253,7 +253,7 @@ namespace triton {
         }
 
         case REFERENCE_NODE:
-          return this->convert(reinterpret_cast<triton::ast::ReferenceNode*>(node)->getAst());
+          return this->convert(reinterpret_cast<triton::ast::ReferenceNode*>(node)->getAst().get());
 
         case STRING_NODE: {
           std::string value = reinterpret_cast<triton::ast::StringNode*>(node)->getValue();
@@ -265,8 +265,8 @@ namespace triton {
         }
 
         case SX_NODE: {
-          z3::expr ext        = this->convert(node->getChildren()[0]);
-          z3::expr value      = this->convert(node->getChildren()[1]);
+          z3::expr ext        = this->convert(node->getChildren()[0].get());
+          z3::expr value      = this->convert(node->getChildren()[1].get());
           triton::uint32 extv = static_cast<triton::uint32>(this->getUintValue(ext));
 
           return to_expr(this->context, Z3_mk_sign_ext(this->context, extv, value));
@@ -289,8 +289,8 @@ namespace triton {
         }
 
         case ZX_NODE: {
-          z3::expr ext        = this->convert(node->getChildren()[0]);
-          z3::expr value      = this->convert(node->getChildren()[1]);
+          z3::expr ext        = this->convert(node->getChildren()[0].get());
+          z3::expr value      = this->convert(node->getChildren()[1].get());
           triton::uint32 extv = static_cast<triton::uint32>(this->getUintValue(ext));
 
           return to_expr(this->context, Z3_mk_zero_ext(this->context, extv, value));

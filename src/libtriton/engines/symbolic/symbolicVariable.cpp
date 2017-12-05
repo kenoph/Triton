@@ -21,7 +21,8 @@ namespace triton {
                                          triton::usize id,
                                          triton::uint32 size,
                                          const std::string& comment):
-      SymbolicValue(astCtxt.variable(TRITON_SYMVAR_NAME + std::to_string(id), size), id, kind, comment),
+      SymbolicValue(std::shared_ptr<triton::ast::AbstractNode>(astCtxt.variable(TRITON_SYMVAR_NAME + std::to_string(id), size)),
+                    id, kind, comment),
       name(TRITON_SYMVAR_NAME + std::to_string(id)),
       kindValue(kindValue),
       size(size)

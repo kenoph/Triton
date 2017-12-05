@@ -50,7 +50,7 @@ namespace triton {
            * E.g: `"0x11223344: jne 0x55667788"`, 0x11223344 is the source address and 0x55667788 is the destination if and only if the
            * branch is taken, otherwise the destination is the next instruction address.
            */
-          std::vector<std::tuple<bool, triton::uint64, triton::uint64, triton::ast::AbstractNode*>> branches;
+          std::vector<std::tuple<bool, triton::uint64, triton::uint64, std::shared_ptr<triton::ast::AbstractNode>>> branches;
 
 
         public:
@@ -61,16 +61,16 @@ namespace triton {
           PathConstraint(const PathConstraint &copy);
 
           //! Adds a branch to the path constraint.
-          void addBranchConstraint(bool taken, triton::uint64 srdAddr, triton::uint64 dstAddr, triton::ast::AbstractNode* pc);
+          void addBranchConstraint(bool taken, triton::uint64 srdAddr, triton::uint64 dstAddr, std::shared_ptr<triton::ast::AbstractNode> const& pc);
 
           //! Returns the branch constraints.
-          const std::vector<std::tuple<bool, triton::uint64, triton::uint64, triton::ast::AbstractNode*>>& getBranchConstraints(void) const;
+          const std::vector<std::tuple<bool, triton::uint64, triton::uint64, std::shared_ptr<triton::ast::AbstractNode>>>& getBranchConstraints(void) const;
 
           //! Returns the address of the taken branch.
           triton::uint64 getTakenAddress(void) const;
 
           //! Returns the path constraint AST of the taken branch.
-          triton::ast::AbstractNode* getTakenPathConstraintAst(void) const;
+          std::shared_ptr<triton::ast::AbstractNode> getTakenPathConstraintAst(void) const;
 
           //! Returns true if it is not a direct jump.
           bool isMultipleBranches(void) const;

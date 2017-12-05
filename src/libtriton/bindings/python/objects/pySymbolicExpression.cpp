@@ -140,7 +140,7 @@ namespace triton {
 
       static PyObject* SymbolicExpression_getAst(PyObject* self, PyObject* noarg) {
         try {
-          return PyAstNode(PySymbolicExpression_AsSymbolicExpression(self)->getAst());
+          return PyAstNode(PySymbolicExpression_AsSymbolicExpression(self)->getShareAst());
         }
         catch (const triton::exceptions::Exception& e) {
           return PyErr_Format(PyExc_TypeError, "%s", e.what());

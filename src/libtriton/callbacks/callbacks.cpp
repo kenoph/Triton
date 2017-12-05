@@ -65,7 +65,7 @@ namespace triton {
     }
 
 
-    triton::ast::AbstractNode* Callbacks::processCallbacks(triton::callbacks::callback_e kind, triton::ast::AbstractNode* node) const {
+    std::shared_ptr<triton::ast::AbstractNode> Callbacks::processCallbacks(triton::callbacks::callback_e kind, std::shared_ptr<triton::ast::AbstractNode> node) const {
       switch (kind) {
         case triton::callbacks::SYMBOLIC_SIMPLIFICATION: {
           for (auto& function: this->symbolicSimplificationCallbacks) {

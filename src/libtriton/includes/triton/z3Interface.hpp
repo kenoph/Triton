@@ -32,7 +32,7 @@ namespace triton {
     /*! \brief The interface between Triton and Z3 */
     namespace Z3Interface {
         //! Converts a Triton's AST to a Z3's AST, perform a Z3 simplification and returns a Triton's AST.
-        triton::ast::AbstractNode* simplify(triton::ast::AbstractNode* node);
+        std::shared_ptr<triton::ast::AbstractNode> simplify(triton::ast::AbstractNode* node);
 
         //! Evaluates a Triton's AST via Z3 and returns a concrete value.
         triton::uint512 evaluate(triton::ast::AbstractNode *node);

@@ -15,6 +15,7 @@
 #include <stdexcept>
 #include <string>
 #include <vector>
+#include <memory>
 
 #include <triton/astEnums.hpp>
 #include <triton/tritonTypes.hpp>
@@ -45,16 +46,16 @@ namespace triton {
     class AstContext;
 
     //! Abstract node
-    class AbstractNode {
+    class AbstractNode: public std::enable_shared_from_this<AbstractNode> {
       protected:
         //! The kind of the node.
         enum kind_e kind;
 
         //! The children of the node.
-        std::vector<AbstractNode*> children;
+        std::vector<std::shared_ptr<AbstractNode>> children;
 
         //! The parents of the node. Empty if there is still no parent.
-        std::set<AbstractNode*> parents;
+        std::map<AbstractNode*, std::weak_ptr<AbstractNode>> parents;
 
         //! The size of the node.
         triton::uint32 size;
@@ -112,7 +113,7 @@ namespace triton {
         virtual triton::uint512 evaluate(void) const;
 
         //! Returns the children of the node.
-        std::vector<AbstractNode*>& getChildren(void);
+        std::vector<std::shared_ptr<AbstractNode>>& getChildren(void);
 
         /*!
          * \brief Returns the parents of node or an empty set if there is still no parent defined.
@@ -120,7 +121,9 @@ namespace triton {
          * Note that if there is the `AST_DICTIONARIES` optimization enabled, this feature will
          * probably not represent the real tree of your expression.
          */
-        std::set<AbstractNode*>& getParents(void);
+        std::vector<std::shared_ptr<AbstractNode>> getParents(void);
+
+        void updateParents();
 
         //! Removes a parent node.
         void removeParent(AbstractNode* p);
@@ -129,16 +132,16 @@ namespace triton {
         void setParent(AbstractNode* p);
 
         //! Sets the parent nodes.
-        void setParent(std::set<AbstractNode*>& p);
+        void setParent(std::vector<AbstractNode*>& p);
 
         //! Sets the size of the node.
         void setBitvectorSize(triton::uint32 size);
 
         //! Adds a child.
-        void addChild(AbstractNode* child);
+        void addChild(std::shared_ptr<AbstractNode> const& child);
 
         //! Sets a child at an index.
-        void setChild(triton::uint32 index, AbstractNode* child);
+        void setChild(triton::uint32 index, std::shared_ptr<AbstractNode> const& child);
 
         //! Init stuffs like size and eval.
         virtual void init(void) = 0;
@@ -151,282 +154,376 @@ namespace triton {
     //! `(bvadd <expr1> <expr2>)` node
     class BvaddNode : public AbstractNode {
       public:
-        BvaddNode(AbstractNode* expr1, AbstractNode* expr2);
         void init(void);
         triton::uint512 hash(triton::uint32 deep) const;
+        static std::shared_ptr<AbstractNode> get(std::shared_ptr<AbstractNode> const& expr1, std::shared_ptr<AbstractNode> const& expr2);
+
+      private:
+        BvaddNode(AstContext& ctxt);
     };
 
 
     //! `(bvand <expr1> <expr2>)` node
     class BvandNode : public AbstractNode {
       public:
-        BvandNode(AbstractNode* expr1, AbstractNode* expr2);
         void init(void);
         triton::uint512 hash(triton::uint32 deep) const;
+        static std::shared_ptr<BvandNode> get(std::shared_ptr<AbstractNode> const& expr1, std::shared_ptr<AbstractNode> const& expr2);
+
+      private:
+        BvandNode(AstContext& ctxt);
     };
 
 
     //! `(bvashr <expr1> <expr2>)` node
     class BvashrNode : public AbstractNode {
       public:
-        BvashrNode(AbstractNode* expr1, AbstractNode* expr2);
         void init(void);
         triton::uint512 hash(triton::uint32 deep) const;
+        static std::shared_ptr<AbstractNode> get(std::shared_ptr<AbstractNode> const& expr1, std::shared_ptr<AbstractNode> const& expr2);
+
+      private:
+        BvashrNode(AstContext& ctxt);
     };
 
 
     //! `(bvlshr <expr1> <expr2>)` node
     class BvlshrNode : public AbstractNode {
       public:
-        BvlshrNode(AbstractNode* expr1, AbstractNode* expr2);
         void init(void);
         triton::uint512 hash(triton::uint32 deep) const;
+        static std::shared_ptr<AbstractNode> get(std::shared_ptr<AbstractNode> const& expr1, std::shared_ptr<AbstractNode> const& expr2);
+
+      private:
+        BvlshrNode(AstContext& ctxt);
     };
 
 
     //! `(bvmul <expr1> <expr2>)` node
     class BvmulNode : public AbstractNode {
       public:
-        BvmulNode(AbstractNode* expr1, AbstractNode* expr2);
         void init(void);
         triton::uint512 hash(triton::uint32 deep) const;
+        static std::shared_ptr<AbstractNode> get(std::shared_ptr<AbstractNode> const& expr1, std::shared_ptr<AbstractNode> const& expr2);
+
+      private:
+        BvmulNode(AstContext& ctxt);
     };
 
 
     //! `(bvnand <expr1> <expr2>)` node
     class BvnandNode : public AbstractNode {
       public:
-        BvnandNode(AbstractNode* expr1, AbstractNode* expr2);
         void init(void);
         triton::uint512 hash(triton::uint32 deep) const;
+        static std::shared_ptr<AbstractNode> get(std::shared_ptr<AbstractNode> const& expr1, std::shared_ptr<AbstractNode> const& expr2);
+
+      private:
+        BvnandNode(AstContext& ctxt);
     };
 
 
     //! `(bvneg <expr>)` node
     class BvnegNode : public AbstractNode {
       public:
-        BvnegNode(AbstractNode* expr);
         void init(void);
         triton::uint512 hash(triton::uint32 deep) const;
+        static std::shared_ptr<AbstractNode> get(std::shared_ptr<AbstractNode> const& expr);
+
+      private:
+        BvnegNode(AstContext& ctxt);
     };
 
 
     //! `(bvnor <expr1> <expr2>)` node
     class BvnorNode : public AbstractNode {
       public:
-        BvnorNode(AbstractNode* expr1, AbstractNode* expr2);
         void init(void);
         triton::uint512 hash(triton::uint32 deep) const;
+        static std::shared_ptr<AbstractNode> get(std::shared_ptr<AbstractNode> const& expr1, std::shared_ptr<AbstractNode> const& expr2);
+
+      private:
+        BvnorNode(AstContext& ctxt);
     };
 
 
     //! `(bvnot <expr>)` node
     class BvnotNode : public AbstractNode {
       public:
-        BvnotNode(AbstractNode* expr1);
         void init(void);
         triton::uint512 hash(triton::uint32 deep) const;
+        static std::shared_ptr<AbstractNode> get(std::shared_ptr<AbstractNode> const& expr1);
+
+      private:
+        BvnotNode(AstContext& ctxt);
     };
 
 
     //! `(bvor <expr1> <expr2>)` node
     class BvorNode : public AbstractNode {
       public:
-        BvorNode(AbstractNode* expr1, AbstractNode* expr2);
         void init(void);
         triton::uint512 hash(triton::uint32 deep) const;
+        static std::shared_ptr<AbstractNode> get(std::shared_ptr<AbstractNode> const& expr1, std::shared_ptr<AbstractNode> const& expr2);
+
+      private:
+        BvorNode(AstContext& ctxt);
     };
 
 
     //! `((_ rotate_left rot) <expr>)` node
     class BvrolNode : public AbstractNode {
       public:
-        BvrolNode(triton::uint32 rot, AbstractNode* expr);
-        BvrolNode(AbstractNode* rot, AbstractNode* expr);
         void init(void);
         triton::uint512 hash(triton::uint32 deep) const;
+        static std::shared_ptr<AbstractNode> get(triton::uint32 rot, std::shared_ptr<AbstractNode> const& expr);
+        static std::shared_ptr<AbstractNode> get(std::shared_ptr<AbstractNode> const& rot, std::shared_ptr<AbstractNode> const& expr);
+
+      private:
+        BvrolNode(AstContext& ctxt);
     };
 
 
     //! `((_ rotate_right rot) <expr>)` node
     class BvrorNode : public AbstractNode {
       public:
-        BvrorNode(triton::uint32 rot, AbstractNode* expr);
-        BvrorNode(AbstractNode* rot, AbstractNode* expr);
         void init(void);
         triton::uint512 hash(triton::uint32 deep) const;
+        static std::shared_ptr<AbstractNode> get(triton::uint32 rot, std::shared_ptr<AbstractNode> const& expr);
+        static std::shared_ptr<AbstractNode> get(std::shared_ptr<AbstractNode> const& rot, std::shared_ptr<AbstractNode> const& expr);
+
+      private:
+        BvrorNode(AstContext& ctxt);
     };
 
 
     //! `(bvsdiv <expr1> <expr2>)` node
     class BvsdivNode : public AbstractNode {
       public:
-        BvsdivNode(AbstractNode* expr1, AbstractNode* expr2);
         void init(void);
         triton::uint512 hash(triton::uint32 deep) const;
+        static std::shared_ptr<AbstractNode> get(std::shared_ptr<AbstractNode> const& expr1, std::shared_ptr<AbstractNode> const& expr2);
+
+      private:
+        BvsdivNode(AstContext& ctxt);
     };
 
 
     //! `(bvsge <expr1> <expr2>)` node
     class BvsgeNode : public AbstractNode {
       public:
-        BvsgeNode(AbstractNode* expr1, AbstractNode* expr2);
         void init(void);
         triton::uint512 hash(triton::uint32 deep) const;
+        static std::shared_ptr<AbstractNode> get(std::shared_ptr<AbstractNode> const& expr1, std::shared_ptr<AbstractNode> const& expr2);
+
+      private:
+        BvsgeNode(AstContext& ctxt);
     };
 
 
     //! `(bvsgt <expr1> <expr2>)` node
     class BvsgtNode : public AbstractNode {
       public:
-        BvsgtNode(AbstractNode* expr1, AbstractNode* expr2);
         void init(void);
         triton::uint512 hash(triton::uint32 deep) const;
+        static std::shared_ptr<AbstractNode> get(std::shared_ptr<AbstractNode> const& expr1, std::shared_ptr<AbstractNode> const& expr2);
+
+      private:
+        BvsgtNode(AstContext& ctxt);
     };
 
 
     //! `(bvshl <expr1> <expr2>)` node
     class BvshlNode : public AbstractNode {
       public:
-        BvshlNode(AbstractNode* expr1, AbstractNode* expr2);
         void init(void);
         triton::uint512 hash(triton::uint32 deep) const;
+        static std::shared_ptr<AbstractNode> get(std::shared_ptr<AbstractNode> const& expr1, std::shared_ptr<AbstractNode> const& expr2);
+
+      private:
+        BvshlNode(AstContext& ctxt);
     };
 
 
     //! `(bvsle <expr1> <expr2>)` node
     class BvsleNode : public AbstractNode {
       public:
-        BvsleNode(AbstractNode* expr1, AbstractNode* expr2);
         void init(void);
         triton::uint512 hash(triton::uint32 deep) const;
+        static std::shared_ptr<AbstractNode> get(std::shared_ptr<AbstractNode> const& expr1, std::shared_ptr<AbstractNode> const& expr2);
+
+      private:
+        BvsleNode(AstContext& ctxt);
     };
 
 
     //! `(bvslt <expr1> <expr2>)` node
     class BvsltNode : public AbstractNode {
       public:
-        BvsltNode(AbstractNode* expr1, AbstractNode* expr2);
         void init(void);
         triton::uint512 hash(triton::uint32 deep) const;
+        static std::shared_ptr<AbstractNode> get(std::shared_ptr<AbstractNode> const& expr1, std::shared_ptr<AbstractNode> const& expr2);
+
+      private:
+        BvsltNode(AstContext& ctxt);
     };
 
 
     //! `(bvsmod <expr1> <expr2>)` node
     class BvsmodNode : public AbstractNode {
       public:
-        BvsmodNode(AbstractNode* expr1, AbstractNode* expr2);
         void init(void);
         triton::uint512 hash(triton::uint32 deep) const;
+        static std::shared_ptr<AbstractNode> get(std::shared_ptr<AbstractNode> const& expr1, std::shared_ptr<AbstractNode> const& expr2);
+
+      private:
+        BvsmodNode(AstContext& ctxt);
     };
 
 
     //! `(bvsrem <expr1> <expr2>)` node
     class BvsremNode : public AbstractNode {
       public:
-        BvsremNode(AbstractNode* expr1, AbstractNode* expr2);
         void init(void);
         triton::uint512 hash(triton::uint32 deep) const;
+        static std::shared_ptr<AbstractNode> get(std::shared_ptr<AbstractNode> const& expr1, std::shared_ptr<AbstractNode> const& expr2);
+
+      private:
+        BvsremNode(AstContext& ctxt);
     };
 
 
     //! `(bvsub <expr1> <expr2>)` node
     class BvsubNode : public AbstractNode {
       public:
-        BvsubNode(AbstractNode* expr1, AbstractNode* expr2);
         void init(void);
         triton::uint512 hash(triton::uint32 deep) const;
+        static std::shared_ptr<AbstractNode> get(std::shared_ptr<AbstractNode> const& expr1, std::shared_ptr<AbstractNode> const& expr2);
+
+      private:
+        BvsubNode(AstContext& ctxt);
     };
 
 
     //! `(bvudiv <expr1> <expr2>)` node
     class BvudivNode : public AbstractNode {
       public:
-        BvudivNode(AbstractNode* expr1, AbstractNode* expr2);
         void init(void);
         triton::uint512 hash(triton::uint32 deep) const;
+        static std::shared_ptr<AbstractNode> get(std::shared_ptr<AbstractNode> const& expr1, std::shared_ptr<AbstractNode> const& expr2);
+
+      private:
+        BvudivNode(AstContext& ctxt);
     };
 
 
     //! `(bvuge <expr1> <expr2>)` node
     class BvugeNode : public AbstractNode {
       public:
-        BvugeNode(AbstractNode* expr1, AbstractNode* expr2);
         void init(void);
         triton::uint512 hash(triton::uint32 deep) const;
+        static std::shared_ptr<AbstractNode> get(std::shared_ptr<AbstractNode> const& expr1, std::shared_ptr<AbstractNode> const& expr2);
+
+      private:
+        BvugeNode(AstContext& ctxt);
     };
 
 
     //! `(bvugt <expr1> <expr2>)` node
     class BvugtNode : public AbstractNode {
       public:
-        BvugtNode(AbstractNode* expr1, AbstractNode* expr2);
         void init(void);
         triton::uint512 hash(triton::uint32 deep) const;
+        static std::shared_ptr<AbstractNode> get(std::shared_ptr<AbstractNode> const& expr1, std::shared_ptr<AbstractNode> const& expr2);
+
+      private:
+        BvugtNode(AstContext& ctxt);
     };
 
 
     //! `(bvule <expr1> <expr2>)` node
     class BvuleNode : public AbstractNode {
       public:
-        BvuleNode(AbstractNode* expr1, AbstractNode* expr2);
         void init(void);
         triton::uint512 hash(triton::uint32 deep) const;
+        static std::shared_ptr<AbstractNode> get(std::shared_ptr<AbstractNode> const& expr1, std::shared_ptr<AbstractNode> const& expr2);
+
+      private:
+        BvuleNode(AstContext& ctxt);
     };
 
 
     //! `(bvult <expr1> <expr2>)` node
     class BvultNode : public AbstractNode {
       public:
-        BvultNode(AbstractNode* expr1, AbstractNode* expr2);
         void init(void);
         triton::uint512 hash(triton::uint32 deep) const;
+        static std::shared_ptr<AbstractNode> get(std::shared_ptr<AbstractNode> const& expr1, std::shared_ptr<AbstractNode> const& expr2);
+
+      private:
+        BvultNode(AstContext& ctxt);
     };
 
 
     //! `(bvurem <expr1> <expr2>)` node
     class BvuremNode : public AbstractNode {
       public:
-        BvuremNode(AbstractNode* expr1, AbstractNode* expr2);
         void init(void);
         triton::uint512 hash(triton::uint32 deep) const;
+        static std::shared_ptr<AbstractNode> get(std::shared_ptr<AbstractNode> const& expr1, std::shared_ptr<AbstractNode> const& expr2);
+
+      private:
+        BvuremNode(AstContext& ctxt);
     };
 
 
     //! `(bvxnor <expr1> <expr2>)` node
     class BvxnorNode : public AbstractNode {
       public:
-        BvxnorNode(AbstractNode* expr1, AbstractNode* expr2);
         void init(void);
         triton::uint512 hash(triton::uint32 deep) const;
+        static std::shared_ptr<AbstractNode> get(std::shared_ptr<AbstractNode> const& expr1, std::shared_ptr<AbstractNode> const& expr2);
+
+      private:
+        BvxnorNode(AstContext& ctxt);
     };
 
 
     //! `(bvxor <expr1> <expr2>)` node
     class BvxorNode : public AbstractNode {
       public:
-        BvxorNode(AbstractNode* expr1, AbstractNode* expr2);
         void init(void);
         triton::uint512 hash(triton::uint32 deep) const;
+        static std::shared_ptr<AbstractNode> get(std::shared_ptr<AbstractNode> const& expr1, std::shared_ptr<AbstractNode> const& expr2);
+
+      private:
+        BvxorNode(AstContext& ctxt);
     };
 
 
     //! `(_ bv<value> <size>)` node
     class BvNode : public AbstractNode {
       public:
-        BvNode(triton::uint512 value, triton::uint32 size, AstContext& ctxt);
         void init(void);
         triton::uint512 hash(triton::uint32 deep) const;
+        static std::shared_ptr<AbstractNode> get(triton::uint512 value, triton::uint32 size, AstContext& ctxt);
+
+      private:
+        BvNode(AstContext& ctxt);
     };
 
 
     //! `(concat <expr1> <expr2> ...)` node
     class ConcatNode : public AbstractNode {
       public:
-        ConcatNode(AbstractNode* expr1, AbstractNode* expr2);
-        template <typename T> ConcatNode(const T& exprs, AstContext& ctxt);
         void init(void);
         triton::uint512 hash(triton::uint32 deep) const;
+
+        static std::shared_ptr<AbstractNode> get(std::shared_ptr<AbstractNode> const& expr1, std::shared_ptr<AbstractNode> const& expr2);
+        template <typename T> static std::shared_ptr<AbstractNode> get(const T& exprs, AstContext& ctxt);
+
+      private:
+        ConcatNode(AstContext& ctxt);
     };
 
 
@@ -436,84 +533,113 @@ namespace triton {
         triton::uint512 value;
 
       public:
-        DecimalNode(triton::uint512 value, AstContext& ctxt);
         void init(void);
         triton::uint512 hash(triton::uint32 deep) const;
         triton::uint512 getValue(void);
+
+        static std::shared_ptr<AbstractNode> get(triton::uint512 value, AstContext& ctxt);
+
+      private:
+        DecimalNode(AstContext& ctxt);
     };
 
 
     //! `(distinct <expr1> <expr2> ...)` node
     class DistinctNode : public AbstractNode {
       public:
-        DistinctNode(AbstractNode* expr1, AbstractNode* expr2);
         void init(void);
         triton::uint512 hash(triton::uint32 deep) const;
+        static std::shared_ptr<AbstractNode> get(std::shared_ptr<AbstractNode> const& expr1, std::shared_ptr<AbstractNode> const& expr2);
+
+      private:
+        DistinctNode(AstContext& ctxt);
     };
 
 
     //! `(= <expr1> <expr2> ...)` node
     class EqualNode : public AbstractNode {
       public:
-        EqualNode(AbstractNode* expr1, AbstractNode* expr2);
         void init(void);
         triton::uint512 hash(triton::uint32 deep) const;
+        static std::shared_ptr<AbstractNode> get(std::shared_ptr<AbstractNode> const& expr1, std::shared_ptr<AbstractNode> const& expr2);
+
+      private:
+        EqualNode(AstContext& ctxt);
     };
 
 
     //! `((_ extract <high> <low>) <expr>)` node
     class ExtractNode : public AbstractNode {
       public:
-        ExtractNode(triton::uint32 high, triton::uint32 low, AbstractNode* expr);
         void init(void);
         triton::uint512 hash(triton::uint32 deep) const;
+        static std::shared_ptr<AbstractNode> get(triton::uint32 high, triton::uint32 low, std::shared_ptr<AbstractNode> const& expr);
+
+      private:
+        ExtractNode(AstContext& ctxt);
     };
 
 
     //! `(ite <ifExpr> <thenExpr> <elseExpr>)`
     class IteNode : public AbstractNode {
       public:
-        IteNode(AbstractNode* ifExpr, AbstractNode* thenExpr, AbstractNode* elseExpr);
         void init(void);
         triton::uint512 hash(triton::uint32 deep) const;
+        static std::shared_ptr<AbstractNode> get(std::shared_ptr<AbstractNode> const& ifExpr, std::shared_ptr<AbstractNode> const& thenExpr, std::shared_ptr<AbstractNode> const& elseExpr);
+
+      private:
+        IteNode(AstContext& ctxt);
     };
 
 
     //! `(and <expr1> <expr2>)`
     class LandNode : public AbstractNode {
       public:
-        LandNode(AbstractNode* expr1, AbstractNode* expr2);
-        template <typename T> LandNode(const T& exprs, AstContext& ctxt);
         void init(void);
         triton::uint512 hash(triton::uint32 deep) const;
+
+        static std::shared_ptr<AbstractNode> get(std::shared_ptr<AbstractNode> const& expr1, std::shared_ptr<AbstractNode> const& expr2);
+        template <class T> static std::shared_ptr<AbstractNode> get(const T& exprs, AstContext& ctxt);
+
+      private:
+        LandNode(AstContext& ctxt);
     };
 
 
     //! `(let ((<alias> <expr2>)) <expr3>)`
     class LetNode : public AbstractNode {
       public:
-        LetNode(std::string alias, AbstractNode* expr2, AbstractNode* expr3);
         void init(void);
         triton::uint512 hash(triton::uint32 deep) const;
+        static std::shared_ptr<AbstractNode> get(std::string alias, std::shared_ptr<AbstractNode> const& expr2, std::shared_ptr<AbstractNode> const& expr3);
+
+      private:
+        LetNode(AstContext& ctxt);
     };
 
 
     //! `(lnot <expr>)`
     class LnotNode : public AbstractNode {
       public:
-        LnotNode(AbstractNode* expr);
         void init(void);
         triton::uint512 hash(triton::uint32 deep) const;
+        static std::shared_ptr<AbstractNode> get(std::shared_ptr<AbstractNode> const& expr);
+
+      private:
+        LnotNode(AstContext& ctxt);
     };
 
 
     //! `(or <expr1> <expr2>)`
     class LorNode : public AbstractNode {
       public:
-        LorNode(AbstractNode* expr1, AbstractNode* expr2);
-        template <typename T> LorNode(const T& exprs, AstContext& ctxt);
         void init(void);
         triton::uint512 hash(triton::uint32 deep) const;
+        static std::shared_ptr<AbstractNode> get(std::shared_ptr<AbstractNode> const& expr1, std::shared_ptr<AbstractNode> const& expr2);
+        template <class T> static std::shared_ptr<AbstractNode> get(const T& exprs, AstContext& ctxt);
+
+      private:
+        LorNode(AstContext& ctxt);
     };
 
 
@@ -521,15 +647,18 @@ namespace triton {
     class ReferenceNode : public AbstractNode {
       protected:
         triton::usize id;
-        AbstractNode* ast;
+        std::shared_ptr<AbstractNode> ast;
 
       public:
-        ReferenceNode(AbstractNode* ast, triton::usize id);
         void init(void);
         triton::uint512 hash(triton::uint32 deep) const;
+        static std::shared_ptr<AbstractNode> get(std::shared_ptr<AbstractNode> const& ast, triton::usize id);
 
         triton::usize getId() const;
-        AbstractNode* getAst() const;
+        std::shared_ptr<AbstractNode> const& getAst();
+
+      private:
+        ReferenceNode(std::shared_ptr<AbstractNode> const& ast, triton::usize id);
     };
 
 
@@ -539,19 +668,25 @@ namespace triton {
         std::string value;
 
       public:
-        StringNode(std::string value, AstContext& ctxt);
         void init(void);
         triton::uint512 hash(triton::uint32 deep) const;
+        static std::shared_ptr<AbstractNode> get(std::string value, AstContext& ctxt);
         std::string getValue(void);
+
+      private:
+        StringNode(std::string value, AstContext& ctxt);
     };
 
 
     //! `((_ sign_extend sizeExt) <expr>)` node
     class SxNode : public AbstractNode {
       public:
-        SxNode(triton::uint32 sizeExt, AbstractNode* expr);
         void init(void);
         triton::uint512 hash(triton::uint32 deep) const;
+        static std::shared_ptr<AbstractNode> get(triton::uint32 sizeExt, std::shared_ptr<AbstractNode> const& expr);
+
+      private:
+        SxNode(AstContext& ctxt);
     };
 
 
@@ -561,10 +696,13 @@ namespace triton {
         std::string varName;
 
       public:
-        VariableNode(std::string const& varName, triton::uint32 size, AstContext& ctxt);
         void init(void);
         triton::uint512 hash(triton::uint32 deep) const;
         std::string const& getVarName() const;
+        static std::shared_ptr<AbstractNode> get(std::string const& varName, triton::uint32 size, AstContext& ctxt);
+
+      private:
+        VariableNode(std::string const& varName, AstContext& ctxt);
     };
 
 
@@ -572,9 +710,12 @@ namespace triton {
     class ZxNode : public AbstractNode {
       public:
         //! Create a zero extend of expr to sizeExt bits
-        ZxNode(triton::uint32 sizeExt, AbstractNode* expr);
         void init(void);
         triton::uint512 hash(triton::uint32 deep) const;
+        static std::shared_ptr<AbstractNode> get(triton::uint32 sizeExt, std::shared_ptr<AbstractNode> const& expr);
+
+      private:
+        ZxNode(AstContext& ctxt);
     };
 
 
@@ -582,7 +723,7 @@ namespace triton {
     std::ostream& operator<<(std::ostream& stream, AbstractNode* node);
 
     //! AST C++ API - Duplicates the AST
-    AbstractNode* newInstance(AbstractNode* node);
+    std::shared_ptr<AbstractNode> newInstance(AbstractNode* node);
 
     //! Custom pow function for hash routine.
     triton::uint512 pow(triton::uint512 hash, triton::uint32 n);

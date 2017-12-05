@@ -9,6 +9,7 @@
 #define TRITON_SYMBOLICVALUE_H
 
 #include <string>
+#include <memory>
 
 #include <triton/ast.hpp>
 #include <triton/symbolicEnums.hpp>
@@ -53,7 +54,7 @@ namespace triton {
           symkind_e kind;
 
           //! The root node (AST) of the symbolic value.
-          triton::ast::AbstractNode* ast;
+          std::shared_ptr<triton::ast::AbstractNode> ast;
 
           //! The comment of the symbolic value.
           std::string comment;
@@ -63,7 +64,7 @@ namespace triton {
 
         public:
           //! Constructor.
-          SymbolicValue(triton::ast::AbstractNode* expr, triton::usize id, symkind_e kind, const std::string& comment="");
+          SymbolicValue(std::shared_ptr<triton::ast::AbstractNode> expr, triton::usize id, symkind_e kind, const std::string& comment="");
 
           //! Returns the symbolic value id.
           triton::usize getId(void) const;
@@ -91,12 +92,13 @@ namespace triton {
 
           //! Returns the SMT AST root node of the symbolic value. This is the semantics.
           triton::ast::AbstractNode* getAst(void) const;
+          std::shared_ptr<triton::ast::AbstractNode> const& getShareAst(void);
 
           //! Returns a new SMT AST root node of the symbolic value. This new instance is a duplicate of the original node and may be changed without changing the original semantics.
-          triton::ast::AbstractNode* getNewAst(void) const;
+          std::shared_ptr<triton::ast::AbstractNode> getNewAst(void) const;
 
           //! Sets a root node.
-          void setAst(triton::ast::AbstractNode* node);
+          void setAst(std::shared_ptr<triton::ast::AbstractNode> const& node);
       };
 
     /*! @} End of symbolic namespace */

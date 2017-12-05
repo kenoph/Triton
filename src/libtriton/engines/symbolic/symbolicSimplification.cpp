@@ -175,13 +175,13 @@ namespace triton {
       }
 
 
-      triton::ast::AbstractNode* SymbolicSimplification::processSimplification(triton::ast::AbstractNode* node) const {
+      std::shared_ptr<triton::ast::AbstractNode> SymbolicSimplification::processSimplification(std::shared_ptr<triton::ast::AbstractNode> const& node) const {
         if (node == nullptr)
           throw triton::exceptions::SymbolicSimplification("SymbolicSimplification::processSimplification(): node cannot be null.");
 
         /* process recorded callback about symbolic simplifications */
         if (this->callbacks)
-          node = this->callbacks->processCallbacks(triton::callbacks::SYMBOLIC_SIMPLIFICATION, node);
+          return this->callbacks->processCallbacks(triton::callbacks::SYMBOLIC_SIMPLIFICATION, node);
 
         return node;
       }

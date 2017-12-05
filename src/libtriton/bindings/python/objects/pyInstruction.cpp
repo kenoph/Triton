@@ -254,7 +254,7 @@ namespace triton {
             PyObject* item = xPyTuple_New(2);
             PyTuple_SetItem(item, 0, PyMemoryAccess(std::get<0>(*it)));
             // FIXME: Change interface?
-            PyTuple_SetItem(item, 1, PyAstNode(std::get<1>(*it)->getAst()));
+            PyTuple_SetItem(item, 1, PyAstNode(std::get<1>(*it)->getShareAst()));
             PyList_SetItem(ret, index++, item);
           }
 
@@ -309,7 +309,7 @@ namespace triton {
             PyObject* item = xPyTuple_New(2);
             PyTuple_SetItem(item, 0, PyMemoryAccess(std::get<0>(*it)));
             // FIXME: Should we fix the interface?
-            PyTuple_SetItem(item, 1, PyAstNode(std::get<1>(*it)->getAst()));
+            PyTuple_SetItem(item, 1, PyAstNode(std::get<1>(*it)->getShareAst()));
             PyList_SetItem(ret, index++, item);
           }
 
@@ -380,7 +380,7 @@ namespace triton {
           for (auto it = readImmediates.cbegin(); it != readImmediates.cend(); it++) {
             PyObject* item = xPyTuple_New(2);
             PyTuple_SetItem(item, 0, PyImmediate(std::get<0>(*it)));
-            PyTuple_SetItem(item, 1, PyAstNode(std::get<1>(*it)->getAst()));
+            PyTuple_SetItem(item, 1, PyAstNode(std::get<1>(*it)->getShareAst()));
             PyList_SetItem(ret, index++, item);
           }
 
@@ -403,7 +403,7 @@ namespace triton {
             PyObject* item = xPyTuple_New(2);
             PyTuple_SetItem(item, 0, PyRegister(std::get<0>(*it)));
             // FIXME: SHould we change the interface?
-            PyTuple_SetItem(item, 1, PyAstNode(std::get<1>(*it)->getAst()));
+            PyTuple_SetItem(item, 1, PyAstNode(std::get<1>(*it)->getShareAst()));
             PyList_SetItem(ret, index++, item);
           }
 
@@ -470,7 +470,7 @@ namespace triton {
             PyObject* item = xPyTuple_New(2);
             PyTuple_SetItem(item, 0, PyRegister(std::get<0>(*it)));
             // FIXME: Should we change the interface?
-            PyTuple_SetItem(item, 1, PyAstNode(std::get<1>(*it)->getAst()));
+            PyTuple_SetItem(item, 1, PyAstNode(std::get<1>(*it)->getShareAst()));
             PyList_SetItem(ret, index++, item);
           }
 

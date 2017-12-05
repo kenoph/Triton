@@ -20,12 +20,15 @@ namespace triton {
   namespace engines {
     namespace symbolic {
 
-      SymbolicValue::SymbolicValue(triton::ast::AbstractNode* node, triton::usize id, symkind_e kind, const std::string& comment):
+      SymbolicValue::SymbolicValue(std::shared_ptr<triton::ast::AbstractNode> node, triton::usize id, symkind_e kind, const std::string& comment):
         kind(kind),
-        ast(node),
+        ast(std::move(node)),
         comment(comment),
         id(id)
-        { }
+        {
+          if(ast == nullptr)
+            throw triton::exceptions::SymbolicVariable("SymbolicValue(): No AST defined.");
+        }
 
 
       triton::usize SymbolicValue::getId(void) const {
@@ -43,9 +46,6 @@ namespace triton {
 
 
       bool SymbolicValue::isSymbolized(void) const {
-        // FIXME: Check at build time
-        if (this->ast == nullptr)
-          return false;
         return this->ast->isSymbolized();
       }
 
@@ -71,25 +71,30 @@ namespace triton {
 
 
       triton::ast::AbstractNode* SymbolicValue::getAst(void) const {
-        // FIXME: Check at build time
-        if (this->ast == nullptr)
-          // FIXME
-          throw triton::exceptions::SymbolicVariable("SymbolicValue::getAst(): No AST defined.");
+        return this->ast.get();
+      }
+
+      std::shared_ptr<triton::ast::AbstractNode> const& SymbolicValue::getShareAst(void) {
         return this->ast;
       }
 
 
-      triton::ast::AbstractNode* SymbolicValue::getNewAst(void) const {
+      std::shared_ptr<triton::ast::AbstractNode> SymbolicValue::getNewAst(void) const {
         // FIXME: Check at build time
         if (this->ast == nullptr)
           // FIXME
           throw triton::exceptions::SymbolicVariable("SymbolicValue::getNewAst(): No AST defined.");
-        return triton::ast::newInstance(this->ast);
+        return triton::ast::newInstance(this->ast.get());
       }
 
 
-      void SymbolicValue::setAst(triton::ast::AbstractNode* node) {
-        node->setParent(this->ast->getParents());
+      void SymbolicValue::setAst(std::shared_ptr<triton::ast::AbstractNode> const& node) {
+        if(node == nullptr)
+          throw triton::exceptions::SymbolicVariable("SymbolicValue::setAst(): No AST defined.");
+
+        for(auto sp: this->ast->getParents()) {
+          node->setParent(sp.get());
+        }
         this->ast = node;
         this->ast->init();
       }

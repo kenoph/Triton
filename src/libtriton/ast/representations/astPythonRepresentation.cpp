@@ -77,210 +77,210 @@ namespace triton {
 
       /* bvadd representation */
       std::ostream& AstPythonRepresentation::print(std::ostream& stream, triton::ast::BvaddNode* node) {
-        stream << "((" << node->getChildren()[0] << " + " << node->getChildren()[1] << ") & 0x" << std::hex << node->getBitvectorMask() << std::dec << ")";
+        stream << "((" << node->getChildren()[0].get() << " + " << node->getChildren()[1].get() << ") & 0x" << std::hex << node->getBitvectorMask() << std::dec << ")";
         return stream;
       }
 
 
       /* bvand representation */
       std::ostream& AstPythonRepresentation::print(std::ostream& stream, triton::ast::BvandNode* node) {
-        stream << "(" << node->getChildren()[0] << " & " << node->getChildren()[1] << ")";
+        stream << "(" << node->getChildren()[0].get() << " & " << node->getChildren()[1].get() << ")";
         return stream;
       }
 
 
       /* bvashr representation */
       std::ostream& AstPythonRepresentation::print(std::ostream& stream, triton::ast::BvashrNode* node) {
-        stream << "(" << node->getChildren()[0] << " >> " << node->getChildren()[1] << ")";
+        stream << "(" << node->getChildren()[0].get() << " >> " << node->getChildren()[1].get() << ")";
         return stream;
       }
 
 
       /* bvlshr representation */
       std::ostream& AstPythonRepresentation::print(std::ostream& stream, triton::ast::BvlshrNode* node) {
-        stream << "(" << node->getChildren()[0] << " >> " << node->getChildren()[1] << ")";
+        stream << "(" << node->getChildren()[0].get() << " >> " << node->getChildren()[1].get() << ")";
         return stream;
       }
 
 
       /* bvmul representation */
       std::ostream& AstPythonRepresentation::print(std::ostream& stream, triton::ast::BvmulNode* node) {
-        stream << "((" << node->getChildren()[0] << " * " << node->getChildren()[1] << ") & 0x" << std::hex << node->getBitvectorMask() << std::dec << ")";
+        stream << "((" << node->getChildren()[0].get() << " * " << node->getChildren()[1].get() << ") & 0x" << std::hex << node->getBitvectorMask() << std::dec << ")";
         return stream;
       }
 
 
       /* bvnand representation */
       std::ostream& AstPythonRepresentation::print(std::ostream& stream, triton::ast::BvnandNode* node) {
-        stream << "(~(" << node->getChildren()[0] << " & " << node->getChildren()[1] << ") & 0x" << std::hex << node->getBitvectorMask() << std::dec << ")";
+        stream << "(~(" << node->getChildren()[0].get() << " & " << node->getChildren()[1].get() << ") & 0x" << std::hex << node->getBitvectorMask() << std::dec << ")";
         return stream;
       }
 
 
       /* bvneg representation */
       std::ostream& AstPythonRepresentation::print(std::ostream& stream, triton::ast::BvnegNode* node) {
-        stream << "-" << node->getChildren()[0];
+        stream << "-" << node->getChildren()[0].get();
         return stream;
       }
 
 
       /* bvnor representation */
       std::ostream& AstPythonRepresentation::print(std::ostream& stream, triton::ast::BvnorNode* node) {
-        stream << "(~(" << node->getChildren()[0] << " | " << node->getChildren()[1] << ") & 0x" << std::hex << node->getBitvectorMask() << std::dec << ")";
+        stream << "(~(" << node->getChildren()[0].get() << " | " << node->getChildren()[1].get() << ") & 0x" << std::hex << node->getBitvectorMask() << std::dec << ")";
         return stream;
       }
 
 
       /* bvnot representation */
       std::ostream& AstPythonRepresentation::print(std::ostream& stream, triton::ast::BvnotNode* node) {
-        stream << "(~(" << node->getChildren()[0] << ") & 0x" << std::hex << node->getBitvectorMask() << std::dec << ")";
+        stream << "(~(" << node->getChildren()[0].get() << ") & 0x" << std::hex << node->getBitvectorMask() << std::dec << ")";
         return stream;
       }
 
 
       /* bvor representation */
       std::ostream& AstPythonRepresentation::print(std::ostream& stream, triton::ast::BvorNode* node) {
-        stream << "(" << node->getChildren()[0] << " | " << node->getChildren()[1] << ")";
+        stream << "(" << node->getChildren()[0].get() << " | " << node->getChildren()[1].get() << ")";
         return stream;
       }
 
 
       /* bvrol representation */
       std::ostream& AstPythonRepresentation::print(std::ostream& stream, triton::ast::BvrolNode* node) {
-        stream << "rol(" << node->getChildren()[0] << ", " << node->getChildren()[1] << ")";
+        stream << "rol(" << node->getChildren()[0].get() << ", " << node->getChildren()[1].get() << ")";
         return stream;
       }
 
 
       /* bvror representation */
       std::ostream& AstPythonRepresentation::print(std::ostream& stream, triton::ast::BvrorNode* node) {
-        stream << "ror(" << node->getChildren()[0] << ", " << node->getChildren()[1] << ")";
+        stream << "ror(" << node->getChildren()[0].get() << ", " << node->getChildren()[1].get() << ")";
         return stream;
       }
 
 
       /* bvsdiv representation */
       std::ostream& AstPythonRepresentation::print(std::ostream& stream, triton::ast::BvsdivNode* node) {
-        stream << "(" << node->getChildren()[0] << " / " << node->getChildren()[1] << ")";
+        stream << "(" << node->getChildren()[0].get() << " / " << node->getChildren()[1].get() << ")";
         return stream;
       }
 
 
       /* bvsge representation */
       std::ostream& AstPythonRepresentation::print(std::ostream& stream, triton::ast::BvsgeNode* node) {
-        stream << "(" << node->getChildren()[0] << " >= " << node->getChildren()[1] << ")";
+        stream << "(" << node->getChildren()[0].get() << " >= " << node->getChildren()[1].get() << ")";
         return stream;
       }
 
 
       /* bvsgt representation */
       std::ostream& AstPythonRepresentation::print(std::ostream& stream, triton::ast::BvsgtNode* node) {
-        stream << "(" << node->getChildren()[0] << " > " << node->getChildren()[1] << ")";
+        stream << "(" << node->getChildren()[0].get() << " > " << node->getChildren()[1].get() << ")";
         return stream;
       }
 
 
       /* bvshl representation */
       std::ostream& AstPythonRepresentation::print(std::ostream& stream, triton::ast::BvshlNode* node) {
-        stream << "((" << node->getChildren()[0] << " << " << node->getChildren()[1] << ") & 0x" << std::hex << node->getBitvectorMask() << std::dec << ")";
+        stream << "((" << node->getChildren()[0].get() << " << " << node->getChildren()[1].get() << ") & 0x" << std::hex << node->getBitvectorMask() << std::dec << ")";
         return stream;
       }
 
 
       /* bvsle representation */
       std::ostream& AstPythonRepresentation::print(std::ostream& stream, triton::ast::BvsleNode* node) {
-        stream << "(" << node->getChildren()[0] << " <= " << node->getChildren()[1] << ")";
+        stream << "(" << node->getChildren()[0].get() << " <= " << node->getChildren()[1].get() << ")";
         return stream;
       }
 
 
       /* bvslt representation */
       std::ostream& AstPythonRepresentation::print(std::ostream& stream, triton::ast::BvsltNode* node) {
-        stream << "(" << node->getChildren()[0] << " < " << node->getChildren()[1] << ")";
+        stream << "(" << node->getChildren()[0].get() << " < " << node->getChildren()[1].get() << ")";
         return stream;
       }
 
 
       /* bvsmod representation */
       std::ostream& AstPythonRepresentation::print(std::ostream& stream, triton::ast::BvsmodNode* node) {
-        stream << "(" << node->getChildren()[0] << " % " << node->getChildren()[1] << ")";
+        stream << "(" << node->getChildren()[0].get() << " % " << node->getChildren()[1].get() << ")";
         return stream;
       }
 
 
       /* bvsrem representation */
       std::ostream& AstPythonRepresentation::print(std::ostream& stream, triton::ast::BvsremNode* node) {
-        stream << "(" << node->getChildren()[0] << " % " << node->getChildren()[1] << ")";
+        stream << "(" << node->getChildren()[0].get() << " % " << node->getChildren()[1].get() << ")";
         return stream;
       }
 
 
       /* bvsub representation */
       std::ostream& AstPythonRepresentation::print(std::ostream& stream, triton::ast::BvsubNode* node) {
-        stream << "((" << node->getChildren()[0] << " - " << node->getChildren()[1] << ") & 0x" << std::hex << node->getBitvectorMask() << std::dec << ")";
+        stream << "((" << node->getChildren()[0].get() << " - " << node->getChildren()[1].get() << ") & 0x" << std::hex << node->getBitvectorMask() << std::dec << ")";
         return stream;
       }
 
 
       /* bvudiv representation */
       std::ostream& AstPythonRepresentation::print(std::ostream& stream, triton::ast::BvudivNode* node) {
-        stream << "(" << node->getChildren()[0] << " / " << node->getChildren()[1] << ")";
+        stream << "(" << node->getChildren()[0].get() << " / " << node->getChildren()[1].get() << ")";
         return stream;
       }
 
 
       /* bvuge representation */
       std::ostream& AstPythonRepresentation::print(std::ostream& stream, triton::ast::BvugeNode* node) {
-        stream << "(" << node->getChildren()[0] << " >= " << node->getChildren()[1] << ")";
+        stream << "(" << node->getChildren()[0].get() << " >= " << node->getChildren()[1].get() << ")";
         return stream;
       }
 
 
       /* bvugt representation */
       std::ostream& AstPythonRepresentation::print(std::ostream& stream, triton::ast::BvugtNode* node) {
-        stream << "(" << node->getChildren()[0] << " > " << node->getChildren()[1] << ")";
+        stream << "(" << node->getChildren()[0].get() << " > " << node->getChildren()[1].get() << ")";
         return stream;
       }
 
 
       /* bvule representation */
       std::ostream& AstPythonRepresentation::print(std::ostream& stream, triton::ast::BvuleNode* node) {
-        stream << "(" << node->getChildren()[0] << " <= " << node->getChildren()[1] << ")";
+        stream << "(" << node->getChildren()[0].get() << " <= " << node->getChildren()[1].get() << ")";
         return stream;
       }
 
 
       /* bvult representation */
       std::ostream& AstPythonRepresentation::print(std::ostream& stream, triton::ast::BvultNode* node) {
-        stream << "(" << node->getChildren()[0] << " < " << node->getChildren()[1] << ")";
+        stream << "(" << node->getChildren()[0].get() << " < " << node->getChildren()[1].get() << ")";
         return stream;
       }
 
 
       /* bvurem representation */
       std::ostream& AstPythonRepresentation::print(std::ostream& stream, triton::ast::BvuremNode* node) {
-        stream << "(" << node->getChildren()[0] << " % " << node->getChildren()[1] << ")";
+        stream << "(" << node->getChildren()[0].get() << " % " << node->getChildren()[1].get() << ")";
         return stream;
       }
 
 
       /* bvxnor representation */
       std::ostream& AstPythonRepresentation::print(std::ostream& stream, triton::ast::BvxnorNode* node) {
-        stream << "(~(" << node->getChildren()[0] << " ^ " << node->getChildren()[1] << ") & 0x" << std::hex << node->getBitvectorMask() << std::dec << ")";
+        stream << "(~(" << node->getChildren()[0].get() << " ^ " << node->getChildren()[1].get() << ") & 0x" << std::hex << node->getBitvectorMask() << std::dec << ")";
         return stream;
       }
 
 
       /* bvxor representation */
       std::ostream& AstPythonRepresentation::print(std::ostream& stream, triton::ast::BvxorNode* node) {
-        stream << "(" << node->getChildren()[0] << " ^ " << node->getChildren()[1] << ")";
+        stream << "(" << node->getChildren()[0].get() << " ^ " << node->getChildren()[1].get() << ")";
         return stream;
       }
 
 
       /* bv representation */
       std::ostream& AstPythonRepresentation::print(std::ostream& stream, triton::ast::BvNode* node) {
-        stream << node->getChildren()[0];
+        stream << node->getChildren()[0].get();
         return stream;
       }
 
@@ -309,21 +309,21 @@ namespace triton {
 
       /* distinct representation */
       std::ostream& AstPythonRepresentation::print(std::ostream& stream, triton::ast::DistinctNode* node) {
-        stream << "(" << node->getChildren()[0] << " != " << node->getChildren()[1] << ")";
+        stream << "(" << node->getChildren()[0].get() << " != " << node->getChildren()[1].get() << ")";
         return stream;
       }
 
 
       /* equal representation */
       std::ostream& AstPythonRepresentation::print(std::ostream& stream, triton::ast::EqualNode* node) {
-        stream << "(" << node->getChildren()[0] << " == " << node->getChildren()[1] << ")";
+        stream << "(" << node->getChildren()[0].get() << " == " << node->getChildren()[1].get() << ")";
         return stream;
       }
 
 
       /* extract representation */
       std::ostream& AstPythonRepresentation::print(std::ostream& stream, triton::ast::ExtractNode* node) {
-        triton::uint32 low = reinterpret_cast<triton::ast::DecimalNode*>(node->getChildren()[1])->getValue().convert_to<triton::uint32>();
+        triton::uint32 low = reinterpret_cast<triton::ast::DecimalNode*>(node->getChildren()[1].get())->getValue().convert_to<triton::uint32>();
 
         if (low == 0)
           stream << "(" << node->getChildren()[2] << " & " << std::hex << "0x" << node->getBitvectorMask() << std::dec << ")";
@@ -336,7 +336,7 @@ namespace triton {
 
       /* ite representation */
       std::ostream& AstPythonRepresentation::print(std::ostream& stream, triton::ast::IteNode* node) {
-        stream << "(" << node->getChildren()[1] << " if " << node->getChildren()[0] << " else " << node->getChildren()[2] << ")";
+        stream << "(" << node->getChildren()[1].get() << " if " << node->getChildren()[0].get() << " else " << node->getChildren()[2].get() << ")";
         return stream;
       }
 
@@ -345,9 +345,9 @@ namespace triton {
       std::ostream& AstPythonRepresentation::print(std::ostream& stream, triton::ast::LandNode* node) {
         triton::usize size = node->getChildren().size();
 
-        stream << "(" << node->getChildren()[0];
+        stream << "(" << node->getChildren()[0].get();
         for (triton::usize index = 1; index < size; index++)
-          stream << " and " << node->getChildren()[index];
+          stream << " and " << node->getChildren()[index].get();
         stream << ")";
 
         return stream;
@@ -356,14 +356,14 @@ namespace triton {
 
       /* let representation */
       std::ostream& AstPythonRepresentation::print(std::ostream& stream, triton::ast::LetNode* node) {
-        stream << node->getChildren()[2];
+        stream << node->getChildren()[2].get();
         return stream;
       }
 
 
       /* lnot representation */
       std::ostream& AstPythonRepresentation::print(std::ostream& stream, triton::ast::LnotNode* node) {
-        stream << "not " << node->getChildren()[0];
+        stream << "not " << node->getChildren()[0].get();
         return stream;
       }
 
@@ -372,9 +372,9 @@ namespace triton {
       std::ostream& AstPythonRepresentation::print(std::ostream& stream, triton::ast::LorNode* node) {
         triton::usize size = node->getChildren().size();
 
-        stream << "(" << node->getChildren()[0];
+        stream << "(" << node->getChildren()[0].get();
         for (triton::usize index = 1; index < size; index++)
-          stream << " or " << node->getChildren()[index];
+          stream << " or " << node->getChildren()[index].get();
         stream << ")";
 
         return stream;
@@ -397,12 +397,12 @@ namespace triton {
 
       /* sx representation */
       std::ostream& AstPythonRepresentation::print(std::ostream& stream, triton::ast::SxNode* node) {
-        triton::uint512 extend = reinterpret_cast<triton::ast::DecimalNode*>(node->getChildren()[0])->getValue();
+        triton::uint512 extend = reinterpret_cast<triton::ast::DecimalNode*>(node->getChildren()[0].get())->getValue();
 
         if (extend)
-          stream << "sx(" << node->getChildren()[0] << ", " << node->getChildren()[1] << ")";
+          stream << "sx(" << node->getChildren()[0].get() << ", " << node->getChildren()[1].get() << ")";
         else
-          stream << node->getChildren()[1];
+          stream << node->getChildren()[1].get();
 
         return stream;
       }
@@ -417,7 +417,7 @@ namespace triton {
 
       /* zx representation */
       std::ostream& AstPythonRepresentation::print(std::ostream& stream, triton::ast::ZxNode* node) {
-        stream << node->getChildren()[1];
+        stream << node->getChildren()[1].get();
         return stream;
       }
 

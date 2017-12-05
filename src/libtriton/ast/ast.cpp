@@ -37,7 +37,7 @@ namespace triton {
       this->symbolized  = copy.symbolized;
 
       for (triton::uint32 index = 0; index < copy.children.size(); index++)
-        this->children.push_back(triton::ast::newInstance(copy.children[index]));
+        this->children.push_back(triton::ast::newInstance(copy.children[index].get()));
     }
 
 
@@ -121,39 +121,67 @@ namespace triton {
       return this->eval;
     }
 
+    void AbstractNode::updateParents() {
+      for(auto& sp: getParents())
+        sp->init();
+    }
 
-    std::vector<AbstractNode*>& AbstractNode::getChildren(void) {
+
+    std::vector<std::shared_ptr<AbstractNode>>& AbstractNode::getChildren(void) {
       return this->children;
     }
 
 
-    std::set<AbstractNode*>& AbstractNode::getParents(void) {
-      return this->parents;
+    std::vector<std::shared_ptr<AbstractNode>> AbstractNode::getParents(void) {
+      std::vector<std::shared_ptr<AbstractNode>> res;
+      std::vector<AbstractNode*> toRemove;
+      for(auto& kv: parents) {
+        if(auto sp = kv.second.lock())
+          res.push_back(sp);
+        else
+          toRemove.push_back(kv.first);
+      }
+      for(auto* an: toRemove)
+        parents.erase(an);
+      return res;
     }
 
 
     void AbstractNode::setParent(AbstractNode* p) {
-      this->parents.insert(p);
+      auto it = parents.find(p);
+      if(it == parents.end()) {
+        auto A = p->shared_from_this();
+        this->parents.insert(std::make_pair(p, std::weak_ptr<AbstractNode>(A)));
+      }  else {
+        if(it->second.expired()) {
+          parents.erase(it);
+          auto A = p->shared_from_this();
+          this->parents.insert(std::make_pair(p, std::weak_ptr<AbstractNode>(A)));
+        }
+        else
+        {}; // Ptr already in
+      }
     }
 
 
     void AbstractNode::removeParent(AbstractNode* p) {
-      this->parents.erase(p);
+      this->parents.erase(parents.find(p));
     }
 
 
-    void AbstractNode::setParent(std::set<AbstractNode*>& p) {
-      for (std::set<AbstractNode*>::iterator it = p.begin(); it != p.end(); it++)
-        this->parents.insert(*it);
+    void AbstractNode::setParent(std::vector<AbstractNode*>& p) {
+      for (auto ptr: p)
+        this->setParent(ptr);
     }
 
 
-    void AbstractNode::addChild(AbstractNode* child) {
+    void AbstractNode::addChild(std::shared_ptr<AbstractNode> const& child) {
+      child->setParent(this);
       this->children.push_back(child);
     }
 
 
-    void AbstractNode::setChild(triton::uint32 index, AbstractNode* child) {
+    void AbstractNode::setChild(triton::uint32 index, std::shared_ptr<AbstractNode> const& child) {
       if (index >= this->children.size())
         throw triton::exceptions::Ast("AbstractNode::setChild(): Invalid index.");
 
@@ -179,10 +207,17 @@ namespace triton {
     /* ====== bvadd */
 
 
-    BvaddNode::BvaddNode(AbstractNode* expr1, AbstractNode* expr2): AbstractNode(BVADD_NODE, expr1->getContext()) {
-      this->addChild(expr1);
-      this->addChild(expr2);
-      this->init();
+    BvaddNode::BvaddNode(AstContext& ctxt):
+      AbstractNode(BVADD_NODE, ctxt)
+    {}
+
+
+    std::shared_ptr<AbstractNode> BvaddNode::get(std::shared_ptr<AbstractNode> const& expr1, std::shared_ptr<AbstractNode> const& expr2) {
+      auto node = std::shared_ptr<BvaddNode>(new BvaddNode(expr1->getContext()));
+      node->addChild(expr1);
+      node->addChild(expr2);
+      node->init();
+      return node;
     }
 
 
@@ -199,13 +234,11 @@ namespace triton {
 
       /* Init children and spread information */
       for (triton::uint32 index = 0; index < this->children.size(); index++) {
-        this->children[index]->setParent(this);
         this->symbolized |= this->children[index]->isSymbolized();
       }
 
       /* Init parents */
-      for (std::set<AbstractNode*>::iterator it = this->parents.begin(); it != this->parents.end(); it++)
-        (*it)->init();
+      updateParents();
     }
 
 
@@ -221,10 +254,18 @@ namespace triton {
     /* ====== bvand */
 
 
-    BvandNode::BvandNode(AbstractNode* expr1, AbstractNode* expr2): AbstractNode(BVAND_NODE, expr1->getContext()) {
-      this->addChild(expr1);
-      this->addChild(expr2);
-      this->init();
+    BvandNode::BvandNode(AstContext& ctxt):
+      AbstractNode(BVAND_NODE, ctxt)
+    {
+    }
+
+    std::shared_ptr<BvandNode> BvandNode::get(std::shared_ptr<AbstractNode> const& expr1, std::shared_ptr<AbstractNode> const& expr2)
+    {
+      auto node = std::shared_ptr<BvandNode>(new BvandNode(expr1->getContext()));
+      node->addChild(expr1);
+      node->addChild(expr2);
+      node->init();
+      return node;
     }
 
 
@@ -241,13 +282,11 @@ namespace triton {
 
       /* Init children and spread information */
       for (triton::uint32 index = 0; index < this->children.size(); index++) {
-        this->children[index]->setParent(this);
         this->symbolized |= this->children[index]->isSymbolized();
       }
 
       /* Init parents */
-      for (std::set<AbstractNode*>::iterator it = this->parents.begin(); it != this->parents.end(); it++)
-        (*it)->init();
+      updateParents();
     }
 
 
@@ -264,10 +303,18 @@ namespace triton {
     /* ====== bvashr (shift with sign extension fill) */
 
 
-    BvashrNode::BvashrNode(AbstractNode* expr1, AbstractNode* expr2): AbstractNode(BVASHR_NODE, expr1->getContext()) {
-      this->addChild(expr1);
-      this->addChild(expr2);
-      this->init();
+    BvashrNode::BvashrNode(AstContext& ctxt):
+        AbstractNode(BVASHR_NODE, ctxt)
+    {}
+
+
+
+    std::shared_ptr<AbstractNode> BvashrNode::get(std::shared_ptr<AbstractNode> const& expr1, std::shared_ptr<AbstractNode> const& expr2) {
+      auto node = std::shared_ptr<BvashrNode>(new BvashrNode(expr1->getContext()));
+      node->addChild(expr1);
+      node->addChild(expr2);
+      node->init();
+      return node;
     }
 
 
@@ -316,13 +363,11 @@ namespace triton {
 
       /* Init children and spread information */
       for (triton::uint32 index = 0; index < this->children.size(); index++) {
-        this->children[index]->setParent(this);
         this->symbolized |= this->children[index]->isSymbolized();
       }
 
       /* Init parents */
-      for (std::set<AbstractNode*>::iterator it = this->parents.begin(); it != this->parents.end(); it++)
-        (*it)->init();
+      updateParents();
     }
 
 
@@ -338,10 +383,18 @@ namespace triton {
     /* ====== bvlshr (shift with zero filled) */
 
 
-    BvlshrNode::BvlshrNode(AbstractNode* expr1, AbstractNode* expr2): AbstractNode(BVLSHR_NODE, expr1->getContext()) {
-      this->addChild(expr1);
-      this->addChild(expr2);
-      this->init();
+    BvlshrNode::BvlshrNode(AstContext& ctxt):
+      AbstractNode(BVLSHR_NODE, ctxt)
+    {}
+
+
+
+    std::shared_ptr<AbstractNode> BvlshrNode::get(std::shared_ptr<AbstractNode> const& expr1, std::shared_ptr<AbstractNode> const& expr2) {
+      auto node = std::shared_ptr<BvlshrNode>(new BvlshrNode(expr1->getContext()));
+      node->addChild(expr1);
+      node->addChild(expr2);
+      node->init();
+      return node;
     }
 
 
@@ -358,13 +411,11 @@ namespace triton {
 
       /* Init children and spread information */
       for (triton::uint32 index = 0; index < this->children.size(); index++) {
-        this->children[index]->setParent(this);
         this->symbolized |= this->children[index]->isSymbolized();
       }
 
       /* Init parents */
-      for (std::set<AbstractNode*>::iterator it = this->parents.begin(); it != this->parents.end(); it++)
-        (*it)->init();
+      updateParents();
     }
 
 
@@ -380,10 +431,18 @@ namespace triton {
     /* ====== bvmul */
 
 
-    BvmulNode::BvmulNode(AbstractNode* expr1, AbstractNode* expr2): AbstractNode(BVMUL_NODE, expr1->getContext()) {
-      this->addChild(expr1);
-      this->addChild(expr2);
-      this->init();
+    BvmulNode::BvmulNode(AstContext& ctxt):
+        AbstractNode(BVMUL_NODE, ctxt)
+    {}
+
+
+
+    std::shared_ptr<AbstractNode> BvmulNode::get(std::shared_ptr<AbstractNode> const& expr1, std::shared_ptr<AbstractNode> const& expr2) {
+      auto node = std::shared_ptr<BvmulNode>(new BvmulNode(expr1->getContext()));
+      node->addChild(expr1);
+      node->addChild(expr2);
+      node->init();
+      return node;
     }
 
 
@@ -400,13 +459,11 @@ namespace triton {
 
       /* Init children and spread information */
       for (triton::uint32 index = 0; index < this->children.size(); index++) {
-        this->children[index]->setParent(this);
         this->symbolized |= this->children[index]->isSymbolized();
       }
 
       /* Init parents */
-      for (std::set<AbstractNode*>::iterator it = this->parents.begin(); it != this->parents.end(); it++)
-        (*it)->init();
+      updateParents();
     }
 
 
@@ -422,10 +479,18 @@ namespace triton {
     /* ====== bvnand */
 
 
-    BvnandNode::BvnandNode(AbstractNode* expr1, AbstractNode* expr2): AbstractNode(BVNAND_NODE, expr1->getContext()) {
-      this->addChild(expr1);
-      this->addChild(expr2);
-      this->init();
+    BvnandNode::BvnandNode(AstContext& ctxt):
+        AbstractNode(BVNAND_NODE,ctxt)
+    {}
+
+
+
+    std::shared_ptr<AbstractNode> BvnandNode::get(std::shared_ptr<AbstractNode> const& expr1, std::shared_ptr<AbstractNode> const& expr2) {
+      auto node = std::shared_ptr<BvnandNode>(new BvnandNode(expr1->getContext()));
+      node->addChild(expr1);
+      node->addChild(expr2);
+      node->init();
+      return node;
     }
 
 
@@ -442,13 +507,11 @@ namespace triton {
 
       /* Init children and spread information */
       for (triton::uint32 index = 0; index < this->children.size(); index++) {
-        this->children[index]->setParent(this);
         this->symbolized |= this->children[index]->isSymbolized();
       }
 
       /* Init parents */
-      for (std::set<AbstractNode*>::iterator it = this->parents.begin(); it != this->parents.end(); it++)
-        (*it)->init();
+      updateParents();
     }
 
 
@@ -464,9 +527,18 @@ namespace triton {
     /* ====== bvneg */
 
 
-    BvnegNode::BvnegNode(AbstractNode* expr): AbstractNode(BVNEG_NODE, expr->getContext()) {
-      this->addChild(expr);
-      this->init();
+    BvnegNode::BvnegNode(AstContext& ctxt):
+        AbstractNode(BVNEG_NODE, ctxt)
+
+    {}
+
+
+
+    std::shared_ptr<AbstractNode> BvnegNode::get(std::shared_ptr<AbstractNode> const& expr) {
+      auto node = std::shared_ptr<BvnegNode>(new BvnegNode(expr->getContext()));
+      node->addChild(expr);
+      node->init();
+      return node;
     }
 
 
@@ -480,13 +552,11 @@ namespace triton {
 
       /* Init children and spread information */
       for (triton::uint32 index = 0; index < this->children.size(); index++) {
-        this->children[index]->setParent(this);
         this->symbolized |= this->children[index]->isSymbolized();
       }
 
       /* Init parents */
-      for (std::set<AbstractNode*>::iterator it = this->parents.begin(); it != this->parents.end(); it++)
-        (*it)->init();
+      updateParents();
     }
 
 
@@ -502,10 +572,18 @@ namespace triton {
     /* ====== bvnor */
 
 
-    BvnorNode::BvnorNode(AbstractNode* expr1, AbstractNode* expr2): AbstractNode(BVNOR_NODE, expr1->getContext()) {
-      this->addChild(expr1);
-      this->addChild(expr2);
-      this->init();
+    BvnorNode::BvnorNode(AstContext& ctxt):
+      AbstractNode(BVNOR_NODE, ctxt)
+    {}
+
+
+
+    std::shared_ptr<AbstractNode> BvnorNode::get(std::shared_ptr<AbstractNode> const& expr1, std::shared_ptr<AbstractNode> const& expr2) {
+      auto node = std::shared_ptr<BvnorNode>(new BvnorNode(expr1->getContext()));
+      node->addChild(expr1);
+      node->addChild(expr2);
+      node->init();
+      return node;
     }
 
 
@@ -522,13 +600,11 @@ namespace triton {
 
       /* Init children and spread information */
       for (triton::uint32 index = 0; index < this->children.size(); index++) {
-        this->children[index]->setParent(this);
         this->symbolized |= this->children[index]->isSymbolized();
       }
 
       /* Init parents */
-      for (std::set<AbstractNode*>::iterator it = this->parents.begin(); it != this->parents.end(); it++)
-        (*it)->init();
+      updateParents();
     }
 
 
@@ -544,9 +620,17 @@ namespace triton {
     /* ====== bvnot */
 
 
-    BvnotNode::BvnotNode(AbstractNode* expr): AbstractNode(BVNOT_NODE, expr->getContext()) {
-      this->addChild(expr);
-      this->init();
+    BvnotNode::BvnotNode(AstContext& ctxt):
+      AbstractNode(BVNOT_NODE, ctxt)
+    {}
+
+
+
+    std::shared_ptr<AbstractNode> BvnotNode::get(std::shared_ptr<AbstractNode> const& expr) {
+      auto node = std::shared_ptr<BvnotNode>(new BvnotNode(expr->getContext()));
+      node->addChild(expr);
+      node->init();
+      return node;
     }
 
 
@@ -560,13 +644,11 @@ namespace triton {
 
       /* Init children and spread information */
       for (triton::uint32 index = 0; index < this->children.size(); index++) {
-        this->children[index]->setParent(this);
         this->symbolized |= this->children[index]->isSymbolized();
       }
 
       /* Init parents */
-      for (std::set<AbstractNode*>::iterator it = this->parents.begin(); it != this->parents.end(); it++)
-        (*it)->init();
+      updateParents();
     }
 
 
@@ -582,10 +664,18 @@ namespace triton {
     /* ====== bvor */
 
 
-    BvorNode::BvorNode(AbstractNode* expr1, AbstractNode* expr2): AbstractNode(BVOR_NODE, expr1->getContext()) {
-      this->addChild(expr1);
-      this->addChild(expr2);
-      this->init();
+    BvorNode::BvorNode(AstContext& ctxt):
+      AbstractNode(BVOR_NODE, ctxt)
+    {}
+
+
+
+    std::shared_ptr<AbstractNode> BvorNode::get(std::shared_ptr<AbstractNode> const& expr1, std::shared_ptr<AbstractNode> const& expr2) {
+      auto node = std::shared_ptr<BvorNode>(new BvorNode(expr1->getContext()));
+      node->addChild(expr1);
+      node->addChild(expr2);
+      node->init();
+      return node;
     }
 
 
@@ -602,13 +692,11 @@ namespace triton {
 
       /* Init children and spread information */
       for (triton::uint32 index = 0; index < this->children.size(); index++) {
-        this->children[index]->setParent(this);
         this->symbolized |= this->children[index]->isSymbolized();
       }
 
       /* Init parents */
-      for (std::set<AbstractNode*>::iterator it = this->parents.begin(); it != this->parents.end(); it++)
-        (*it)->init();
+      updateParents();
     }
 
 
@@ -624,14 +712,22 @@ namespace triton {
     /* ====== bvrol */
 
 
-    BvrolNode::BvrolNode(triton::uint32 rot, AbstractNode* expr): BvrolNode(expr->getContext().decimal(rot), expr) {
+    BvrolNode::BvrolNode(AstContext& ctxt):
+      AbstractNode(BVROL_NODE, ctxt)
+    {}
+
+
+    std::shared_ptr<AbstractNode> BvrolNode::get(triton::uint32 rot, std::shared_ptr<AbstractNode> const& expr) {
+      return BvrolNode::get(expr->getContext().decimal(rot), expr);
     }
 
 
-    BvrolNode::BvrolNode(AbstractNode* rot, AbstractNode* expr): AbstractNode(BVROL_NODE, rot->getContext()) {
-      this->addChild(rot);
-      this->addChild(expr);
-      this->init();
+    std::shared_ptr<AbstractNode> BvrolNode::get(std::shared_ptr<AbstractNode> const& rot, std::shared_ptr<AbstractNode> const& expr) {
+      auto node = std::shared_ptr<BvrolNode>(new BvrolNode(rot->getContext()));
+      node->addChild(rot);
+      node->addChild(expr);
+      node->init();
+      return node;
     }
 
 
@@ -645,7 +741,7 @@ namespace triton {
       if (this->children[0]->getKind() != DECIMAL_NODE)
         throw triton::exceptions::Ast("BvrolNode::init(): rot must be a DECIMAL_NODE.");
 
-      rot   = reinterpret_cast<DecimalNode*>(this->children[0])->getValue().convert_to<triton::uint32>();
+      rot   = reinterpret_cast<DecimalNode*>(this->children[0].get())->getValue().convert_to<triton::uint32>();
       value = this->children[1]->evaluate();
 
       /* Init attributes */
@@ -655,13 +751,11 @@ namespace triton {
 
       /* Init children and spread information */
       for (triton::uint32 index = 0; index < this->children.size(); index++) {
-        this->children[index]->setParent(this);
         this->symbolized |= this->children[index]->isSymbolized();
       }
 
       /* Init parents */
-      for (std::set<AbstractNode*>::iterator it = this->parents.begin(); it != this->parents.end(); it++)
-        (*it)->init();
+      updateParents();
     }
 
 
@@ -677,14 +771,22 @@ namespace triton {
     /* ====== bvror */
 
 
-    BvrorNode::BvrorNode(triton::uint32 rot, AbstractNode* expr): BvrorNode(expr->getContext().decimal(rot), expr) {
+    BvrorNode::BvrorNode(AstContext& ctxt):
+      AbstractNode(BVROR_NODE, ctxt)
+    {
     }
 
 
-    BvrorNode::BvrorNode(AbstractNode* rot, AbstractNode* expr): AbstractNode(BVROR_NODE, expr->getContext()) {
-      this->addChild(rot);
-      this->addChild(expr);
-      this->init();
+    std::shared_ptr<AbstractNode> BvrorNode::get(triton::uint32 rot, std::shared_ptr<AbstractNode> const& expr) {
+      return BvrorNode::get(expr->getContext().decimal(rot), expr);
+    }
+
+    std::shared_ptr<AbstractNode> BvrorNode::get(std::shared_ptr<AbstractNode> const& rot, std::shared_ptr<AbstractNode> const& expr) {
+      auto node = std::shared_ptr<BvrorNode>(new BvrorNode(rot->getContext()));
+      node->addChild(rot);
+      node->addChild(expr);
+      node->init();
+      return node;
     }
 
 
@@ -698,7 +800,7 @@ namespace triton {
       if (this->children[0]->getKind() != DECIMAL_NODE)
         throw triton::exceptions::Ast("BvrorNode::init(): rot must be a DECIMAL_NODE.");
 
-      rot   = reinterpret_cast<DecimalNode*>(this->children[0])->getValue().convert_to<triton::uint32>();
+      rot   = reinterpret_cast<DecimalNode*>(this->children[0].get())->getValue().convert_to<triton::uint32>();
       value = this->children[1]->evaluate();
 
       /* Init attributes */
@@ -708,13 +810,11 @@ namespace triton {
 
       /* Init children and spread information */
       for (triton::uint32 index = 0; index < this->children.size(); index++) {
-        this->children[index]->setParent(this);
         this->symbolized |= this->children[index]->isSymbolized();
       }
 
       /* Init parents */
-      for (std::set<AbstractNode*>::iterator it = this->parents.begin(); it != this->parents.end(); it++)
-        (*it)->init();
+      updateParents();
     }
 
 
@@ -730,10 +830,18 @@ namespace triton {
     /* ====== bvsdiv */
 
 
-    BvsdivNode::BvsdivNode(AbstractNode* expr1, AbstractNode* expr2): AbstractNode(BVSDIV_NODE, expr1->getContext()) {
-      this->addChild(expr1);
-      this->addChild(expr2);
-      this->init();
+    BvsdivNode::BvsdivNode(AstContext& ctxt):
+      AbstractNode(BVSDIV_NODE, ctxt)
+    {}
+
+
+
+    std::shared_ptr<AbstractNode> BvsdivNode::get(std::shared_ptr<AbstractNode> const& expr1, std::shared_ptr<AbstractNode> const& expr2) {
+      auto node = std::shared_ptr<BvsdivNode>(new BvsdivNode(expr1->getContext()));
+      node->addChild(expr1);
+      node->addChild(expr2);
+      node->init();
+      return node;
     }
 
 
@@ -748,8 +856,8 @@ namespace triton {
         throw triton::exceptions::Ast("BvsdivNode::init(): Must take two nodes of same size.");
 
       /* Sign extend */
-      op1Signed = triton::ast::modularSignExtend(this->children[0]);
-      op2Signed = triton::ast::modularSignExtend(this->children[1]);
+      op1Signed = triton::ast::modularSignExtend(this->children[0].get());
+      op2Signed = triton::ast::modularSignExtend(this->children[1].get());
 
       /* Init attributes */
       this->size = this->children[0]->getBitvectorSize();
@@ -763,13 +871,11 @@ namespace triton {
 
       /* Init children and spread information */
       for (triton::uint32 index = 0; index < this->children.size(); index++) {
-        this->children[index]->setParent(this);
         this->symbolized |= this->children[index]->isSymbolized();
       }
 
       /* Init parents */
-      for (std::set<AbstractNode*>::iterator it = this->parents.begin(); it != this->parents.end(); it++)
-        (*it)->init();
+      updateParents();
     }
 
 
@@ -785,10 +891,18 @@ namespace triton {
     /* ====== bvsge */
 
 
-    BvsgeNode::BvsgeNode(AbstractNode* expr1, AbstractNode* expr2): AbstractNode(BVSGE_NODE, expr1->getContext()) {
-      this->addChild(expr1);
-      this->addChild(expr2);
-      this->init();
+    BvsgeNode::BvsgeNode(AstContext& ctxt):
+      AbstractNode(BVSGE_NODE, ctxt)
+    {}
+
+
+
+    std::shared_ptr<AbstractNode> BvsgeNode::get(std::shared_ptr<AbstractNode> const& expr1, std::shared_ptr<AbstractNode> const& expr2) {
+      auto node = std::shared_ptr<BvsgeNode>(new BvsgeNode(expr1->getContext()));
+      node->addChild(expr1);
+      node->addChild(expr2);
+      node->init();
+      return node;
     }
 
 
@@ -803,8 +917,8 @@ namespace triton {
         throw triton::exceptions::Ast("BvsgeNode::init(): Must take two nodes of same size.");
 
       /* Sign extend */
-      op1Signed = triton::ast::modularSignExtend(this->children[0]);
-      op2Signed = triton::ast::modularSignExtend(this->children[1]);
+      op1Signed = triton::ast::modularSignExtend(this->children[0].get());
+      op2Signed = triton::ast::modularSignExtend(this->children[1].get());
 
       /* Init attributes */
       this->size = 1;
@@ -812,13 +926,11 @@ namespace triton {
 
       /* Init children and spread information */
       for (triton::uint32 index = 0; index < this->children.size(); index++) {
-        this->children[index]->setParent(this);
         this->symbolized |= this->children[index]->isSymbolized();
       }
 
       /* Init parents */
-      for (std::set<AbstractNode*>::iterator it = this->parents.begin(); it != this->parents.end(); it++)
-        (*it)->init();
+      updateParents();
     }
 
 
@@ -834,10 +946,18 @@ namespace triton {
     /* ====== bvsgt */
 
 
-    BvsgtNode::BvsgtNode(AbstractNode* expr1, AbstractNode* expr2): AbstractNode(BVSGT_NODE, expr1->getContext()) {
-      this->addChild(expr1);
-      this->addChild(expr2);
-      this->init();
+    BvsgtNode::BvsgtNode(AstContext& ctxt):
+      AbstractNode(BVSGT_NODE, ctxt)
+    {}
+
+
+
+    std::shared_ptr<AbstractNode> BvsgtNode::get(std::shared_ptr<AbstractNode> const& expr1, std::shared_ptr<AbstractNode> const& expr2) {
+      auto node = std::shared_ptr<BvsgtNode>(new BvsgtNode(expr1->getContext()));
+      node->addChild(expr1);
+      node->addChild(expr2);
+      node->init();
+      return node;
     }
 
 
@@ -852,8 +972,8 @@ namespace triton {
         throw triton::exceptions::Ast("BvsgtNode::init(): Must take two nodes of same size.");
 
       /* Sign extend */
-      op1Signed = triton::ast::modularSignExtend(this->children[0]);
-      op2Signed = triton::ast::modularSignExtend(this->children[1]);
+      op1Signed = triton::ast::modularSignExtend(this->children[0].get());
+      op2Signed = triton::ast::modularSignExtend(this->children[1].get());
 
       /* Init attributes */
       this->size = 1;
@@ -861,13 +981,11 @@ namespace triton {
 
       /* Init children and spread information */
       for (triton::uint32 index = 0; index < this->children.size(); index++) {
-        this->children[index]->setParent(this);
         this->symbolized |= this->children[index]->isSymbolized();
       }
 
       /* Init parents */
-      for (std::set<AbstractNode*>::iterator it = this->parents.begin(); it != this->parents.end(); it++)
-        (*it)->init();
+      updateParents();
     }
 
 
@@ -883,10 +1001,17 @@ namespace triton {
     /* ====== bvshl */
 
 
-    BvshlNode::BvshlNode(AbstractNode* expr1, AbstractNode* expr2): AbstractNode(BVSHL_NODE, expr1->getContext()) {
-      this->addChild(expr1);
-      this->addChild(expr2);
-      this->init();
+    BvshlNode::BvshlNode(AstContext& ctxt): AbstractNode(BVSHL_NODE, ctxt)
+    {}
+
+
+
+    std::shared_ptr<AbstractNode> BvshlNode::get(std::shared_ptr<AbstractNode> const& expr1, std::shared_ptr<AbstractNode> const& expr2) {
+      auto node = std::shared_ptr<BvshlNode>(new BvshlNode(expr1->getContext()));
+      node->addChild(expr1);
+      node->addChild(expr2);
+      node->init();
+      return node;
     }
 
 
@@ -903,13 +1028,11 @@ namespace triton {
 
       /* Init children and spread information */
       for (triton::uint32 index = 0; index < this->children.size(); index++) {
-        this->children[index]->setParent(this);
         this->symbolized |= this->children[index]->isSymbolized();
       }
 
       /* Init parents */
-      for (std::set<AbstractNode*>::iterator it = this->parents.begin(); it != this->parents.end(); it++)
-        (*it)->init();
+      updateParents();
     }
 
 
@@ -925,10 +1048,18 @@ namespace triton {
     /* ====== bvsle */
 
 
-    BvsleNode::BvsleNode(AbstractNode* expr1, AbstractNode* expr2): AbstractNode(BVSLE_NODE, expr1->getContext()) {
-      this->addChild(expr1);
-      this->addChild(expr2);
-      this->init();
+    BvsleNode::BvsleNode(AstContext& ctxt):
+      AbstractNode(BVSLE_NODE, ctxt)
+    {}
+
+
+
+    std::shared_ptr<AbstractNode> BvsleNode::get(std::shared_ptr<AbstractNode> const& expr1, std::shared_ptr<AbstractNode> const& expr2) {
+      auto node = std::shared_ptr<BvsleNode>(new BvsleNode(expr1->getContext()));
+      node->addChild(expr1);
+      node->addChild(expr2);
+      node->init();
+      return node;
     }
 
     void BvsleNode::init(void) {
@@ -942,8 +1073,8 @@ namespace triton {
         throw triton::exceptions::Ast("BvsleNode::init(): Must take two nodes of same size.");
 
       /* Sign extend */
-      op1Signed = triton::ast::modularSignExtend(this->children[0]);
-      op2Signed = triton::ast::modularSignExtend(this->children[1]);
+      op1Signed = triton::ast::modularSignExtend(this->children[0].get());
+      op2Signed = triton::ast::modularSignExtend(this->children[1].get());
 
       /* Init attributes */
       this->size = 1;
@@ -951,13 +1082,11 @@ namespace triton {
 
       /* Init children and spread information */
       for (triton::uint32 index = 0; index < this->children.size(); index++) {
-        this->children[index]->setParent(this);
         this->symbolized |= this->children[index]->isSymbolized();
       }
 
       /* Init parents */
-      for (std::set<AbstractNode*>::iterator it = this->parents.begin(); it != this->parents.end(); it++)
-        (*it)->init();
+      updateParents();
     }
 
 
@@ -973,10 +1102,18 @@ namespace triton {
     /* ====== bvslt */
 
 
-    BvsltNode::BvsltNode(AbstractNode* expr1, AbstractNode* expr2): AbstractNode(BVSLT_NODE, expr1->getContext()) {
-      this->addChild(expr1);
-      this->addChild(expr2);
-      this->init();
+    BvsltNode::BvsltNode(AstContext& ctxt): 
+      AbstractNode(BVSLT_NODE, ctxt)
+    {}
+
+
+
+    std::shared_ptr<AbstractNode> BvsltNode::get(std::shared_ptr<AbstractNode> const& expr1, std::shared_ptr<AbstractNode> const& expr2) {
+      auto node = std::shared_ptr<BvsltNode>(new BvsltNode(expr1->getContext()));
+      node->addChild(expr1);
+      node->addChild(expr2);
+      node->init();
+      return node;
     }
 
 
@@ -991,8 +1128,8 @@ namespace triton {
         throw triton::exceptions::Ast("BvsltNode::init(): Must take two nodes of same size.");
 
       /* Sign extend */
-      op1Signed = triton::ast::modularSignExtend(this->children[0]);
-      op2Signed = triton::ast::modularSignExtend(this->children[1]);
+      op1Signed = triton::ast::modularSignExtend(this->children[0].get());
+      op2Signed = triton::ast::modularSignExtend(this->children[1].get());
 
       /* Init attributes */
       this->size = 1;
@@ -1000,13 +1137,11 @@ namespace triton {
 
       /* Init children and spread information */
       for (triton::uint32 index = 0; index < this->children.size(); index++) {
-        this->children[index]->setParent(this);
         this->symbolized |= this->children[index]->isSymbolized();
       }
 
       /* Init parents */
-      for (std::set<AbstractNode*>::iterator it = this->parents.begin(); it != this->parents.end(); it++)
-        (*it)->init();
+      updateParents();
     }
 
 
@@ -1022,10 +1157,18 @@ namespace triton {
     /* ====== bvsmod - 2's complement signed remainder (sign follows divisor) */
 
 
-    BvsmodNode::BvsmodNode(AbstractNode* expr1, AbstractNode* expr2): AbstractNode(BVSMOD_NODE, expr1->getContext()) {
-      this->addChild(expr1);
-      this->addChild(expr2);
-      this->init();
+    BvsmodNode::BvsmodNode(AstContext& ctxt):
+      AbstractNode(BVSMOD_NODE, ctxt)
+    {}
+
+
+
+    std::shared_ptr<AbstractNode> BvsmodNode::get(std::shared_ptr<AbstractNode> const& expr1, std::shared_ptr<AbstractNode> const& expr2) {
+      auto node = std::shared_ptr<BvsmodNode>(new BvsmodNode(expr1->getContext()));
+      node->addChild(expr1);
+      node->addChild(expr2);
+      node->init();
+      return node;
     }
 
 
@@ -1040,8 +1183,8 @@ namespace triton {
         throw triton::exceptions::Ast("BvsmodNode::init(): Must take two nodes of same size.");
 
       /* Sign extend */
-      op1Signed = triton::ast::modularSignExtend(this->children[0]);
-      op2Signed = triton::ast::modularSignExtend(this->children[1]);
+      op1Signed = triton::ast::modularSignExtend(this->children[0].get());
+      op2Signed = triton::ast::modularSignExtend(this->children[1].get());
 
       /* Init attributes */
       this->size = this->children[0]->getBitvectorSize();
@@ -1053,13 +1196,11 @@ namespace triton {
 
       /* Init children and spread information */
       for (triton::uint32 index = 0; index < this->children.size(); index++) {
-        this->children[index]->setParent(this);
         this->symbolized |= this->children[index]->isSymbolized();
       }
 
       /* Init parents */
-      for (std::set<AbstractNode*>::iterator it = this->parents.begin(); it != this->parents.end(); it++)
-        (*it)->init();
+      updateParents();
     }
 
 
@@ -1075,10 +1216,17 @@ namespace triton {
     /* ====== bvsrem - 2's complement signed remainder (sign follows dividend) */
 
 
-    BvsremNode::BvsremNode(AbstractNode* expr1, AbstractNode* expr2): AbstractNode(BVSREM_NODE, expr1->getContext()) {
-      this->addChild(expr1);
-      this->addChild(expr2);
-      this->init();
+    BvsremNode::BvsremNode(AstContext& ctxt): AbstractNode(BVSREM_NODE, ctxt)
+    {}
+
+
+
+    std::shared_ptr<AbstractNode> BvsremNode::get(std::shared_ptr<AbstractNode> const& expr1, std::shared_ptr<AbstractNode> const& expr2) {
+      auto node = std::shared_ptr<BvsremNode>(new BvsremNode(expr1->getContext()));
+      node->addChild(expr1);
+      node->addChild(expr2);
+      node->init();
+      return node;
     }
 
 
@@ -1093,8 +1241,8 @@ namespace triton {
         throw triton::exceptions::Ast("BvsremNode::init(): Must take two nodes of same size.");
 
       /* Sign extend */
-      op1Signed = triton::ast::modularSignExtend(this->children[0]);
-      op2Signed = triton::ast::modularSignExtend(this->children[1]);
+      op1Signed = triton::ast::modularSignExtend(this->children[0].get());
+      op2Signed = triton::ast::modularSignExtend(this->children[1].get());
 
       /* Init attributes */
       this->size = this->children[0]->getBitvectorSize();
@@ -1106,13 +1254,11 @@ namespace triton {
 
       /* Init children and spread information */
       for (triton::uint32 index = 0; index < this->children.size(); index++) {
-        this->children[index]->setParent(this);
         this->symbolized |= this->children[index]->isSymbolized();
       }
 
       /* Init parents */
-      for (std::set<AbstractNode*>::iterator it = this->parents.begin(); it != this->parents.end(); it++)
-        (*it)->init();
+      updateParents();
     }
 
 
@@ -1128,10 +1274,18 @@ namespace triton {
     /* ====== bvsub */
 
 
-    BvsubNode::BvsubNode(AbstractNode* expr1, AbstractNode* expr2): AbstractNode(BVSUB_NODE, expr1->getContext()) {
-      this->addChild(expr1);
-      this->addChild(expr2);
-      this->init();
+    BvsubNode::BvsubNode(AstContext& ctxt):
+      AbstractNode(BVSUB_NODE, ctxt)
+    {}
+
+
+
+    std::shared_ptr<AbstractNode> BvsubNode::get(std::shared_ptr<AbstractNode> const& expr1, std::shared_ptr<AbstractNode> const& expr2) {
+      auto node = std::shared_ptr<BvsubNode>(new BvsubNode(expr1->getContext()));
+      node->addChild(expr1);
+      node->addChild(expr2);
+      node->init();
+      return node;
     }
 
 
@@ -1148,13 +1302,11 @@ namespace triton {
 
       /* Init children and spread information */
       for (triton::uint32 index = 0; index < this->children.size(); index++) {
-        this->children[index]->setParent(this);
         this->symbolized |= this->children[index]->isSymbolized();
       }
 
       /* Init parents */
-      for (std::set<AbstractNode*>::iterator it = this->parents.begin(); it != this->parents.end(); it++)
-        (*it)->init();
+      updateParents();
     }
 
 
@@ -1170,10 +1322,18 @@ namespace triton {
     /* ====== bvudiv */
 
 
-    BvudivNode::BvudivNode(AbstractNode* expr1, AbstractNode* expr2): AbstractNode(BVUDIV_NODE, expr1->getContext()) {
-      this->addChild(expr1);
-      this->addChild(expr2);
-      this->init();
+    BvudivNode::BvudivNode(AstContext& ctxt):
+      AbstractNode(BVUDIV_NODE, ctxt)
+    {}
+
+
+
+    std::shared_ptr<AbstractNode> BvudivNode::get(std::shared_ptr<AbstractNode> const& expr1, std::shared_ptr<AbstractNode> const& expr2) {
+      auto node = std::shared_ptr<BvudivNode>(new BvudivNode(expr1->getContext()));
+      node->addChild(expr1);
+      node->addChild(expr2);
+      node->init();
+      return node;
     }
 
 
@@ -1194,13 +1354,11 @@ namespace triton {
 
       /* Init children and spread information */
       for (triton::uint32 index = 0; index < this->children.size(); index++) {
-        this->children[index]->setParent(this);
         this->symbolized |= this->children[index]->isSymbolized();
       }
 
       /* Init parents */
-      for (std::set<AbstractNode*>::iterator it = this->parents.begin(); it != this->parents.end(); it++)
-        (*it)->init();
+      updateParents();
     }
 
 
@@ -1216,10 +1374,18 @@ namespace triton {
     /* ====== bvuge */
 
 
-    BvugeNode::BvugeNode(AbstractNode* expr1, AbstractNode* expr2): AbstractNode(BVUGE_NODE, expr1->getContext()) {
-      this->addChild(expr1);
-      this->addChild(expr2);
-      this->init();
+    BvugeNode::BvugeNode(AstContext& ctxt):
+      AbstractNode(BVUGE_NODE, ctxt)
+    {}
+
+
+
+    std::shared_ptr<AbstractNode> BvugeNode::get(std::shared_ptr<AbstractNode> const& expr1, std::shared_ptr<AbstractNode> const& expr2) {
+      auto node = std::shared_ptr<BvugeNode>(new BvugeNode(expr1->getContext()));
+      node->addChild(expr1);
+      node->addChild(expr2);
+      node->init();
+      return node;
     }
 
 
@@ -1236,13 +1402,11 @@ namespace triton {
 
       /* Init children and spread information */
       for (triton::uint32 index = 0; index < this->children.size(); index++) {
-        this->children[index]->setParent(this);
         this->symbolized |= this->children[index]->isSymbolized();
       }
 
       /* Init parents */
-      for (std::set<AbstractNode*>::iterator it = this->parents.begin(); it != this->parents.end(); it++)
-        (*it)->init();
+      updateParents();
     }
 
 
@@ -1258,10 +1422,18 @@ namespace triton {
     /* ====== bvugt */
 
 
-    BvugtNode::BvugtNode(AbstractNode* expr1, AbstractNode* expr2): AbstractNode(BVUGT_NODE, expr1->getContext()) {
-      this->addChild(expr1);
-      this->addChild(expr2);
-      this->init();
+    BvugtNode::BvugtNode(AstContext& ctxt):
+      AbstractNode(BVUGT_NODE, ctxt)
+    {}
+
+
+
+    std::shared_ptr<AbstractNode> BvugtNode::get(std::shared_ptr<AbstractNode> const& expr1, std::shared_ptr<AbstractNode> const& expr2) {
+      auto node = std::shared_ptr<BvugtNode>(new BvugtNode(expr1->getContext()));
+      node->addChild(expr1);
+      node->addChild(expr2);
+      node->init();
+      return node;
     }
 
 
@@ -1278,13 +1450,11 @@ namespace triton {
 
       /* Init children and spread information */
       for (triton::uint32 index = 0; index < this->children.size(); index++) {
-        this->children[index]->setParent(this);
         this->symbolized |= this->children[index]->isSymbolized();
       }
 
       /* Init parents */
-      for (std::set<AbstractNode*>::iterator it = this->parents.begin(); it != this->parents.end(); it++)
-        (*it)->init();
+      updateParents();
     }
 
 
@@ -1300,10 +1470,18 @@ namespace triton {
     /* ====== bvule */
 
 
-    BvuleNode::BvuleNode(AbstractNode* expr1, AbstractNode* expr2): AbstractNode(BVULE_NODE, expr1->getContext()) {
-      this->addChild(expr1);
-      this->addChild(expr2);
-      this->init();
+    BvuleNode::BvuleNode(AstContext& ctxt):
+      AbstractNode(BVULE_NODE, ctxt)
+    {}
+
+
+
+    std::shared_ptr<AbstractNode> BvuleNode::get(std::shared_ptr<AbstractNode> const& expr1, std::shared_ptr<AbstractNode> const& expr2) {
+      auto node = std::shared_ptr<BvuleNode>(new BvuleNode(expr1->getContext()));
+      node->addChild(expr1);
+      node->addChild(expr2);
+      node->init();
+      return node;
     }
 
 
@@ -1320,13 +1498,11 @@ namespace triton {
 
       /* Init children and spread information */
       for (triton::uint32 index = 0; index < this->children.size(); index++) {
-        this->children[index]->setParent(this);
         this->symbolized |= this->children[index]->isSymbolized();
       }
 
       /* Init parents */
-      for (std::set<AbstractNode*>::iterator it = this->parents.begin(); it != this->parents.end(); it++)
-        (*it)->init();
+      updateParents();
     }
 
 
@@ -1342,10 +1518,18 @@ namespace triton {
     /* ====== bvult */
 
 
-    BvultNode::BvultNode(AbstractNode* expr1, AbstractNode* expr2): AbstractNode(BVULT_NODE, expr1->getContext()) {
-      this->addChild(expr1);
-      this->addChild(expr2);
-      this->init();
+    BvultNode::BvultNode(AstContext& ctxt):
+      AbstractNode(BVULT_NODE, ctxt)
+    {}
+
+
+
+    std::shared_ptr<AbstractNode> BvultNode::get(std::shared_ptr<AbstractNode> const& expr1, std::shared_ptr<AbstractNode> const& expr2) {
+      auto node = std::shared_ptr<BvultNode>(new BvultNode(expr1->getContext()));
+      node->addChild(expr1);
+      node->addChild(expr2);
+      node->init();
+      return node;
     }
 
 
@@ -1362,13 +1546,11 @@ namespace triton {
 
       /* Init children and spread information */
       for (triton::uint32 index = 0; index < this->children.size(); index++) {
-        this->children[index]->setParent(this);
         this->symbolized |= this->children[index]->isSymbolized();
       }
 
       /* Init parents */
-      for (std::set<AbstractNode*>::iterator it = this->parents.begin(); it != this->parents.end(); it++)
-        (*it)->init();
+      updateParents();
     }
 
 
@@ -1384,10 +1566,18 @@ namespace triton {
     /* ====== bvurem */
 
 
-    BvuremNode::BvuremNode(AbstractNode* expr1, AbstractNode* expr2): AbstractNode(BVUREM_NODE, expr1->getContext()) {
-      this->addChild(expr1);
-      this->addChild(expr2);
-      this->init();
+    BvuremNode::BvuremNode(AstContext& ctxt):
+      AbstractNode(BVUREM_NODE, ctxt)
+    {}
+
+
+
+    std::shared_ptr<AbstractNode> BvuremNode::get(std::shared_ptr<AbstractNode> const& expr1, std::shared_ptr<AbstractNode> const& expr2) {
+      auto node = std::shared_ptr<BvuremNode>(new BvuremNode(expr1->getContext()));
+      node->addChild(expr1);
+      node->addChild(expr2);
+      node->init();
+      return node;
     }
 
 
@@ -1408,13 +1598,11 @@ namespace triton {
 
       /* Init children and spread information */
       for (triton::uint32 index = 0; index < this->children.size(); index++) {
-        this->children[index]->setParent(this);
         this->symbolized |= this->children[index]->isSymbolized();
       }
 
       /* Init parents */
-      for (std::set<AbstractNode*>::iterator it = this->parents.begin(); it != this->parents.end(); it++)
-        (*it)->init();
+      updateParents();
     }
 
 
@@ -1430,10 +1618,18 @@ namespace triton {
     /* ====== bvxnor */
 
 
-    BvxnorNode::BvxnorNode(AbstractNode* expr1, AbstractNode* expr2): AbstractNode(BVXNOR_NODE, expr1->getContext()) {
-      this->addChild(expr1);
-      this->addChild(expr2);
-      this->init();
+    BvxnorNode::BvxnorNode(AstContext& ctxt):
+      AbstractNode(BVXNOR_NODE, ctxt)
+    {}
+
+
+
+    std::shared_ptr<AbstractNode> BvxnorNode::get(std::shared_ptr<AbstractNode> const& expr1, std::shared_ptr<AbstractNode> const& expr2) {
+      auto node = std::shared_ptr<BvxnorNode>(new BvxnorNode(expr1->getContext()));
+      node->addChild(expr1);
+      node->addChild(expr2);
+      node->init();
+      return node;
     }
 
 
@@ -1450,13 +1646,11 @@ namespace triton {
 
       /* Init children and spread information */
       for (triton::uint32 index = 0; index < this->children.size(); index++) {
-        this->children[index]->setParent(this);
         this->symbolized |= this->children[index]->isSymbolized();
       }
 
       /* Init parents */
-      for (std::set<AbstractNode*>::iterator it = this->parents.begin(); it != this->parents.end(); it++)
-        (*it)->init();
+      updateParents();
     }
 
 
@@ -1472,10 +1666,18 @@ namespace triton {
     /* ====== bvxor */
 
 
-    BvxorNode::BvxorNode(AbstractNode* expr1, AbstractNode* expr2): AbstractNode(BVXOR_NODE, expr1->getContext()) {
-      this->addChild(expr1);
-      this->addChild(expr2);
-      this->init();
+    BvxorNode::BvxorNode(AstContext& ctxt):
+      AbstractNode(BVXOR_NODE, ctxt)
+    {}
+
+
+
+    std::shared_ptr<AbstractNode> BvxorNode::get(std::shared_ptr<AbstractNode> const& expr1, std::shared_ptr<AbstractNode> const& expr2) {
+      auto node = std::shared_ptr<BvxorNode>(new BvxorNode(expr1->getContext()));
+      node->addChild(expr1);
+      node->addChild(expr2);
+      node->init();
+      return node;
     }
 
 
@@ -1492,13 +1694,11 @@ namespace triton {
 
       /* Init children and spread information */
       for (triton::uint32 index = 0; index < this->children.size(); index++) {
-        this->children[index]->setParent(this);
         this->symbolized |= this->children[index]->isSymbolized();
       }
 
       /* Init parents */
-      for (std::set<AbstractNode*>::iterator it = this->parents.begin(); it != this->parents.end(); it++)
-        (*it)->init();
+      updateParents();
     }
 
 
@@ -1514,10 +1714,18 @@ namespace triton {
     /* ====== bv */
 
 
-    BvNode::BvNode(triton::uint512 value, triton::uint32 size, AstContext& ctxt): AbstractNode(BV_NODE, ctxt) {
-      this->addChild(ctxt.decimal(value));
-      this->addChild(ctxt.decimal(size));
-      this->init();
+    BvNode::BvNode(AstContext& ctxt):
+      AbstractNode(BV_NODE, ctxt)
+    {}
+
+
+
+    std::shared_ptr<AbstractNode> BvNode::get(triton::uint512 value, triton::uint32 size, AstContext& ctxt) {
+      auto node = std::shared_ptr<BvNode>(new BvNode(ctxt));
+      node->addChild(ctxt.decimal(value));
+      node->addChild(ctxt.decimal(size));
+      node->init();
+      return node;
     }
 
 
@@ -1531,8 +1739,8 @@ namespace triton {
       if (this->children[0]->getKind() != DECIMAL_NODE || this->children[1]->getKind() != DECIMAL_NODE)
         throw triton::exceptions::Ast("BvNode::init(): Size and value must be a DECIMAL_NODE.");
 
-      value = reinterpret_cast<DecimalNode*>(this->children[0])->getValue();
-      size  = reinterpret_cast<DecimalNode*>(this->children[1])->getValue().convert_to<triton::uint32>();
+      value = reinterpret_cast<DecimalNode*>(this->children[0].get())->getValue();
+      size  = reinterpret_cast<DecimalNode*>(this->children[1].get())->getValue().convert_to<triton::uint32>();
 
       if (!size)
         throw triton::exceptions::Ast("BvNode::init(): Size connot be equal to zero.");
@@ -1546,13 +1754,11 @@ namespace triton {
 
       /* Init children and spread information */
       for (triton::uint32 index = 0; index < this->children.size(); index++) {
-        this->children[index]->setParent(this);
         this->symbolized |= this->children[index]->isSymbolized();
       }
 
       /* Init parents */
-      for (std::set<AbstractNode*>::iterator it = this->parents.begin(); it != this->parents.end(); it++)
-        (*it)->init();
+      updateParents();
     }
 
 
@@ -1568,20 +1774,29 @@ namespace triton {
     /* ====== concat */
 
 
-    ConcatNode::ConcatNode(AbstractNode* expr1, AbstractNode* expr2): AbstractNode(CONCAT_NODE, expr1->getContext()) {
-      this->addChild(expr1);
-      this->addChild(expr2);
-      this->init();
+    ConcatNode::ConcatNode(AstContext& ctxt):
+      AbstractNode(CONCAT_NODE, ctxt)
+    {}
+
+
+
+    std::shared_ptr<AbstractNode> ConcatNode::get(std::shared_ptr<AbstractNode> const& expr1, std::shared_ptr<AbstractNode> const& expr2) {
+      auto node = std::shared_ptr<ConcatNode>(new ConcatNode(expr1->getContext()));
+      node->addChild(expr1);
+      node->addChild(expr2);
+      node->init();
+      return node;
     }
 
-
-    template ConcatNode::ConcatNode(const std::vector<AbstractNode*>& exprs, AstContext& ctxt);
-    template ConcatNode::ConcatNode(const std::list<AbstractNode*>& exprs, AstContext& ctxt);
-    template <typename T>
-    ConcatNode::ConcatNode(const T& exprs, AstContext& ctxt): AbstractNode(CONCAT_NODE, ctxt) {
-      for (AbstractNode* expr : exprs)
-        this->addChild(expr);
-      this->init();
+    template std::shared_ptr<AbstractNode> ConcatNode::get(const std::vector<std::shared_ptr<AbstractNode>>& exprs, AstContext& ctxt);
+    template std::shared_ptr<AbstractNode> ConcatNode::get(const std::list<std::shared_ptr<AbstractNode>>& exprs, AstContext& ctxt);
+    template <class T>
+    std::shared_ptr<AbstractNode> ConcatNode::get(T const& exprs, AstContext& ctxt) {
+      auto node = std::shared_ptr<ConcatNode>(new ConcatNode(ctxt));
+      for (auto expr : exprs)
+        node->addChild(expr);
+      node->init();
+      return node;
     }
 
 
@@ -1604,13 +1819,11 @@ namespace triton {
 
       /* Init children and spread information */
       for (triton::uint32 index = 0; index < this->children.size(); index++) {
-        this->children[index]->setParent(this);
         this->symbolized |= this->children[index]->isSymbolized();
       }
 
       /* Init parents */
-      for (std::set<AbstractNode*>::iterator it = this->parents.begin(); it != this->parents.end(); it++)
-        (*it)->init();
+      updateParents();
     }
 
 
@@ -1626,9 +1839,17 @@ namespace triton {
     /* ====== Decimal node */
 
 
-    DecimalNode::DecimalNode(triton::uint512 value, AstContext& ctxt): AbstractNode(DECIMAL_NODE, ctxt) {
-      this->value = value;
-      this->init();
+    DecimalNode::DecimalNode(AstContext& ctxt):
+      AbstractNode(DECIMAL_NODE, ctxt)
+    {}
+
+
+
+    std::shared_ptr<AbstractNode> DecimalNode::get(triton::uint512 value, AstContext& ctxt) {
+      auto node = std::shared_ptr<DecimalNode>(new DecimalNode(ctxt));
+      node->value = value;
+      node->init();
+      return node;
     }
 
 
@@ -1639,8 +1860,7 @@ namespace triton {
       this->symbolized  = false;
 
       /* Init parents */
-      for (std::set<AbstractNode*>::iterator it = this->parents.begin(); it != this->parents.end(); it++)
-        (*it)->init();
+      updateParents();
     }
 
 
@@ -1658,10 +1878,18 @@ namespace triton {
     /* ====== Distinct node */
 
 
-    DistinctNode::DistinctNode(AbstractNode* expr1, AbstractNode* expr2): AbstractNode(DISTINCT_NODE, expr1->getContext()) {
-      this->addChild(expr1);
-      this->addChild(expr2);
-      this->init();
+    DistinctNode::DistinctNode(AstContext& ctxt):
+      AbstractNode(DISTINCT_NODE, ctxt)
+    {}
+
+
+
+    std::shared_ptr<AbstractNode> DistinctNode::get(std::shared_ptr<AbstractNode> const& expr1, std::shared_ptr<AbstractNode> const& expr2) {
+      auto node = std::shared_ptr<DistinctNode>(new DistinctNode(expr1->getContext()));
+      node->addChild(expr1);
+      node->addChild(expr2);
+      node->init();
+      return node;
     }
 
 
@@ -1675,13 +1903,11 @@ namespace triton {
 
       /* Init children and spread information */
       for (triton::uint32 index = 0; index < this->children.size(); index++) {
-        this->children[index]->setParent(this);
         this->symbolized |= this->children[index]->isSymbolized();
       }
 
       /* Init parents */
-      for (std::set<AbstractNode*>::iterator it = this->parents.begin(); it != this->parents.end(); it++)
-        (*it)->init();
+      updateParents();
     }
 
 
@@ -1697,10 +1923,18 @@ namespace triton {
     /* ====== equal */
 
 
-    EqualNode::EqualNode(AbstractNode* expr1, AbstractNode* expr2): AbstractNode(EQUAL_NODE, expr1->getContext()) {
-      this->addChild(expr1);
-      this->addChild(expr2);
-      this->init();
+    EqualNode::EqualNode(AstContext& ctxt):
+      AbstractNode(EQUAL_NODE, ctxt)
+    {}
+
+
+
+    std::shared_ptr<AbstractNode> EqualNode::get(std::shared_ptr<AbstractNode> const& expr1, std::shared_ptr<AbstractNode> const& expr2) {
+      auto node = std::shared_ptr<EqualNode>(new EqualNode(expr1->getContext()));
+      node->addChild(expr1);
+      node->addChild(expr2);
+      node->init();
+      return node;
     }
 
 
@@ -1714,13 +1948,11 @@ namespace triton {
 
       /* Init children and spread information */
       for (triton::uint32 index = 0; index < this->children.size(); index++) {
-        this->children[index]->setParent(this);
         this->symbolized |= this->children[index]->isSymbolized();
       }
 
       /* Init parents */
-      for (std::set<AbstractNode*>::iterator it = this->parents.begin(); it != this->parents.end(); it++)
-        (*it)->init();
+      updateParents();
     }
 
 
@@ -1736,11 +1968,19 @@ namespace triton {
     /* ====== extract */
 
 
-    ExtractNode::ExtractNode(triton::uint32 high, triton::uint32 low, AbstractNode* expr): AbstractNode(EXTRACT_NODE, expr->getContext()) {
-      this->addChild(this->ctxt.decimal(high));
-      this->addChild(this->ctxt.decimal(low));
-      this->addChild(expr);
-      this->init();
+    ExtractNode::ExtractNode(AstContext& ctxt):
+      AbstractNode(EXTRACT_NODE, ctxt)
+    {}
+
+
+
+    std::shared_ptr<AbstractNode> ExtractNode::get(triton::uint32 high, triton::uint32 low, std::shared_ptr<AbstractNode> const& expr) {
+      auto node = std::shared_ptr<ExtractNode>(new ExtractNode(expr->getContext()));
+      node->addChild(node->ctxt.decimal(high));
+      node->addChild(node->ctxt.decimal(low));
+      node->addChild(expr);
+      node->init();
+      return node;
     }
 
 
@@ -1754,8 +1994,8 @@ namespace triton {
       if (this->children[0]->getKind() != DECIMAL_NODE || this->children[1]->getKind() != DECIMAL_NODE)
         throw triton::exceptions::Ast("ExtractNode::init(): The highest and lower bit must be a DECIMAL_NODE.");
 
-      high = reinterpret_cast<DecimalNode*>(this->children[0])->getValue().convert_to<triton::uint32>();
-      low  = reinterpret_cast<DecimalNode*>(this->children[1])->getValue().convert_to<triton::uint32>();
+      high = reinterpret_cast<DecimalNode*>(this->children[0].get())->getValue().convert_to<triton::uint32>();
+      low  = reinterpret_cast<DecimalNode*>(this->children[1].get())->getValue().convert_to<triton::uint32>();
 
       if (low > high)
         throw triton::exceptions::Ast("ExtractNode::init(): The high bit must be greater than the low bit.");
@@ -1769,13 +2009,11 @@ namespace triton {
 
       /* Init children and spread information */
       for (triton::uint32 index = 0; index < this->children.size(); index++) {
-        this->children[index]->setParent(this);
         this->symbolized |= this->children[index]->isSymbolized();
       }
 
       /* Init parents */
-      for (std::set<AbstractNode*>::iterator it = this->parents.begin(); it != this->parents.end(); it++)
-        (*it)->init();
+      updateParents();
     }
 
 
@@ -1791,11 +2029,19 @@ namespace triton {
     /* ====== ite */
 
 
-    IteNode::IteNode(AbstractNode* ifExpr, AbstractNode* thenExpr, AbstractNode* elseExpr): AbstractNode(ITE_NODE, ifExpr->getContext()) {
-      this->addChild(ifExpr);
-      this->addChild(thenExpr);
-      this->addChild(elseExpr);
-      this->init();
+    IteNode::IteNode(AstContext& ctxt):
+      AbstractNode(ITE_NODE, ctxt)
+    {}
+
+
+
+    std::shared_ptr<AbstractNode> IteNode::get(std::shared_ptr<AbstractNode> const& ifExpr, std::shared_ptr<AbstractNode> const& thenExpr, std::shared_ptr<AbstractNode> const& elseExpr) {
+      auto node = std::shared_ptr<IteNode>(new IteNode(ifExpr->getContext()));
+      node->addChild(ifExpr);
+      node->addChild(thenExpr);
+      node->addChild(elseExpr);
+      node->init();
+      return node;
     }
 
 
@@ -1815,13 +2061,11 @@ namespace triton {
 
       /* Init children and spread information */
       for (triton::uint32 index = 0; index < this->children.size(); index++) {
-        this->children[index]->setParent(this);
         this->symbolized |= this->children[index]->isSymbolized();
       }
 
       /* Init parents */
-      for (std::set<AbstractNode*>::iterator it = this->parents.begin(); it != this->parents.end(); it++)
-        (*it)->init();
+      updateParents();
     }
 
 
@@ -1837,20 +2081,30 @@ namespace triton {
     /* ====== Land */
 
 
-    LandNode::LandNode(AbstractNode* expr1, AbstractNode* expr2): AbstractNode(LAND_NODE, expr1->getContext()) {
-      this->addChild(expr1);
-      this->addChild(expr2);
-      this->init();
+    LandNode::LandNode(AstContext& ctxt):
+      AbstractNode(LAND_NODE, ctxt)
+    {}
+
+
+
+    std::shared_ptr<AbstractNode> LandNode::get(std::shared_ptr<AbstractNode> const& expr1, std::shared_ptr<AbstractNode> const& expr2) {
+      auto node = std::shared_ptr<LandNode>(new LandNode(expr1->getContext()));
+      node->addChild(expr1);
+      node->addChild(expr2);
+      node->init();
+      return node;
     }
 
 
-    template LandNode::LandNode(const std::vector<AbstractNode*>& exprs, AstContext& ctxt);
-    template LandNode::LandNode(const std::list<AbstractNode*>& exprs, AstContext& ctxt);
+    template std::shared_ptr<AbstractNode> LandNode::get(const std::vector<std::shared_ptr<AbstractNode>>& exprs, AstContext& ctxt);
+    template std::shared_ptr<AbstractNode> LandNode::get(const std::list<std::shared_ptr<AbstractNode>>& exprs, AstContext& ctxt);
     template <typename T>
-    LandNode::LandNode(const T& exprs, AstContext& ctxt): AbstractNode(LAND_NODE, ctxt) {
-      for (AbstractNode* expr : exprs)
-        this->addChild(expr);
-      this->init();
+    std::shared_ptr<AbstractNode> LandNode::get(const T& exprs, AstContext& ctxt) {
+      auto node = std::shared_ptr<LandNode>(new LandNode(ctxt));
+      for (auto expr : exprs)
+        node->addChild(expr);
+      node->init();
+      return node;
     }
 
 
@@ -1864,7 +2118,6 @@ namespace triton {
 
       /* Init children and spread information */
       for (triton::uint32 index = 0; index < this->children.size(); index++) {
-        this->children[index]->setParent(this);
         this->symbolized |= this->children[index]->isSymbolized();
         this->eval = this->eval && this->children[index]->evaluate();
 
@@ -1873,8 +2126,7 @@ namespace triton {
       }
 
       /* Init parents */
-      for (std::set<AbstractNode*>::iterator it = this->parents.begin(); it != this->parents.end(); it++)
-        (*it)->init();
+      updateParents();
     }
 
 
@@ -1890,11 +2142,19 @@ namespace triton {
     /* ====== Let */
 
 
-    LetNode::LetNode(std::string alias, AbstractNode* expr2, AbstractNode* expr3): AbstractNode(LET_NODE, expr2->getContext()) {
-      this->addChild(ctxt.string(alias));
-      this->addChild(expr2);
-      this->addChild(expr3);
-      this->init();
+    LetNode::LetNode(AstContext& ctxt):
+      AbstractNode(LET_NODE, ctxt)
+    {}
+
+
+
+    std::shared_ptr<AbstractNode> LetNode::get(std::string alias, std::shared_ptr<AbstractNode> const& expr2, std::shared_ptr<AbstractNode> const& expr3) {
+      auto node = std::shared_ptr<LetNode>(new LetNode(expr2->getContext()));
+      node->addChild(expr2->getContext().string(alias));
+      node->addChild(expr2);
+      node->addChild(expr3);
+      node->init();
+      return node;
     }
 
 
@@ -1911,13 +2171,11 @@ namespace triton {
 
       /* Init children and spread information */
       for (triton::uint32 index = 0; index < this->children.size(); index++) {
-        this->children[index]->setParent(this);
         this->symbolized |= this->children[index]->isSymbolized();
       }
 
       /* Init parents */
-      for (std::set<AbstractNode*>::iterator it = this->parents.begin(); it != this->parents.end(); it++)
-        (*it)->init();
+      updateParents();
     }
 
 
@@ -1933,9 +2191,17 @@ namespace triton {
     /* ====== Lnot */
 
 
-    LnotNode::LnotNode(AbstractNode* expr): AbstractNode(LNOT_NODE, expr->getContext()) {
-      this->addChild(expr);
-      this->init();
+    LnotNode::LnotNode(AstContext& ctxt):
+      AbstractNode(LNOT_NODE, ctxt)
+    {}
+
+
+
+    std::shared_ptr<AbstractNode> LnotNode::get(std::shared_ptr<AbstractNode> const& expr) {
+      auto node = std::shared_ptr<LnotNode>(new LnotNode(expr->getContext()));
+      node->addChild(expr);
+      node->init();
+      return node;
     }
 
 
@@ -1949,7 +2215,6 @@ namespace triton {
 
       /* Init children and spread information */
       for (triton::uint32 index = 0; index < this->children.size(); index++) {
-        this->children[index]->setParent(this);
         this->symbolized |= this->children[index]->isSymbolized();
 
         if (this->children[index]->isLogical() == false)
@@ -1958,8 +2223,7 @@ namespace triton {
 
 
       /* Init parents */
-      for (std::set<AbstractNode*>::iterator it = this->parents.begin(); it != this->parents.end(); it++)
-        (*it)->init();
+      updateParents();
     }
 
 
@@ -1975,20 +2239,30 @@ namespace triton {
     /* ====== Lor */
 
 
-    LorNode::LorNode(AbstractNode* expr1, AbstractNode* expr2): AbstractNode(LOR_NODE, expr1->getContext()) {
-      this->addChild(expr1);
-      this->addChild(expr2);
-      this->init();
+    LorNode::LorNode(AstContext& ctxt):
+      AbstractNode(LOR_NODE, ctxt)
+    {}
+
+
+
+    std::shared_ptr<AbstractNode> LorNode::get(std::shared_ptr<AbstractNode> const& expr1, std::shared_ptr<AbstractNode> const& expr2) {
+      auto node = std::shared_ptr<LorNode>(new LorNode(expr1->getContext()));
+      node->addChild(expr1);
+      node->addChild(expr2);
+      node->init();
+      return node;
     }
 
 
-    template LorNode::LorNode(const std::vector<AbstractNode*>& exprs, AstContext& ctxt);
-    template LorNode::LorNode(const std::list<AbstractNode*>& exprs, AstContext& ctxt);
+    template std::shared_ptr<AbstractNode> LorNode::get(const std::vector<std::shared_ptr<AbstractNode>>& exprs, AstContext& ctxt);
+    template std::shared_ptr<AbstractNode> LorNode::get(const std::list<std::shared_ptr<AbstractNode>>& exprs, AstContext& ctxt);
     template <typename T>
-    LorNode::LorNode(const T& exprs, AstContext& ctxt): AbstractNode(LOR_NODE, ctxt) {
-      for (AbstractNode* expr : exprs)
-        this->addChild(expr);
-      this->init();
+    std::shared_ptr<AbstractNode> LorNode::get(const T& exprs, AstContext& ctxt) {
+      auto node = std::shared_ptr<LorNode>(new LorNode(ctxt));
+      for (auto expr : exprs)
+        node->addChild(expr);
+      node->init();
+      return node;
     }
 
 
@@ -2002,7 +2276,6 @@ namespace triton {
 
       /* Init children and spread information */
       for (triton::uint32 index = 0; index < this->children.size(); index++) {
-        this->children[index]->setParent(this);
         this->symbolized |= this->children[index]->isSymbolized();
         this->eval = this->eval || this->children[index]->evaluate();
 
@@ -2011,8 +2284,7 @@ namespace triton {
       }
 
       /* Init parents */
-      for (std::set<AbstractNode*>::iterator it = this->parents.begin(); it != this->parents.end(); it++)
-        (*it)->init();
+      updateParents();
     }
 
 
@@ -2028,11 +2300,20 @@ namespace triton {
     /* ====== Reference node */
 
 
-    ReferenceNode::ReferenceNode(AbstractNode* ast, triton::usize id)
-      : AbstractNode(REFERENCE_NODE, ast->getContext())
-      , id(id)
-      , ast(ast) {
-      this->init();
+    ReferenceNode::ReferenceNode(std::shared_ptr<AbstractNode> const& ast, triton::usize id):
+      AbstractNode(REFERENCE_NODE, ast->getContext()),
+      id(id),
+      ast(ast)
+    {}
+
+
+
+    std::shared_ptr<AbstractNode> ReferenceNode::get(std::shared_ptr<AbstractNode> const& ast, triton::usize id) {
+      auto node = std::shared_ptr<ReferenceNode>(new ReferenceNode(ast, id));
+      // FIXME: use children to store ast
+      ast->setParent(node.get());
+      node->init();
+      return node;
     }
 
 
@@ -2042,11 +2323,8 @@ namespace triton {
       this->size        = this->ast->getBitvectorSize();
       this->symbolized  = this->ast->isSymbolized();
 
-      this->ast->setParent(this);
-
       /* Init parents */
-      for (std::set<AbstractNode*>::iterator it = this->parents.begin(); it != this->parents.end(); it++)
-        (*it)->init();
+      updateParents();
     }
 
 
@@ -2060,7 +2338,7 @@ namespace triton {
       return this->id;
     }
 
-    AbstractNode* ReferenceNode::getAst() const
+    std::shared_ptr<AbstractNode> const& ReferenceNode::getAst()
     {
       return this->ast;
     }
@@ -2068,9 +2346,17 @@ namespace triton {
     /* ====== String node */
 
 
-    StringNode::StringNode(std::string value, AstContext& ctxt): AbstractNode(STRING_NODE, ctxt) {
-      this->value = value;
-      this->init();
+    StringNode::StringNode(std::string value, AstContext& ctxt):
+      AbstractNode(STRING_NODE, ctxt),
+      value(value)
+    {}
+
+
+
+    std::shared_ptr<AbstractNode> StringNode::get(std::string value, AstContext& ctxt) {
+      auto node = std::shared_ptr<StringNode>(new StringNode(value, ctxt));
+      node->init();
+      return node;
     }
 
 
@@ -2081,8 +2367,7 @@ namespace triton {
       this->symbolized  = false;
 
       /* Init parents */
-      for (std::set<AbstractNode*>::iterator it = this->parents.begin(); it != this->parents.end(); it++)
-        (*it)->init();
+      updateParents();
     }
 
 
@@ -2103,10 +2388,18 @@ namespace triton {
     /* ====== sx */
 
 
-    SxNode::SxNode(triton::uint32 sizeExt, AbstractNode* expr): AbstractNode(SX_NODE, expr->getContext()) {
-      this->addChild(ctxt.decimal(sizeExt));
-      this->addChild(expr);
-      this->init();
+    SxNode::SxNode(AstContext& ctxt):
+      AbstractNode(SX_NODE, ctxt)
+    {}
+
+
+
+    std::shared_ptr<AbstractNode> SxNode::get(triton::uint32 sizeExt, std::shared_ptr<AbstractNode> const& expr) {
+      auto node = std::shared_ptr<SxNode>(new SxNode(expr->getContext()));
+      node->addChild(node->ctxt.decimal(sizeExt));
+      node->addChild(expr);
+      node->init();
+      return node;
     }
 
 
@@ -2119,7 +2412,7 @@ namespace triton {
       if (this->children[0]->getKind() != DECIMAL_NODE)
         throw triton::exceptions::Ast("SxNode::init(): The sizeExt must be a DECIMAL_NODE.");
 
-      sizeExt = reinterpret_cast<DecimalNode*>(this->children[0])->getValue().convert_to<triton::uint32>();
+      sizeExt = reinterpret_cast<DecimalNode*>(this->children[0].get())->getValue().convert_to<triton::uint32>();
 
       /* Init attributes */
       this->size = sizeExt + this->children[1]->getBitvectorSize();
@@ -2130,13 +2423,11 @@ namespace triton {
 
       /* Init children and spread information */
       for (triton::uint32 index = 0; index < this->children.size(); index++) {
-        this->children[index]->setParent(this);
         this->symbolized |= this->children[index]->isSymbolized();
       }
 
       /* Init parents */
-      for (std::set<AbstractNode*>::iterator it = this->parents.begin(); it != this->parents.end(); it++)
-        (*it)->init();
+      updateParents();
     }
 
 
@@ -2152,12 +2443,20 @@ namespace triton {
     /* ====== Variable node */
 
 
-    VariableNode::VariableNode(std::string const& varName, triton::uint32 size, AstContext& ctxt)
+    // FIXME: It would be more efficient to have id
+    VariableNode::VariableNode(std::string const& varName, AstContext& ctxt)
       : AbstractNode(VARIABLE_NODE, ctxt),
-        varName(varName) {
-      setBitvectorSize(size);
+        varName(varName)
+    {}
+
+
+
+    std::shared_ptr<AbstractNode> VariableNode::get(std::string const& varName, triton::uint32 size, AstContext& ctxt) {
+      auto node = std::shared_ptr<VariableNode>(new VariableNode(varName, ctxt));
+      node->setBitvectorSize(size);
       ctxt.initVariable(varName, 0);
-      this->init();
+      node->init();
+      return node;
     }
 
 
@@ -2166,8 +2465,7 @@ namespace triton {
       this->symbolized  = true;
 
       /* Init parents */
-      for (std::set<AbstractNode*>::iterator it = this->parents.begin(); it != this->parents.end(); it++)
-        (*it)->init();
+      updateParents();
     }
 
 
@@ -2190,10 +2488,18 @@ namespace triton {
     /* ====== zx */
 
 
-    ZxNode::ZxNode(triton::uint32 sizeExt, AbstractNode* expr): AbstractNode(ZX_NODE, expr->getContext()) {
-      this->addChild(ctxt.decimal(sizeExt));
-      this->addChild(expr);
-      this->init();
+    ZxNode::ZxNode(AstContext& ctxt):
+      AbstractNode(ZX_NODE, ctxt)
+    {}
+
+
+
+    std::shared_ptr<AbstractNode> ZxNode::get(triton::uint32 sizeExt, std::shared_ptr<AbstractNode> const& expr) {
+      auto node = std::shared_ptr<ZxNode>(new ZxNode(expr->getContext()));
+      node->addChild(node->ctxt.decimal(sizeExt));
+      node->addChild(expr);
+      node->init();
+      return node;
     }
 
 
@@ -2206,7 +2512,7 @@ namespace triton {
       if (this->children[0]->getKind() != DECIMAL_NODE)
         throw triton::exceptions::Ast("ZxNode::init(): The sizeExt must be a DECIMAL_NODE.");
 
-      sizeExt = reinterpret_cast<DecimalNode*>(this->children[0])->getValue().convert_to<triton::uint32>();
+      sizeExt = reinterpret_cast<DecimalNode*>(this->children[0].get())->getValue().convert_to<triton::uint32>();
 
       /* Init attributes */
       this->size = sizeExt + this->children[1]->getBitvectorSize();
@@ -2217,13 +2523,11 @@ namespace triton {
 
       /* Init children and spread information */
       for (triton::uint32 index = 0; index < this->children.size(); index++) {
-        this->children[index]->setParent(this);
         this->symbolized |= this->children[index]->isSymbolized();
       }
 
       /* Init parents */
-      for (std::set<AbstractNode*>::iterator it = this->parents.begin(); it != this->parents.end(); it++)
-        (*it)->init();
+      updateParents();
     }
 
 
@@ -2299,58 +2603,58 @@ namespace triton {
 namespace triton {
   namespace ast {
 
-    AbstractNode* newInstance(AbstractNode* node) {
-      AbstractNode* newNode = nullptr;
+    std::shared_ptr<AbstractNode> newInstance(AbstractNode* node) {
+      std::shared_ptr<AbstractNode> newNode = nullptr;
 
       if (node == nullptr)
         return nullptr;
 
       switch (node->getKind()) {
-        case BVADD_NODE:                newNode = new(std::nothrow) BvaddNode(*reinterpret_cast<BvaddNode*>(node)); break;
-        case BVAND_NODE:                newNode = new(std::nothrow) BvandNode(*reinterpret_cast<BvandNode*>(node)); break;
-        case BVASHR_NODE:               newNode = new(std::nothrow) BvashrNode(*reinterpret_cast<BvashrNode*>(node)); break;
-        case BVLSHR_NODE:               newNode = new(std::nothrow) BvlshrNode(*reinterpret_cast<BvlshrNode*>(node)); break;
-        case BVMUL_NODE:                newNode = new(std::nothrow) BvmulNode(*reinterpret_cast<BvmulNode*>(node)); break;
-        case BVNAND_NODE:               newNode = new(std::nothrow) BvnandNode(*reinterpret_cast<BvnandNode*>(node)); break;
-        case BVNEG_NODE:                newNode = new(std::nothrow) BvnegNode(*reinterpret_cast<BvnegNode*>(node)); break;
-        case BVNOR_NODE:                newNode = new(std::nothrow) BvnorNode(*reinterpret_cast<BvnorNode*>(node)); break;
-        case BVNOT_NODE:                newNode = new(std::nothrow) BvnotNode(*reinterpret_cast<BvnotNode*>(node)); break;
-        case BVOR_NODE:                 newNode = new(std::nothrow) BvorNode(*reinterpret_cast<BvorNode*>(node)); break;
-        case BVROL_NODE:                newNode = new(std::nothrow) BvrolNode(*reinterpret_cast<BvrolNode*>(node)); break;
-        case BVROR_NODE:                newNode = new(std::nothrow) BvrorNode(*reinterpret_cast<BvrorNode*>(node)); break;
-        case BVSDIV_NODE:               newNode = new(std::nothrow) BvsdivNode(*reinterpret_cast<BvsdivNode*>(node)); break;
-        case BVSGE_NODE:                newNode = new(std::nothrow) BvsgeNode(*reinterpret_cast<BvsgeNode*>(node)); break;
-        case BVSGT_NODE:                newNode = new(std::nothrow) BvsgtNode(*reinterpret_cast<BvsgtNode*>(node)); break;
-        case BVSHL_NODE:                newNode = new(std::nothrow) BvshlNode(*reinterpret_cast<BvshlNode*>(node)); break;
-        case BVSLE_NODE:                newNode = new(std::nothrow) BvsleNode(*reinterpret_cast<BvsleNode*>(node)); break;
-        case BVSLT_NODE:                newNode = new(std::nothrow) BvsltNode(*reinterpret_cast<BvsltNode*>(node)); break;
-        case BVSMOD_NODE:               newNode = new(std::nothrow) BvsmodNode(*reinterpret_cast<BvsmodNode*>(node)); break;
-        case BVSREM_NODE:               newNode = new(std::nothrow) BvsremNode(*reinterpret_cast<BvsremNode*>(node)); break;
-        case BVSUB_NODE:                newNode = new(std::nothrow) BvsubNode(*reinterpret_cast<BvsubNode*>(node)); break;
-        case BVUDIV_NODE:               newNode = new(std::nothrow) BvudivNode(*reinterpret_cast<BvudivNode*>(node)); break;
-        case BVUGE_NODE:                newNode = new(std::nothrow) BvugeNode(*reinterpret_cast<BvugeNode*>(node)); break;
-        case BVUGT_NODE:                newNode = new(std::nothrow) BvugtNode(*reinterpret_cast<BvugtNode*>(node)); break;
-        case BVULE_NODE:                newNode = new(std::nothrow) BvuleNode(*reinterpret_cast<BvuleNode*>(node)); break;
-        case BVULT_NODE:                newNode = new(std::nothrow) BvultNode(*reinterpret_cast<BvultNode*>(node)); break;
-        case BVUREM_NODE:               newNode = new(std::nothrow) BvuremNode(*reinterpret_cast<BvuremNode*>(node)); break;
-        case BVXNOR_NODE:               newNode = new(std::nothrow) BvxnorNode(*reinterpret_cast<BvxnorNode*>(node)); break;
-        case BVXOR_NODE:                newNode = new(std::nothrow) BvxorNode(*reinterpret_cast<BvxorNode*>(node)); break;
-        case BV_NODE:                   newNode = new(std::nothrow) BvNode(*reinterpret_cast<BvNode*>(node)); break;
-        case CONCAT_NODE:               newNode = new(std::nothrow) ConcatNode(*reinterpret_cast<ConcatNode*>(node)); break;
-        case DECIMAL_NODE:              newNode = new(std::nothrow) DecimalNode(*reinterpret_cast<DecimalNode*>(node)); break;
-        case DISTINCT_NODE:             newNode = new(std::nothrow) DistinctNode(*reinterpret_cast<DistinctNode*>(node)); break;
-        case EQUAL_NODE:                newNode = new(std::nothrow) EqualNode(*reinterpret_cast<EqualNode*>(node)); break;
-        case EXTRACT_NODE:              newNode = new(std::nothrow) ExtractNode(*reinterpret_cast<ExtractNode*>(node)); break;
-        case ITE_NODE:                  newNode = new(std::nothrow) IteNode(*reinterpret_cast<IteNode*>(node)); break;
-        case LAND_NODE:                 newNode = new(std::nothrow) LandNode(*reinterpret_cast<LandNode*>(node)); break;
-        case LET_NODE:                  newNode = new(std::nothrow) LetNode(*reinterpret_cast<LetNode*>(node)); break;
-        case LNOT_NODE:                 newNode = new(std::nothrow) LnotNode(*reinterpret_cast<LnotNode*>(node)); break;
-        case LOR_NODE:                  newNode = new(std::nothrow) LorNode(*reinterpret_cast<LorNode*>(node)); break;
-        case REFERENCE_NODE:            newNode = new(std::nothrow) ReferenceNode(*reinterpret_cast<ReferenceNode*>(node)); break;
-        case STRING_NODE:               newNode = new(std::nothrow) StringNode(*reinterpret_cast<StringNode*>(node)); break;
-        case SX_NODE:                   newNode = new(std::nothrow) SxNode(*reinterpret_cast<SxNode*>(node)); break;
-        case VARIABLE_NODE:             newNode = new(std::nothrow) VariableNode(*reinterpret_cast<VariableNode*>(node)); break;
-        case ZX_NODE:                   newNode = new(std::nothrow) ZxNode(*reinterpret_cast<ZxNode*>(node)); break;
+        case BVADD_NODE:                newNode.reset(new(std::nothrow) BvaddNode(*reinterpret_cast<BvaddNode*>(node))); break;
+        case BVAND_NODE:                newNode.reset(new(std::nothrow) BvandNode(*reinterpret_cast<BvandNode*>(node))); break;
+        case BVASHR_NODE:               newNode.reset(new(std::nothrow) BvashrNode(*reinterpret_cast<BvashrNode*>(node))); break;
+        case BVLSHR_NODE:               newNode.reset(new(std::nothrow) BvlshrNode(*reinterpret_cast<BvlshrNode*>(node))); break;
+        case BVMUL_NODE:                newNode.reset(new(std::nothrow) BvmulNode(*reinterpret_cast<BvmulNode*>(node))); break;
+        case BVNAND_NODE:               newNode.reset(new(std::nothrow) BvnandNode(*reinterpret_cast<BvnandNode*>(node))); break;
+        case BVNEG_NODE:                newNode.reset(new(std::nothrow) BvnegNode(*reinterpret_cast<BvnegNode*>(node))); break;
+        case BVNOR_NODE:                newNode.reset(new(std::nothrow) BvnorNode(*reinterpret_cast<BvnorNode*>(node))); break;
+        case BVNOT_NODE:                newNode.reset(new(std::nothrow) BvnotNode(*reinterpret_cast<BvnotNode*>(node))); break;
+        case BVOR_NODE:                 newNode.reset(new(std::nothrow) BvorNode(*reinterpret_cast<BvorNode*>(node))); break;
+        case BVROL_NODE:                newNode.reset(new(std::nothrow) BvrolNode(*reinterpret_cast<BvrolNode*>(node))); break;
+        case BVROR_NODE:                newNode.reset(new(std::nothrow) BvrorNode(*reinterpret_cast<BvrorNode*>(node))); break;
+        case BVSDIV_NODE:               newNode.reset(new(std::nothrow) BvsdivNode(*reinterpret_cast<BvsdivNode*>(node))); break;
+        case BVSGE_NODE:                newNode.reset(new(std::nothrow) BvsgeNode(*reinterpret_cast<BvsgeNode*>(node))); break;
+        case BVSGT_NODE:                newNode.reset(new(std::nothrow) BvsgtNode(*reinterpret_cast<BvsgtNode*>(node))); break;
+        case BVSHL_NODE:                newNode.reset(new(std::nothrow) BvshlNode(*reinterpret_cast<BvshlNode*>(node))); break;
+        case BVSLE_NODE:                newNode.reset(new(std::nothrow) BvsleNode(*reinterpret_cast<BvsleNode*>(node))); break;
+        case BVSLT_NODE:                newNode.reset(new(std::nothrow) BvsltNode(*reinterpret_cast<BvsltNode*>(node))); break;
+        case BVSMOD_NODE:               newNode.reset(new(std::nothrow) BvsmodNode(*reinterpret_cast<BvsmodNode*>(node))); break;
+        case BVSREM_NODE:               newNode.reset(new(std::nothrow) BvsremNode(*reinterpret_cast<BvsremNode*>(node))); break;
+        case BVSUB_NODE:                newNode.reset(new(std::nothrow) BvsubNode(*reinterpret_cast<BvsubNode*>(node))); break;
+        case BVUDIV_NODE:               newNode.reset(new(std::nothrow) BvudivNode(*reinterpret_cast<BvudivNode*>(node))); break;
+        case BVUGE_NODE:                newNode.reset(new(std::nothrow) BvugeNode(*reinterpret_cast<BvugeNode*>(node))); break;
+        case BVUGT_NODE:                newNode.reset(new(std::nothrow) BvugtNode(*reinterpret_cast<BvugtNode*>(node))); break;
+        case BVULE_NODE:                newNode.reset(new(std::nothrow) BvuleNode(*reinterpret_cast<BvuleNode*>(node))); break;
+        case BVULT_NODE:                newNode.reset(new(std::nothrow) BvultNode(*reinterpret_cast<BvultNode*>(node))); break;
+        case BVUREM_NODE:               newNode.reset(new(std::nothrow) BvuremNode(*reinterpret_cast<BvuremNode*>(node))); break;
+        case BVXNOR_NODE:               newNode.reset(new(std::nothrow) BvxnorNode(*reinterpret_cast<BvxnorNode*>(node))); break;
+        case BVXOR_NODE:                newNode.reset(new(std::nothrow) BvxorNode(*reinterpret_cast<BvxorNode*>(node))); break;
+        case BV_NODE:                   newNode.reset(new(std::nothrow) BvNode(*reinterpret_cast<BvNode*>(node))); break;
+        case CONCAT_NODE:               newNode.reset(new(std::nothrow) ConcatNode(*reinterpret_cast<ConcatNode*>(node))); break;
+        case DECIMAL_NODE:              newNode.reset(new(std::nothrow) DecimalNode(*reinterpret_cast<DecimalNode*>(node))); break;
+        case DISTINCT_NODE:             newNode.reset(new(std::nothrow) DistinctNode(*reinterpret_cast<DistinctNode*>(node))); break;
+        case EQUAL_NODE:                newNode.reset(new(std::nothrow) EqualNode(*reinterpret_cast<EqualNode*>(node))); break;
+        case EXTRACT_NODE:              newNode.reset(new(std::nothrow) ExtractNode(*reinterpret_cast<ExtractNode*>(node))); break;
+        case ITE_NODE:                  newNode.reset(new(std::nothrow) IteNode(*reinterpret_cast<IteNode*>(node))); break;
+        case LAND_NODE:                 newNode.reset(new(std::nothrow) LandNode(*reinterpret_cast<LandNode*>(node))); break;
+        case LET_NODE:                  newNode.reset(new(std::nothrow) LetNode(*reinterpret_cast<LetNode*>(node))); break;
+        case LNOT_NODE:                 newNode.reset(new(std::nothrow) LnotNode(*reinterpret_cast<LnotNode*>(node))); break;
+        case LOR_NODE:                  newNode.reset(new(std::nothrow) LorNode(*reinterpret_cast<LorNode*>(node))); break;
+        case REFERENCE_NODE:            newNode.reset(new(std::nothrow) ReferenceNode(*reinterpret_cast<ReferenceNode*>(node))); break;
+        case STRING_NODE:               newNode.reset(new(std::nothrow) StringNode(*reinterpret_cast<StringNode*>(node))); break;
+        case SX_NODE:                   newNode.reset(new(std::nothrow) SxNode(*reinterpret_cast<SxNode*>(node))); break;
+        case VARIABLE_NODE:             newNode.reset(new(std::nothrow) VariableNode(*reinterpret_cast<VariableNode*>(node))); break;
+        case ZX_NODE:                   newNode.reset(new(std::nothrow) ZxNode(*reinterpret_cast<ZxNode*>(node))); break;
         default:
           throw triton::exceptions::Ast("triton::ast::newInstance(): Invalid kind node.");
       }
@@ -2358,7 +2662,7 @@ namespace triton {
       if (newNode == nullptr)
         throw triton::exceptions::Ast("triton::ast::newInstance(): No enough memory.");
 
-      return node->getContext().getAstGarbageCollector().recordAstNode(newNode);
+      return newNode;
     }
 
   }; /* ast namespace */

@@ -61,7 +61,7 @@ namespace triton {
      * \details The callback takes as uniq argument a triton::ast::AbstractNode and must return a valid triton::ast::AbstractNode.
      * The returned node is used as assignment. See also the page about \ref SMT_simplification_page for more information.
      */
-    using symbolicSimplificationCallback = ComparableFunctor<triton::ast::AbstractNode*(triton::API&, triton::ast::AbstractNode*)>;
+    using symbolicSimplificationCallback = ComparableFunctor<std::shared_ptr<triton::ast::AbstractNode>(triton::API&, std::shared_ptr<triton::ast::AbstractNode> const&)>;
 
     //! \class Callbacks
     /*! \brief The callbacks class */
@@ -108,7 +108,7 @@ namespace triton {
         void removeCallback(triton::callbacks::symbolicSimplificationCallback cb);
 
         //! Processes callbacks according to the kind and the C++ polymorphism.
-        triton::ast::AbstractNode* processCallbacks(triton::callbacks::callback_e kind, triton::ast::AbstractNode* node) const;
+        std::shared_ptr<triton::ast::AbstractNode> processCallbacks(triton::callbacks::callback_e kind, std::shared_ptr<triton::ast::AbstractNode> node) const;
 
         //! Processes callbacks according to the kind and the C++ polymorphism.
         void processCallbacks(triton::callbacks::callback_e kind, const triton::arch::MemoryAccess& mem) const;

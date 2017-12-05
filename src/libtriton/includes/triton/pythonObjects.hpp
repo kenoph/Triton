@@ -49,7 +49,7 @@ namespace triton {
      */
 
       //! Creates the AstNode python class.
-      PyObject* PyAstNode(triton::ast::AbstractNode* node);
+      PyObject* PyAstNode(std::shared_ptr<triton::ast::AbstractNode> node);
 
       //! Creates the BitsVector python class.
       template<typename T> PyObject* PyBitsVector(const T& op);
@@ -98,7 +98,7 @@ namespace triton {
       //! pyAstNode object.
       typedef struct {
         PyObject_HEAD
-        triton::ast::AbstractNode* node;
+        std::shared_ptr<triton::ast::AbstractNode> node;
       } AstNode_Object;
 
       //! pyAstNode type.

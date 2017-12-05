@@ -26,8 +26,8 @@ namespace triton {
                          triton::engines::symbolic::SymbolicEngine* symbolicEngine,
                          triton::engines::taint::TaintEngine* taintEngine)
       : modes(modes),
-        astGarbageCollector(astCtxt.getAstGarbageCollector()),
-        backupAstGarbageCollector(true) {
+        astGarbageCollector(astCtxt.getAstGarbageCollector())
+    {
 
       if (architecture == nullptr)
         throw triton::exceptions::IrBuilder("IrBuilder::IrBuilder(): The architecture API must be defined.");
@@ -109,7 +109,6 @@ namespace triton {
 
 
     void IrBuilder::postIrInit(triton::arch::Instruction& inst) {
-      std::set<triton::ast::AbstractNode*> uniqueNodes;
       std::vector<triton::engines::symbolic::SymbolicExpression*> newVector;
 
       auto& loadAccess        = inst.getLoadAccess();
@@ -140,7 +139,7 @@ namespace triton {
         writtenRegisters.clear();
 
         /* Symbolic Expressions */
-        this->removeSymbolicExpressions(inst, uniqueNodes);
+        this->removeSymbolicExpressions(inst);
 
         /* Restore backup */
         *this->symbolicEngine = *this->backupSymbolicEngine;
@@ -175,7 +174,6 @@ namespace triton {
         /* Clear symbolic expressions */
         for (auto* se : inst.symbolicExpressions) {
           if (se->isSymbolized() == false) {
-            this->astGarbageCollector.extractUniqueAstNodes(uniqueNodes, se->getAst());
             this->symbolicEngine->removeSymbolicExpression(se->getId());
           }
           else
@@ -196,37 +194,33 @@ namespace triton {
         this->collectNodes(inst.operands);
 
         /* Implicit and explicit semantics - MEM */
-        this->collectNodes(uniqueNodes, loadAccess);
+        this->collectNodes(loadAccess);
 
         /* Implicit and explicit semantics - REG */
-        this->collectNodes(uniqueNodes, readRegisters);
+        this->collectNodes(readRegisters);
 
         /* Implicit and explicit semantics - IMM */
-        this->collectNodes(uniqueNodes, readImmediates);
+        this->collectNodes(readImmediates);
 
         /* Implicit and explicit semantics - MEM */
-        this->collectNodes(uniqueNodes, storeAccess);
+        this->collectNodes(storeAccess);
 
         /* Implicit and explicit semantics - REG */
-        this->collectNodes(uniqueNodes, writtenRegisters);
+        this->collectNodes(writtenRegisters);
 
         /* Symbolic Expressions */
-        this->removeSymbolicExpressions(inst, uniqueNodes);
+        this->removeSymbolicExpressions(inst);
       }
 
       // ----------------------------------------------------------------------
-
-      /* Free collected nodes */
-      this->astGarbageCollector.freeAstNodes(uniqueNodes);
 
       if (!this->symbolicEngine->isEnabled())
         this->astGarbageCollector = this->backupAstGarbageCollector;
     }
 
 
-    void IrBuilder::removeSymbolicExpressions(triton::arch::Instruction& inst, std::set<triton::ast::AbstractNode*>& uniqueNodes) {
+    void IrBuilder::removeSymbolicExpressions(triton::arch::Instruction& inst) {
       for (const auto* se : inst.symbolicExpressions) {
-        this->astGarbageCollector.extractUniqueAstNodes(uniqueNodes, se->getAst());
         this->symbolicEngine->removeSymbolicExpression(se->getId());
       }
       inst.symbolicExpressions.clear();
@@ -234,9 +228,7 @@ namespace triton {
 
 
     template <typename T>
-    void IrBuilder::collectNodes(std::set<triton::ast::AbstractNode*>& uniqueNodes, T& items) const {
-      for (const auto& item : items)
-        this->astGarbageCollector.extractUniqueAstNodes(uniqueNodes, std::get<1>(item)->getAst());
+    void IrBuilder::collectNodes(T& items) const {
       items.clear();
     }
 

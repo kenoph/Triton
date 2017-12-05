@@ -42,163 +42,163 @@ namespace triton {
     class AstContext {
       public:
         //! AST C++ API - bv node builder
-        AbstractNode* bv(triton::uint512 value, triton::uint32 size);
+        std::shared_ptr<AbstractNode> bv(triton::uint512 value, triton::uint32 size);
 
         //! AST C++ API - bvadd node builder
-        AbstractNode* bvadd(AbstractNode* expr1, AbstractNode* expr2);
+        std::shared_ptr<AbstractNode> bvadd(std::shared_ptr<AbstractNode> expr1, std::shared_ptr<AbstractNode> expr2);
 
         //! AST C++ API - bvand node builder
-        AbstractNode* bvand(AbstractNode* expr1, AbstractNode* expr2);
+        std::shared_ptr<AbstractNode> bvand(std::shared_ptr<AbstractNode> expr1, std::shared_ptr<AbstractNode> expr2);
 
         //! AST C++ API - bvashr node builder
-        AbstractNode* bvashr(AbstractNode* expr1, AbstractNode* expr2);
+        std::shared_ptr<AbstractNode> bvashr(std::shared_ptr<AbstractNode> expr1, std::shared_ptr<AbstractNode> expr2);
 
         //! AST C++ API - bvfalse node builder
-        AbstractNode* bvfalse(void);
+        std::shared_ptr<AbstractNode> bvfalse(void);
 
         //! AST C++ API - bvlshr node builder
-        AbstractNode* bvlshr(AbstractNode* expr1, AbstractNode* expr2);
+        std::shared_ptr<AbstractNode> bvlshr(std::shared_ptr<AbstractNode> expr1, std::shared_ptr<AbstractNode> expr2);
 
         //! AST C++ API - bvmul node builder
-        AbstractNode* bvmul(AbstractNode* expr1, AbstractNode* expr2);
+        std::shared_ptr<AbstractNode> bvmul(std::shared_ptr<AbstractNode> expr1, std::shared_ptr<AbstractNode> expr2);
 
         //! AST C++ API - bvnand node builder
-        AbstractNode* bvnand(AbstractNode* expr1, AbstractNode* expr2);
+        std::shared_ptr<AbstractNode> bvnand(std::shared_ptr<AbstractNode> expr1, std::shared_ptr<AbstractNode> expr2);
 
         //! AST C++ API - bvneg node builder
-        AbstractNode* bvneg(AbstractNode* expr);
+        std::shared_ptr<AbstractNode> bvneg(std::shared_ptr<AbstractNode> expr);
 
         //! AST C++ API - bvnor node builder
-        AbstractNode* bvnor(AbstractNode* expr1, AbstractNode* expr2);
+        std::shared_ptr<AbstractNode> bvnor(std::shared_ptr<AbstractNode> expr1, std::shared_ptr<AbstractNode> expr2);
 
         //! AST C++ API - bvnot node builder
-        AbstractNode* bvnot(AbstractNode* expr);
+        std::shared_ptr<AbstractNode> bvnot(std::shared_ptr<AbstractNode> expr);
 
         //! AST C++ API - bvor node builder
-        AbstractNode* bvor(AbstractNode* expr1, AbstractNode* expr2);
+        std::shared_ptr<AbstractNode> bvor(std::shared_ptr<AbstractNode> expr1, std::shared_ptr<AbstractNode> expr2);
 
         //! AST C++ API - bvrol node builder
-        AbstractNode* bvrol(triton::uint32 rot, AbstractNode* expr);
+        std::shared_ptr<AbstractNode> bvrol(triton::uint32 rot, std::shared_ptr<AbstractNode> expr);
 
         //! AST C++ API - bvrol node builder
-        AbstractNode* bvrol(AbstractNode* rot, AbstractNode* expr);
+        std::shared_ptr<AbstractNode> bvrol(std::shared_ptr<AbstractNode> rot, std::shared_ptr<AbstractNode> expr);
 
         //! AST C++ API - bvror node builder
-        AbstractNode* bvror(triton::uint32 rot, AbstractNode* expr);
+        std::shared_ptr<AbstractNode> bvror(triton::uint32 rot, std::shared_ptr<AbstractNode> expr);
 
         //! AST C++ API - bvror node builder
-        AbstractNode* bvror(AbstractNode* rot, AbstractNode* expr);
+        std::shared_ptr<AbstractNode> bvror(std::shared_ptr<AbstractNode> rot, std::shared_ptr<AbstractNode> expr);
 
         //! AST C++ API - bvsdiv node builder
-        AbstractNode* bvsdiv(AbstractNode* expr1, AbstractNode* expr2);
+        std::shared_ptr<AbstractNode> bvsdiv(std::shared_ptr<AbstractNode> expr1, std::shared_ptr<AbstractNode> expr2);
 
         //! AST C++ API - bvsge node builder
-        AbstractNode* bvsge(AbstractNode* expr1, AbstractNode* expr2);
+        std::shared_ptr<AbstractNode> bvsge(std::shared_ptr<AbstractNode> expr1, std::shared_ptr<AbstractNode> expr2);
 
         //! AST C++ API - bvsgt node builder
-        AbstractNode* bvsgt(AbstractNode* expr1, AbstractNode* expr2);
+        std::shared_ptr<AbstractNode> bvsgt(std::shared_ptr<AbstractNode> expr1, std::shared_ptr<AbstractNode> expr2);
 
         //! AST C++ API - bvshl node builder
-        AbstractNode* bvshl(AbstractNode* expr1, AbstractNode* expr2);
+        std::shared_ptr<AbstractNode> bvshl(std::shared_ptr<AbstractNode> expr1, std::shared_ptr<AbstractNode> expr2);
 
         //! AST C++ API - bvsle node builder
-        AbstractNode* bvsle(AbstractNode* expr1, AbstractNode* expr2);
+        std::shared_ptr<AbstractNode> bvsle(std::shared_ptr<AbstractNode> expr1, std::shared_ptr<AbstractNode> expr2);
 
         //! AST C++ API - bvslt node builder
-        AbstractNode* bvslt(AbstractNode* expr1, AbstractNode* expr2);
+        std::shared_ptr<AbstractNode> bvslt(std::shared_ptr<AbstractNode> expr1, std::shared_ptr<AbstractNode> expr2);
 
         //! AST C++ API - bvsmod node builder
-        AbstractNode* bvsmod(AbstractNode* expr1, AbstractNode* expr2);
+        std::shared_ptr<AbstractNode> bvsmod(std::shared_ptr<AbstractNode> expr1, std::shared_ptr<AbstractNode> expr2);
 
         //! AST C++ API - bvsrem node builder
-        AbstractNode* bvsrem(AbstractNode* expr1, AbstractNode* expr2);
+        std::shared_ptr<AbstractNode> bvsrem(std::shared_ptr<AbstractNode> expr1, std::shared_ptr<AbstractNode> expr2);
 
         //! AST C++ API - bvsub node builder
-        AbstractNode* bvsub(AbstractNode* expr1, AbstractNode* expr2);
+        std::shared_ptr<AbstractNode> bvsub(std::shared_ptr<AbstractNode> expr1, std::shared_ptr<AbstractNode> expr2);
 
         //! AST C++ API - bvtrue node builder
-        AbstractNode* bvtrue(void);
+        std::shared_ptr<AbstractNode> bvtrue(void);
 
         //! AST C++ API - bvudiv node builder
-        AbstractNode* bvudiv(AbstractNode* expr1, AbstractNode* expr2);
+        std::shared_ptr<AbstractNode> bvudiv(std::shared_ptr<AbstractNode> expr1, std::shared_ptr<AbstractNode> expr2);
 
         //! AST C++ API - bvuge node builder
-        AbstractNode* bvuge(AbstractNode* expr1, AbstractNode* expr2);
+        std::shared_ptr<AbstractNode> bvuge(std::shared_ptr<AbstractNode> expr1, std::shared_ptr<AbstractNode> expr2);
 
         //! AST C++ API - bvugt node builder
-        AbstractNode* bvugt(AbstractNode* expr1, AbstractNode* expr2);
+        std::shared_ptr<AbstractNode> bvugt(std::shared_ptr<AbstractNode> expr1, std::shared_ptr<AbstractNode> expr2);
 
         //! AST C++ API - bvule node builder
-        AbstractNode* bvule(AbstractNode* expr1, AbstractNode* expr2);
+        std::shared_ptr<AbstractNode> bvule(std::shared_ptr<AbstractNode> expr1, std::shared_ptr<AbstractNode> expr2);
 
         //! AST C++ API - bvult node builder
-        AbstractNode* bvult(AbstractNode* expr1, AbstractNode* expr2);
+        std::shared_ptr<AbstractNode> bvult(std::shared_ptr<AbstractNode> expr1, std::shared_ptr<AbstractNode> expr2);
 
         //! AST C++ API - bvurem node builder
-        AbstractNode* bvurem(AbstractNode* expr1, AbstractNode* expr2);
+        std::shared_ptr<AbstractNode> bvurem(std::shared_ptr<AbstractNode> expr1, std::shared_ptr<AbstractNode> expr2);
 
         //! AST C++ API - bvxnor node builder
-        AbstractNode* bvxnor(AbstractNode* expr1, AbstractNode* expr2);
+        std::shared_ptr<AbstractNode> bvxnor(std::shared_ptr<AbstractNode> expr1, std::shared_ptr<AbstractNode> expr2);
 
         //! AST C++ API - bvxor node builder
-        AbstractNode* bvxor(AbstractNode* expr1, AbstractNode* expr2);
+        std::shared_ptr<AbstractNode> bvxor(std::shared_ptr<AbstractNode> expr1, std::shared_ptr<AbstractNode> expr2);
 
         //! AST C++ API - concat node builder
-        AbstractNode* concat(AbstractNode* expr1, AbstractNode* expr2);
+        std::shared_ptr<AbstractNode> concat(std::shared_ptr<AbstractNode> expr1, std::shared_ptr<AbstractNode> expr2);
 
         //! AST C++ API - concat node builder
         template <typename T>
-        AbstractNode* concat(const T& exprs);
+        std::shared_ptr<AbstractNode> concat(const T& exprs);
 
         //! AST C++ API - decimal node builder
-        AbstractNode* decimal(triton::uint512 value);
+        std::shared_ptr<AbstractNode> decimal(triton::uint512 value);
 
         //! AST C++ API - distinct node builder
-        AbstractNode* distinct(AbstractNode* expr1, AbstractNode* expr2);
+        std::shared_ptr<AbstractNode> distinct(std::shared_ptr<AbstractNode> expr1, std::shared_ptr<AbstractNode> expr2);
 
         //! AST C++ API - equal node builder
-        AbstractNode* equal(AbstractNode* expr1, AbstractNode* expr2);
+        std::shared_ptr<AbstractNode> equal(std::shared_ptr<AbstractNode> expr1, std::shared_ptr<AbstractNode> expr2);
 
         //! AST C++ API - extract node builder
-        AbstractNode* extract(triton::uint32 high, triton::uint32 low, AbstractNode* expr);
+        std::shared_ptr<AbstractNode> extract(triton::uint32 high, triton::uint32 low, std::shared_ptr<AbstractNode> expr);
 
         //! AST C++ API - ite node builder
-        AbstractNode* ite(AbstractNode* ifExpr, AbstractNode* thenExpr, AbstractNode* elseExpr);
+        std::shared_ptr<AbstractNode> ite(std::shared_ptr<AbstractNode> ifExpr, std::shared_ptr<AbstractNode> thenExpr, std::shared_ptr<AbstractNode> elseExpr);
 
         //! AST C++ API - land node builder
-        AbstractNode* land(AbstractNode* expr1, AbstractNode* expr2);
+        std::shared_ptr<AbstractNode> land(std::shared_ptr<AbstractNode> expr1, std::shared_ptr<AbstractNode> expr2);
 
         //! AST C++ API - land node builder
         template <typename T>
-        AbstractNode* land(const T& exprs);
+        std::shared_ptr<AbstractNode> land(const T& exprs);
 
         //! AST C++ API - let node builder
-        AbstractNode* let(std::string alias, AbstractNode* expr2, AbstractNode* expr3);
+        std::shared_ptr<AbstractNode> let(std::string alias, std::shared_ptr<AbstractNode> expr2, std::shared_ptr<AbstractNode> expr3);
 
         //! AST C++ API - lnot node builder
-        AbstractNode* lnot(AbstractNode* expr);
+        std::shared_ptr<AbstractNode> lnot(std::shared_ptr<AbstractNode> expr);
 
         //! AST C++ API - lor node builder
-        AbstractNode* lor(AbstractNode* expr1, AbstractNode* expr2);
+        std::shared_ptr<AbstractNode> lor(std::shared_ptr<AbstractNode> expr1, std::shared_ptr<AbstractNode> expr2);
 
         //! AST C++ API - lor node builder
         template <typename T>
-        AbstractNode* lor(const T& exprs);
+        std::shared_ptr<AbstractNode> lor(const T& exprs);
 
         //! AST C++ API - reference node builder
-        AbstractNode* reference(AbstractNode* ast, triton::usize id);
+        std::shared_ptr<AbstractNode> reference(std::shared_ptr<AbstractNode> ast, triton::usize id);
 
         //! AST C++ API - string node builder
-        AbstractNode* string(std::string value);
+        std::shared_ptr<AbstractNode> string(std::string value);
 
         //! AST C++ API - sx node builder
-        AbstractNode* sx(triton::uint32 sizeExt, AbstractNode* expr);
+        std::shared_ptr<AbstractNode> sx(triton::uint32 sizeExt, std::shared_ptr<AbstractNode> expr);
 
         //! AST C++ API - variable node builder
-        AbstractNode* variable(std::string const& varName, triton::uint32 size);
+        std::shared_ptr<AbstractNode> variable(std::string const& varName, triton::uint32 size);
 
         //! AST C++ API - zx node builder
-        AbstractNode* zx(triton::uint32 sizeExt, AbstractNode* expr);
+        std::shared_ptr<AbstractNode> zx(triton::uint32 sizeExt, std::shared_ptr<AbstractNode> expr);
 
         //! Access to the underliying garbage collector
         triton::ast::AstGarbageCollector& getAstGarbageCollector(void);

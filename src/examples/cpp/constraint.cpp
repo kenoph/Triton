@@ -69,7 +69,7 @@ int main(int ac, const char **av) {
   std::cout << "constraint: " << constraint << std::endl;
 
   /* Ask a model */
-  auto model = api.getModel(constraint);
+  auto model = api.getModel(constraint.get());
 
   /* Display all symbolic variable value contained in the model */
   std::cout << "Model:" << std::endl;

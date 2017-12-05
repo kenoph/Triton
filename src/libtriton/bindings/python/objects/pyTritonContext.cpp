@@ -529,7 +529,7 @@ namespace triton {
               break;
 
             case callbacks::SYMBOLIC_SIMPLIFICATION:
-              PyTritonContext_AsTritonContext(self)->addCallback(callbacks::symbolicSimplificationCallback([cb_self, cb](triton::API& api, triton::ast::AbstractNode* node) {
+              PyTritonContext_AsTritonContext(self)->addCallback(callbacks::symbolicSimplificationCallback([cb_self, cb](triton::API& api, std::shared_ptr<triton::ast::AbstractNode> node) {
                 /********* Lambda *********/
                 PyObject* args = nullptr;
 
@@ -923,7 +923,7 @@ namespace triton {
           ccomment = PyString_AsString(comment);
 
         triton::arch::Instruction arg1 = *PyInstruction_AsInstruction(inst);
-        triton::ast::AbstractNode *arg2 = PyAstNode_AsAstNode(node);
+        std::shared_ptr<triton::ast::AbstractNode> arg2 = PyAstNode_AsAstNode(node);
         triton::arch::Register arg3 = *PyRegister_AsRegister(flag);
 
         try {
@@ -965,7 +965,7 @@ namespace triton {
           ccomment = PyString_AsString(comment);
 
         triton::arch::Instruction arg1 = *PyInstruction_AsInstruction(inst);
-        triton::ast::AbstractNode *arg2 = PyAstNode_AsAstNode(node);
+        std::shared_ptr<triton::ast::AbstractNode> arg2 = PyAstNode_AsAstNode(node);
         triton::arch::MemoryAccess arg3 = *PyMemoryAccess_AsMemoryAccess(mem);
 
         try {
@@ -1007,7 +1007,7 @@ namespace triton {
           ccomment = PyString_AsString(comment);
 
         triton::arch::Instruction arg1 = *PyInstruction_AsInstruction(inst);
-        triton::ast::AbstractNode *arg2 = PyAstNode_AsAstNode(node);
+        std::shared_ptr<triton::ast::AbstractNode> arg2 = PyAstNode_AsAstNode(node);
         triton::arch::Register arg3 = *PyRegister_AsRegister(reg);
 
         try {
@@ -1045,7 +1045,7 @@ namespace triton {
           ccomment = PyString_AsString(comment);
 
         triton::arch::Instruction arg1 = *PyInstruction_AsInstruction(inst);
-        triton::ast::AbstractNode *arg2 = PyAstNode_AsAstNode(node);
+        std::shared_ptr<triton::ast::AbstractNode> arg2 = PyAstNode_AsAstNode(node);
 
         try {
           return PySymbolicExpression(PyTritonContext_AsTritonContext(self)->createSymbolicVolatileExpression(arg1, arg2, ccomment));
@@ -1154,7 +1154,7 @@ namespace triton {
           return PyErr_Format(PyExc_TypeError, "evaluateAstViaZ3(): Expects a AstNode as argument.");
 
         try {
-          return PyLong_FromUint512(PyTritonContext_AsTritonContext(self)->evaluateAstViaZ3(PyAstNode_AsAstNode(node)));
+          return PyLong_FromUint512(PyTritonContext_AsTritonContext(self)->evaluateAstViaZ3(PyAstNode_AsAstNode(node).get()));
         }
         catch (const triton::exceptions::Exception& e) {
           return PyErr_Format(PyExc_TypeError, "%s", e.what());
@@ -1327,7 +1327,7 @@ namespace triton {
 
         try {
           ret = xPyDict_New();
-          auto model = PyTritonContext_AsTritonContext(self)->getModel(PyAstNode_AsAstNode(node));
+          auto model = PyTritonContext_AsTritonContext(self)->getModel(PyAstNode_AsAstNode(node).get());
           for (auto it = model.begin(); it != model.end(); it++) {
             PyDict_SetItem(ret, PyLong_FromUint32(it->first), PySolverModel(it->second));
           }
@@ -1359,7 +1359,7 @@ namespace triton {
           return PyErr_Format(PyExc_TypeError, "getModels(): Expects an integer as second argument.");
 
         try {
-          auto models = PyTritonContext_AsTritonContext(self)->getModels(PyAstNode_AsAstNode(node), PyLong_AsUint32(limit));
+          auto models = PyTritonContext_AsTritonContext(self)->getModels(PyAstNode_AsAstNode(node).get(), PyLong_AsUint32(limit));
           triton::uint32 index = 0;
 
           ret = xPyList_New(models.size());

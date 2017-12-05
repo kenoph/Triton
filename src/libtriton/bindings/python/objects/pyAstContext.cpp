@@ -1139,7 +1139,7 @@ namespace triton {
           return PyErr_Format(PyExc_TypeError, "duplicate(): expected a AstNode as argument");
 
         try {
-          return PyAstNode(triton::ast::newInstance(PyAstNode_AsAstNode(expr)));
+          return PyAstNode(triton::ast::newInstance(PyAstNode_AsAstNode(expr).get()));
         }
         catch (const triton::exceptions::Exception& e) {
           return PyErr_Format(PyExc_TypeError, "%s", e.what());
@@ -1148,7 +1148,7 @@ namespace triton {
 
 
       static PyObject* AstContext_concat(PyObject* self, PyObject* exprsList) {
-        std::vector<triton::ast::AbstractNode *> exprs;
+        std::vector<std::shared_ptr<triton::ast::AbstractNode>> exprs;
 
         if (exprsList == nullptr || !PyList_Check(exprsList))
           return PyErr_Format(PyExc_TypeError, "concat(): expected a list of AstNodes as first argument");
@@ -1247,7 +1247,7 @@ namespace triton {
 
 
       static PyObject* AstContext_land(PyObject* self, PyObject* exprsList) {
-        std::vector<triton::ast::AbstractNode *> exprs;
+        std::vector<std::shared_ptr<triton::ast::AbstractNode>> exprs;
 
         if (exprsList == nullptr || !PyList_Check(exprsList))
           return PyErr_Format(PyExc_TypeError, "land(): expected a list of AstNodes as first argument");
@@ -1311,7 +1311,7 @@ namespace triton {
 
 
       static PyObject* AstContext_lor(PyObject* self, PyObject* exprsList) {
-        std::vector<triton::ast::AbstractNode *> exprs;
+        std::vector<std::shared_ptr<triton::ast::AbstractNode>> exprs;
 
         if (exprsList == nullptr || !PyList_Check(exprsList))
           return PyErr_Format(PyExc_TypeError, "lor(): expected a list of AstNodes as first argument");
@@ -1342,7 +1342,7 @@ namespace triton {
         try {
           // FIXME: we should remove this interface and use only ast, id interface to have a distinct ast library
           auto* se = PySymbolicExpression_AsSymbolicExpression(symExpr);
-          return PyAstNode(PyAstContext_AsAstContext(self)->reference(se->getAst(), se->getId()));
+          return PyAstNode(PyAstContext_AsAstContext(self)->reference(se->getShareAst(), se->getId()));
         }
         catch (const triton::exceptions::Exception& e) {
           return PyErr_Format(PyExc_TypeError, "%s", e.what());

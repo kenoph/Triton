@@ -59,10 +59,10 @@ namespace triton {
         triton::engines::taint::TaintEngine* taintEngine;
 
         //! Removes all symbolic expressions of an instruction.
-        void removeSymbolicExpressions(triton::arch::Instruction& inst, std::set<triton::ast::AbstractNode*>& uniqueNodes);
+        void removeSymbolicExpressions(triton::arch::Instruction& inst);
 
         //! Collects nodes from a set.
-        template <typename T> void collectNodes(std::set<triton::ast::AbstractNode*>& uniqueNodes, T& items) const;
+        template <typename T> void collectNodes(T& items) const;
 
         //! Collects nodes from operands.
         void collectNodes(std::vector<triton::arch::OperandWrapper>& operands) const;
