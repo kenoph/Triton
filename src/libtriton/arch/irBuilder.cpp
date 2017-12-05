@@ -27,7 +27,7 @@ namespace triton {
                          triton::engines::taint::TaintEngine* taintEngine)
       : modes(modes),
         astGarbageCollector(astCtxt.getAstGarbageCollector()),
-        backupAstGarbageCollector(modes, true) {
+        backupAstGarbageCollector(true) {
 
       if (architecture == nullptr)
         throw triton::exceptions::IrBuilder("IrBuilder::IrBuilder(): The architecture API must be defined.");

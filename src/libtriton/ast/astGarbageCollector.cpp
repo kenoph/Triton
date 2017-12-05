@@ -13,24 +13,19 @@
 namespace triton {
   namespace ast {
 
-    AstGarbageCollector::AstGarbageCollector(const triton::modes::Modes& modes, bool isBackup)
-      : triton::ast::AstDictionaries(isBackup),
-        modes(modes) {
-
+    AstGarbageCollector::AstGarbageCollector(bool isBackup)
+    {
       this->backupFlag = isBackup;
     }
 
 
     AstGarbageCollector::AstGarbageCollector(const AstGarbageCollector& other)
-      : triton::ast::AstDictionaries(other),
-        modes(other.modes) {
+    {
       this->copy(other);
     }
 
 
     void AstGarbageCollector::operator=(const AstGarbageCollector& other) {
-      triton::ast::AstDictionaries::operator=(other);
-      // We assume modes didn't change
       this->copy(other);
     }
 
@@ -65,10 +60,6 @@ namespace triton {
     void AstGarbageCollector::freeAstNodes(std::set<triton::ast::AbstractNode*>& nodes) {
       std::set<triton::ast::AbstractNode*>::iterator it;
 
-      /* Do not delete AST nodes if the AST_DICTIONARIES optimization is enabled */
-      if (this->modes.isModeEnabled(triton::modes::AST_DICTIONARIES))
-        return;
-
       for (it = nodes.begin(); it != nodes.end(); it++) {
         /* Remove the node from the global set */
         this->allocatedNodes.erase(*it);
@@ -96,16 +87,8 @@ namespace triton {
 
 
     triton::ast::AbstractNode* AstGarbageCollector::recordAstNode(triton::ast::AbstractNode* node) {
-      /* Check if the AST_DICTIONARIES is enabled. */
-      if (this->modes.isModeEnabled(triton::modes::AST_DICTIONARIES)) {
-        triton::ast::AbstractNode* ret = this->browseAstDictionaries(node);
-        if (ret != nullptr)
-          return ret;
-      }
-      else {
-        /* Record the node */
-        this->allocatedNodes.insert(node);
-      }
+      /* Record the node */
+      this->allocatedNodes.insert(node);
       return node;
     }
 

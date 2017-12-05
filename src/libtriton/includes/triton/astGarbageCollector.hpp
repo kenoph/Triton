@@ -12,8 +12,6 @@
 #include <string>
 
 #include <triton/ast.hpp>
-#include <triton/astDictionaries.hpp>
-#include <triton/modes.hpp>
 #include <triton/tritonTypes.hpp>
 
 
@@ -35,11 +33,8 @@ namespace triton {
 
     //! \class AstGarbageCollector
     /*! \brief The AST garbage collector class */
-    class AstGarbageCollector : public triton::ast::AstDictionaries {
+    class AstGarbageCollector {
       private:
-        //! Modes API
-        const triton::modes::Modes& modes;
-
         //! Defines if this instance is used as a backup.
         bool backupFlag;
 
@@ -52,7 +47,7 @@ namespace triton {
 
       public:
         //! Constructor.
-        AstGarbageCollector(const triton::modes::Modes& modes, bool isBackup=false);
+        AstGarbageCollector(bool isBackup=false);
 
         //! Constructor by copy.
         AstGarbageCollector(const AstGarbageCollector& other);

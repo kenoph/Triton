@@ -194,7 +194,7 @@ Note that only the version `71313` of Pin is supported.
 
 namespace triton {
 
-  API::API() : callbacks(*this), arch(&this->callbacks), modes(), astCtxt{this->modes} {
+  API::API() : callbacks(*this), arch(&this->callbacks) {
   }
 
 
@@ -414,7 +414,7 @@ namespace triton {
     this->modes = triton::modes::Modes();
 
     // Clean up the ast context
-    this->astCtxt = triton::ast::AstContext{this->modes};
+    this->astCtxt = triton::ast::AstContext{};
   }
 
 
@@ -484,11 +484,6 @@ namespace triton {
 
   const std::set<triton::ast::AbstractNode*>& API::getAllocatedAstNodes(void) const {
     return this->astCtxt.getAstGarbageCollector().getAllocatedAstNodes();
-  }
-
-
-  std::map<std::string, triton::usize> API::getAstDictionariesStats(void) const {
-    return this->astCtxt.getAstGarbageCollector().getAstDictionariesStats();
   }
 
 

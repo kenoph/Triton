@@ -41,9 +41,6 @@ namespace triton {
     /*! \brief AST Context - Used as AST builder. */
     class AstContext {
       public:
-        //! Constructor
-        AstContext(const triton::modes::Modes& modes);
-
         //! AST C++ API - bv node builder
         AbstractNode* bv(triton::uint512 value, triton::uint32 size);
 

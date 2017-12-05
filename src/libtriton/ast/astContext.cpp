@@ -14,10 +14,6 @@
 namespace triton {
   namespace ast {
 
-    AstContext::AstContext(const triton::modes::Modes& modes) : astGarbageCollector(modes) {
-    }
-
-
     AbstractNode* AstContext::bv(triton::uint512 value, triton::uint32 size) {
       AbstractNode* node = new(std::nothrow) BvNode(value, size, *this);
       if (node == nullptr)
