@@ -1118,7 +1118,9 @@ namespace triton {
           }
 
           /* Set AST */
-          mem.setLeaAst(leaAst);
+          // FIXME: No need to forget when we will remove the GC
+          this->astCtxt.getAstGarbageCollector().forgetNode(leaAst);
+          mem.setLeaAst(std::shared_ptr<triton::ast::AbstractNode>(leaAst));
 
           /* Initialize the address only if it is not already defined */
           if (!mem.getAddress() || force)

@@ -65,13 +65,13 @@ namespace triton {
         template <typename T> void collectNodes(std::set<triton::ast::AbstractNode*>& uniqueNodes, T& items) const;
 
         //! Collects nodes from operands.
-        void collectNodes(std::set<triton::ast::AbstractNode*>& uniqueNodes, std::vector<triton::arch::OperandWrapper>& operands, bool gc) const;
+        void collectNodes(std::vector<triton::arch::OperandWrapper>& operands) const;
 
         //! Collects unsymbolized nodes from a set.
         template <typename T> void collectUnsymbolizedNodes(T& items) const;
 
         //! Collects unsymbolized nodes from operands.
-        void collectUnsymbolizedNodes(std::set<triton::ast::AbstractNode*>& uniqueNodes, std::vector<triton::arch::OperandWrapper>& operands) const;
+        void collectUnsymbolizedNodes(std::vector<triton::arch::OperandWrapper>& operands) const;
 
       protected:
         //! x86 ISA builder.

@@ -29,7 +29,6 @@ namespace triton {
       this->copy(other);
     }
 
-
     void AstGarbageCollector::copy(const AstGarbageCollector& other) {
       /* Remove unused nodes before the assignation */
       for (auto it = this->allocatedNodes.begin(); it != this->allocatedNodes.end(); it++) {

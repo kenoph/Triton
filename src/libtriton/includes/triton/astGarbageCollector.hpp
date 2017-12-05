@@ -76,6 +76,10 @@ namespace triton {
         //! Records a variable AST node.
         void recordVariableAstNode(const std::string& name, triton::ast::AbstractNode* node);
 
+        void forgetNode(triton::ast::AbstractNode* node) {
+          allocatedNodes.erase(node);
+        }
+
         //! Returns all allocated nodes.
         const std::set<triton::ast::AbstractNode*>& getAllocatedAstNodes(void) const;
 

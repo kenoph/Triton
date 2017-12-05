@@ -16,6 +16,7 @@
 #include <triton/register.hpp>
 #include <triton/tritonTypes.hpp>
 
+#include <memory>
 
 
 //! The Triton namespace
@@ -61,7 +62,7 @@ namespace triton {
         triton::arch::Immediate scale;
 
         //! The AST of the memory access (LEA).
-        triton::ast::AbstractNode* leaAst;
+        std::shared_ptr<triton::ast::AbstractNode> leaAst;
 
         //! Copy a MemoryAccess.
         void copy(const MemoryAccess& other);
@@ -155,7 +156,7 @@ namespace triton {
         void setScale(const triton::arch::Immediate& scale);
 
         //! Sets the AST of the memory access (LEA).
-        void setLeaAst(triton::ast::AbstractNode* ast);
+        void setLeaAst(std::shared_ptr<triton::ast::AbstractNode> ast);
 
         //! Copies a MemoryAccess.
         void operator=(const MemoryAccess& other);
