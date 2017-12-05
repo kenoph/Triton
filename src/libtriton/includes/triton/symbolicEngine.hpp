@@ -209,10 +209,10 @@ namespace triton {
           triton::uint512 getSymbolicRegisterValue(const triton::arch::Register& reg);
 
           //! Returns a symbolic operand based on the abstract wrapper.
-          triton::ast::AbstractNode* buildSymbolicOperand(const triton::arch::OperandWrapper& op);
+          triton::engines::symbolic::SymbolicExpression* buildSymbolicOperand(const triton::arch::OperandWrapper& op);
 
           //! Returns a symbolic operand based on the abstract wrapper.
-          triton::ast::AbstractNode* buildSymbolicOperand(triton::arch::Instruction& inst, const triton::arch::OperandWrapper& op);
+          triton::engines::symbolic::SymbolicExpression* buildSymbolicOperand(triton::arch::Instruction& inst, const triton::arch::OperandWrapper& op);
 
           //! Returns a symbolic immediate.
           triton::engines::symbolic::SymbolicExpression* buildSymbolicImmediate(const triton::arch::Immediate& imm);

@@ -630,13 +630,15 @@ namespace triton {
 
   triton::ast::AbstractNode* API::buildSymbolicOperand(const triton::arch::OperandWrapper& op) {
     this->checkSymbolic();
-    return this->symbolic->buildSymbolicOperand(op);
+    // FIXME: should we change the interface?
+    return this->symbolic->buildSymbolicOperand(op)->getAst();
   }
 
 
   triton::ast::AbstractNode* API::buildSymbolicOperand(triton::arch::Instruction& inst, const triton::arch::OperandWrapper& op) {
     this->checkSymbolic();
-    return this->symbolic->buildSymbolicOperand(inst, op);
+    // FIXME: should we change the interface?
+    return this->symbolic->buildSymbolicOperand(inst, op)->getAst();
   }
 
 

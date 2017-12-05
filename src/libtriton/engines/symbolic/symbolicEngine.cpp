@@ -662,14 +662,11 @@ namespace triton {
 
 
       /* Returns a symbolic operand based on the abstract wrapper. */
-      triton::ast::AbstractNode* SymbolicEngine::buildSymbolicOperand(const triton::arch::OperandWrapper& op) {
+      triton::engines::symbolic::SymbolicExpression* SymbolicEngine::buildSymbolicOperand(const triton::arch::OperandWrapper& op) {
         switch (op.getType()) {
-          // FIXME
-          case triton::arch::OP_IMM: return this->buildSymbolicImmediate(op.getConstImmediate())->getAst();
-                                     // FIXME
-          case triton::arch::OP_MEM: return this->buildSymbolicMemory(op.getConstMemory())->getAst();
-                                     // FIXME
-          case triton::arch::OP_REG: return this->buildSymbolicRegister(op.getConstRegister())->getAst();
+          case triton::arch::OP_IMM: return this->buildSymbolicImmediate(op.getConstImmediate());
+          case triton::arch::OP_MEM: return this->buildSymbolicMemory(op.getConstMemory());
+          case triton::arch::OP_REG: return this->buildSymbolicRegister(op.getConstRegister());
           default:
             throw triton::exceptions::SymbolicEngine("SymbolicEngine::buildSymbolicOperand(): Invalid operand.");
         }
@@ -677,14 +674,11 @@ namespace triton {
 
 
       /* Returns a symbolic operand based on the abstract wrapper. */
-      triton::ast::AbstractNode* SymbolicEngine::buildSymbolicOperand(triton::arch::Instruction& inst, const triton::arch::OperandWrapper& op) {
+      triton::engines::symbolic::SymbolicExpression* SymbolicEngine::buildSymbolicOperand(triton::arch::Instruction& inst, const triton::arch::OperandWrapper& op) {
         switch (op.getType()) {
-          // FIXME
-          case triton::arch::OP_IMM: return this->buildSymbolicImmediate(inst, op.getConstImmediate())->getAst();
-                                     // FIXME
-          case triton::arch::OP_MEM: return this->buildSymbolicMemory(inst, op.getConstMemory())->getAst();
-                                     // FIXME
-          case triton::arch::OP_REG: return this->buildSymbolicRegister(inst, op.getConstRegister())->getAst();
+          case triton::arch::OP_IMM: return this->buildSymbolicImmediate(inst, op.getConstImmediate());
+          case triton::arch::OP_MEM: return this->buildSymbolicMemory(inst, op.getConstMemory());
+          case triton::arch::OP_REG: return this->buildSymbolicRegister(inst, op.getConstRegister());
           default:
             throw triton::exceptions::SymbolicEngine("SymbolicEngine::buildSymbolicOperand(): Invalid operand.");
         }
