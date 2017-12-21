@@ -224,25 +224,6 @@ namespace triton {
 
 
 
-        /* AST Garbage Collector API ===================================================================== */
-
-        //! [**AST garbage collector api**] - Extracts all unique nodes from a partial AST into the uniqueNodes set.
-        void extractUniqueAstNodes(std::set<triton::ast::AbstractNode*>& uniqueNodes, triton::ast::AbstractNode* root) const;
-
-        //! [**AST garbage collector api**] - Records a variable AST node.
-        void recordVariableAstNode(const std::string& name, std::shared_ptr<triton::ast::AbstractNode> const& node);
-
-        //! [**AST garbage collector api**] - Returns all variable nodes recorded.
-        const std::map<std::string, std::shared_ptr<triton::ast::AbstractNode>>& getAstVariableNodes(void) const;
-
-        //! [**AST garbage collector api**] - Returns the node of a recorded variable.
-        std::shared_ptr<triton::ast::AbstractNode> const& getAstVariableNode(const std::string& name);
-
-        //! [**AST garbage collector api**] - Sets all variable nodes recorded.
-        void setAstVariableNodes(const std::map<std::string, std::shared_ptr<triton::ast::AbstractNode>>& nodes);
-
-
-
         /* AST Representation API ======================================================================== */
 
         //! [**AST representation api**] - Returns the AST representation mode as triton::ast::representations::mode_e.

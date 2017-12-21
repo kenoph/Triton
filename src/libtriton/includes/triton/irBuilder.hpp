@@ -9,7 +9,6 @@
 #define TRITON_IRBUILDER_H
 
 #include <triton/architecture.hpp>
-#include <triton/astGarbageCollector.hpp>
 #include <triton/instruction.hpp>
 #include <triton/modes.hpp>
 #include <triton/semanticsInterface.hpp>
@@ -42,12 +41,6 @@ namespace triton {
 
         //! Modes API
         const triton::modes::Modes& modes;
-
-        //! AST garbage collector API
-        triton::ast::AstGarbageCollector& astGarbageCollector;
-
-        //! Backup AST garbage collector
-        triton::ast::AstGarbageCollector backupAstGarbageCollector;
 
         //! Symbolic engine API
         triton::engines::symbolic::SymbolicEngine* symbolicEngine;

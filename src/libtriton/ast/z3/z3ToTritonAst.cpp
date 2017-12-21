@@ -396,7 +396,7 @@ namespace triton {
         /* Variable or string */
         case Z3_OP_UNINTERPRETED: {
           std::string name = function.name().str();
-          node = this->astCtxt.getAstGarbageCollector().getAstVariableNode(name);
+          node = this->astCtxt.getVariableNode(name);
 
           if (!node)
             node = this->astCtxt.string(name);

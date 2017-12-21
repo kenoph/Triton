@@ -46,10 +46,7 @@ namespace tracer {
         /* 3 - Save current taint engine state */
         this->snapshotTaintEngine = new triton::engines::taint::TaintEngine(*tracer::pintool::api.getTaintEngine());
 
-        /* 4 - Save current map of variables */
-        this->variablesMap = tracer::pintool::api.getAstVariableNodes();
-
-        /* 5 - Save the Triton CPU state */
+        /* 4 - Save the Triton CPU state */
         #if defined(__x86_64__) || defined(_M_X64)
         this->cpu = new triton::arch::x86::x8664Cpu(*dynamic_cast<triton::arch::x86::x8664Cpu*>(tracer::pintool::api.getCpu()));
         #endif
@@ -57,7 +54,7 @@ namespace tracer {
         this->cpu = new triton::arch::x86::x86Cpu(*dynamic_cast<triton::arch::x86::x86Cpu*>(tracer::pintool::api.getCpu()));
         #endif
 
-        /* 6 - Save Pin registers context */
+        /* 5 - Save Pin registers context */
         PIN_SaveContext(ctx, &this->pinCtx);
       }
 
@@ -80,10 +77,7 @@ namespace tracer {
         /* 3 - Restore current taint engine state */
         *tracer::pintool::api.getTaintEngine() = *this->snapshotTaintEngine;
 
-        /* 4 - Restore current variables map state */
-        tracer::pintool::api.setAstVariableNodes(this->variablesMap);
-
-        /* 5 - Restore the Triton CPU state */
+        /* 4 - Restore the Triton CPU state */
         #if defined(__x86_64__) || defined(_M_X64)
         *dynamic_cast<triton::arch::x86::x8664Cpu*>(tracer::pintool::api.getCpu()) = *this->cpu;
         #endif
@@ -91,7 +85,7 @@ namespace tracer {
         *dynamic_cast<triton::arch::x86::x86Cpu*>(tracer::pintool::api.getCpu()) = *this->cpu;
         #endif
 
-        /* 6 - Restore Pin registers context */
+        /* 5 - Restore Pin registers context */
         PIN_SaveContext(&this->pinCtx, ctx);
 
         this->mustBeRestore = false;

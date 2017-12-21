@@ -50,9 +50,6 @@ namespace tracer {
         //! Flag which defines if we must restore the snapshot.
         bool mustBeRestore;
 
-        //! Variables node state.
-        std::map<std::string, std::shared_ptr<triton::ast::AbstractNode>> variablesMap;
-
         //! Snapshot of the symbolic engine.
         triton::engines::symbolic::SymbolicEngine* snapshotSymEngine;
 

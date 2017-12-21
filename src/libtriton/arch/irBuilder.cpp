@@ -25,8 +25,7 @@ namespace triton {
                          triton::ast::AstContext& astCtxt,
                          triton::engines::symbolic::SymbolicEngine* symbolicEngine,
                          triton::engines::taint::TaintEngine* taintEngine)
-      : modes(modes),
-        astGarbageCollector(astCtxt.getAstGarbageCollector())
+      : modes(modes)
     {
 
       if (architecture == nullptr)
@@ -103,7 +102,6 @@ namespace triton {
       /* Backup the symbolic engine in the case where only the taint is available. */
       if (!this->symbolicEngine->isEnabled()) {
         *this->backupSymbolicEngine = *this->symbolicEngine;
-        this->backupAstGarbageCollector = this->astGarbageCollector;
       }
     }
 
@@ -211,11 +209,6 @@ namespace triton {
         /* Symbolic Expressions */
         this->removeSymbolicExpressions(inst);
       }
-
-      // ----------------------------------------------------------------------
-
-      if (!this->symbolicEngine->isEnabled())
-        this->astGarbageCollector = this->backupAstGarbageCollector;
     }
 
 

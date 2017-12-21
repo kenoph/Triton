@@ -234,8 +234,9 @@ namespace triton {
     std::shared_ptr<AbstractNode> AstContext::variable(std::string const& varName, triton::uint32 size) {
 
       // try to get node from variable pool
-      if(this->astGarbageCollector.hasAstVariableNode(varName)) {
-        auto& node = this->astGarbageCollector.getAstVariableNode(varName);
+      auto it = this->valueMapping.find(varName);
+      if(it != this->valueMapping.end()) {
+        auto& node = it->second.first;
 
         if(node->getBitvectorSize() != size)
           throw triton::exceptions::Ast("Node builders - Missmatching variable size.");
@@ -244,12 +245,7 @@ namespace triton {
         return node;
       } else {
         // if not found, create a new variable node
-        auto node = VariableNode::get(varName, size, *this);
-
-        // and register this variable node in the variable pool
-        this->astGarbageCollector.recordVariableAstNode(varName, node);
-
-        return node;
+        return VariableNode::get(varName, size, *this);
       }
     }
 
@@ -261,35 +257,32 @@ namespace triton {
       return ZxNode::get(sizeExt, expr);
     }
 
-    triton::ast::AstGarbageCollector& AstContext::getAstGarbageCollector(void) {
-      return this->astGarbageCollector;
-    }
-
-    const triton::ast::AstGarbageCollector& AstContext::getAstGarbageCollector(void) const {
-      return this->astGarbageCollector;
-    }
-
-    void AstContext::initVariable(const std::string& name, const triton::uint512& value) {
+    void AstContext::initVariable(const std::string& name, const triton::uint512& value, std::shared_ptr<AbstractNode> const& node) {
+      // FIXME: Use insert and check result
       auto it = this->valueMapping.find(name);
       if (it == this->valueMapping.end())
-        this->valueMapping.insert(std::make_pair(name, value));
+        this->valueMapping.insert(std::make_pair(name, std::make_pair(node, value)));
+      else
+        throw triton::exceptions::Ast("Ast variable already initialized");
     }
 
     void AstContext::updateVariable(const std::string& name, const triton::uint512& value) {
-      for (auto& kv: this->astGarbageCollector.getAstVariableNodes()) {
-        if (kv.first == name) {
-          assert(kv.second[0]->getType() == triton::ast::VARIABLE_NODE);
-          this->valueMapping[dynamic_cast<VariableNode*>(kv.second.get())->getVarName()] = value;
-          kv.second->init();
-          return;
-        }
-      }
-      throw triton::exceptions::Ast("AstContext::updateVariable(): Variable to update not found");
+      auto& kv = this->valueMapping.at(name);
+      kv.second = value;
+      kv.first->init();
+    }
+
+    std::shared_ptr<AbstractNode> AstContext::getVariableNode(const std::string& name) {
+      auto it = this->valueMapping.find(name);
+      if (it == this->valueMapping.end())
+        return nullptr;
+      else
+        return it->second.first;
     }
 
     const triton::uint512& AstContext::getValueForVariable(const std::string& varName) const {
       try {
-        return this->valueMapping.at(varName);
+        return this->valueMapping.at(varName).second;
       } catch(const std::out_of_range& e) {
         throw triton::exceptions::Ast("AstContext::getValueForVariable(): Variable doesn't exists");
       }

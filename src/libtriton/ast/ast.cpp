@@ -2454,7 +2454,8 @@ namespace triton {
     std::shared_ptr<AbstractNode> VariableNode::get(std::string const& varName, triton::uint32 size, AstContext& ctxt) {
       auto node = std::shared_ptr<VariableNode>(new VariableNode(varName, ctxt));
       node->setBitvectorSize(size);
-      ctxt.initVariable(varName, 0);
+      ctxt.initVariable(varName, 0, node);
+      node->symbolized  = true;
       node->init();
       return node;
     }
@@ -2462,7 +2463,6 @@ namespace triton {
 
     void VariableNode::init(void) {
       this->eval        = ctxt.getValueForVariable(this->varName) & this->getBitvectorMask();
-      this->symbolized  = true;
 
       /* Init parents */
       updateParents();

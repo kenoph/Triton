@@ -454,35 +454,6 @@ namespace triton {
   }
 
 
-
-  /* AST garbage collector API ====================================================================== */
-
-  void API::extractUniqueAstNodes(std::set<triton::ast::AbstractNode*>& uniqueNodes, triton::ast::AbstractNode* root) const {
-    this->astCtxt.getAstGarbageCollector().extractUniqueAstNodes(uniqueNodes, root);
-  }
-
-
-  void API::recordVariableAstNode(const std::string& name, std::shared_ptr<triton::ast::AbstractNode> const& node) {
-    this->astCtxt.getAstGarbageCollector().recordVariableAstNode(name, node);
-  }
-
-
-  const std::map<std::string, std::shared_ptr<triton::ast::AbstractNode>>& API::getAstVariableNodes(void) const {
-    return this->astCtxt.getAstGarbageCollector().getAstVariableNodes();
-  }
-
-
-  std::shared_ptr<triton::ast::AbstractNode> const& API::getAstVariableNode(const std::string& name) {
-    return this->astCtxt.getAstGarbageCollector().getAstVariableNode(name);
-  }
-
-
-  void API::setAstVariableNodes(const std::map<std::string, std::shared_ptr<triton::ast::AbstractNode>>& nodes) {
-    this->astCtxt.getAstGarbageCollector().setAstVariableNodes(nodes);
-  }
-
-
-
   /* AST representation API ========================================================================= */
 
   triton::uint32 API::getAstRepresentationMode(void) const {

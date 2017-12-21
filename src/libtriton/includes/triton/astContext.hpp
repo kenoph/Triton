@@ -9,7 +9,6 @@
 #define TRITON_AST_CONTEXT_H
 
 #include <triton/ast.hpp>
-#include <triton/astGarbageCollector.hpp>
 #include "triton/astRepresentation.hpp"   // for AstRepresentation, astRepre...
 
 #include <vector>
@@ -200,14 +199,11 @@ namespace triton {
         //! AST C++ API - zx node builder
         std::shared_ptr<AbstractNode> zx(triton::uint32 sizeExt, std::shared_ptr<AbstractNode> expr);
 
-        //! Access to the underliying garbage collector
-        triton::ast::AstGarbageCollector& getAstGarbageCollector(void);
-
-        //! Access to the underliying garbage collector
-        const triton::ast::AstGarbageCollector& getAstGarbageCollector(void) const;
-
         //! Initialize a variable in the context
-        void initVariable(const std::string& name, const triton::uint512& value);
+        void initVariable(const std::string& name, const triton::uint512& value, std::shared_ptr<AbstractNode> const& node);
+
+        //! Get existing variable node if present or nullptr
+        std::shared_ptr<AbstractNode> getVariableNode(const std::string& name);
 
         //! Update a variable value in this context
         void updateVariable(const std::string& name, const triton::uint512& value);
@@ -225,11 +221,9 @@ namespace triton {
         std::ostream& print(std::ostream& stream, AbstractNode* node);
 
       private:
-        //! The AST garbage collector interface.
-        triton::ast::AstGarbageCollector astGarbageCollector;
-
-        //! Map a concrete value for a variable name.
-        std::map<std::string, triton::uint512> valueMapping;
+        //! Map a concrete value and ast node for a variable name.
+        // FIXME: Could be a weakptr to avoid leaking these nodes
+        std::map<std::string, std::pair<std::shared_ptr<triton::ast::AbstractNode>, triton::uint512>> valueMapping;
 
         //! String formater for ast
         triton::ast::representations::AstRepresentation astRepresentation;
