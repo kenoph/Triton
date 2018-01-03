@@ -29,7 +29,7 @@ class TestSymbolicExpression(unittest.TestCase):
 
     def test_expressions(self):
         """Test expressions"""
-        self.assertEqual(len(self.inst1.getSymbolicExpressions()), 7)
+        self.assertEqual(len(self.inst1.getSymbolicExpressions()), 9)
 
     def test_getAst(self):
         """Test getAst"""
@@ -37,7 +37,7 @@ class TestSymbolicExpression(unittest.TestCase):
 
     def test_getComment(self):
         """Test getComment"""
-        self.assertEqual(self.expr1.getComment(), "XOR operation")
+        self.assertEqual(self.expr1.getComment(), "Parent Reg - XOR operation")
 
     def test_getId(self):
         """Test getId"""

@@ -789,7 +789,6 @@ namespace triton {
         else
           op = this->astCtxt.bv(this->architecture->getConcreteRegisterValue(reg), bvSize);
 
-        // FIXME: Could we just return the old SymExpr?
         return this->newSymbolicExpression(op, triton::engines::symbolic::REG, "Symbolic Register");
       }
 
@@ -864,7 +863,6 @@ namespace triton {
           this->architecture->setConcreteMemoryValue(mem, ret.back()->evaluate());
           /* Define the memory store */
           inst.setStoreAccess(mem, aligned_se);
-          // FIXME: se or aligned_se
           return se;
         }
 
@@ -878,8 +876,7 @@ namespace triton {
         se->setOriginMemory(triton::arch::MemoryAccess(address, mem.getSize()));
 
         /* Define the memory store */
-        // FIXME: se or aligned_se?
-        inst.setStoreAccess(mem, aligned_se);
+        inst.setStoreAccess(mem, se);
         inst.addSymbolicExpression(se);
         return se;
       }
@@ -923,11 +920,13 @@ namespace triton {
             break;
         }
 
-        triton::engines::symbolic::SymbolicExpression* se = this->newSymbolicExpression(finalExpr, triton::engines::symbolic::REG, comment);
+        triton::engines::symbolic::SymbolicExpression* se = this->newSymbolicExpression(finalExpr, triton::engines::symbolic::REG, "Parent Reg - " + comment);
         this->assignSymbolicExpressionToRegister(se, parentReg);
         inst.addSymbolicExpression(se);
-        // FIXME: Should it be a new SymbolicExpression from node?
-        inst.setWrittenRegister(reg, se);
+
+        triton::engines::symbolic::SymbolicExpression* reg_se = this->newSymbolicExpression(node, triton::engines::symbolic::REG, "Real Reg - " + comment);
+        inst.setWrittenRegister(reg, reg_se);
+        inst.addSymbolicExpression(reg_se);
 
         return se;
       }

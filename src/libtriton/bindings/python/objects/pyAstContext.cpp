@@ -150,14 +150,16 @@ True
 >>> for expr in inst.getSymbolicExpressions():
 ...     print expr
 ...
-ref_2 = ((0x1122334455667788 + 0x8877665544332211) & 0xFFFFFFFFFFFFFFFF) # ADD operation
-ref_3 = (0x1 if (0x10 == (0x10 & (ref_2 ^ (0x1122334455667788 ^ 0x8877665544332211)))) else 0x0) # Adjust flag
-ref_4 = ((((0x1122334455667788 & 0x8877665544332211) ^ (((0x1122334455667788 ^ 0x8877665544332211) ^ ref_2) & (0x1122334455667788 ^ 0x8877665544332211))) >> 63) & 0x1) # Carry flag
-ref_5 = ((((0x1122334455667788 ^ (~(0x8877665544332211) & 0xFFFFFFFFFFFFFFFF)) & (0x1122334455667788 ^ ref_2)) >> 63) & 0x1) # Overflow flag
-ref_6 = ((((((((0x1 ^ (((ref_2 & 0xFF) >> 0x0) & 0x1)) ^ (((ref_2 & 0xFF) >> 0x1) & 0x1)) ^ (((ref_2 & 0xFF) >> 0x2) & 0x1)) ^ (((ref_2 & 0xFF) >> 0x3) & 0x1)) ^ (((ref_2 & 0xFF) >> 0x4) & 0x1)) ^ (((ref_2 & 0xFF) >> 0x5) & 0x1)) ^ (((ref_2 & 0xFF) >> 0x6) & 0x1)) ^ (((ref_2 & 0xFF) >> 0x7) & 0x1)) # Parity flag
-ref_7 = ((ref_2 >> 63) & 0x1) # Sign flag
-ref_8 = (0x1 if (ref_2 == 0x0) else 0x0) # Zero flag
-ref_9 = 0x400003 # Program Counter
+ref_2 = ((0x1122334455667788 + 0x8877665544332211) & 0xFFFFFFFFFFFFFFFF) # Parent Reg - ADD operation
+ref_3 = ((0x1122334455667788 + 0x8877665544332211) & 0xFFFFFFFFFFFFFFFF) # Real Reg - ADD operation
+ref_4 = (0x1 if (0x10 == (0x10 & (ref_2 ^ (0x1122334455667788 ^ 0x8877665544332211)))) else 0x0) # Adjust flag
+ref_5 = ((((0x1122334455667788 & 0x8877665544332211) ^ (((0x1122334455667788 ^ 0x8877665544332211) ^ ref_2) & (0x1122334455667788 ^ 0x8877665544332211))) >> 63) & 0x1) # Carry flag
+ref_6 = ((((0x1122334455667788 ^ (~(0x8877665544332211) & 0xFFFFFFFFFFFFFFFF)) & (0x1122334455667788 ^ ref_2)) >> 63) & 0x1) # Overflow flag
+ref_7 = ((((((((0x1 ^ (((ref_2 & 0xFF) >> 0x0) & 0x1)) ^ (((ref_2 & 0xFF) >> 0x1) & 0x1)) ^ (((ref_2 & 0xFF) >> 0x2) & 0x1)) ^ (((ref_2 & 0xFF) >> 0x3) & 0x1)) ^ (((ref_2 & 0xFF) >> 0x4) & 0x1)) ^ (((ref_2 & 0xFF) >> 0x5) & 0x1)) ^ (((ref_2 & 0xFF) >> 0x6) & 0x1)) ^ (((ref_2 & 0xFF) >> 0x7) & 0x1)) # Parity flag
+ref_8 = ((ref_2 >> 63) & 0x1) # Sign flag
+ref_9 = (0x1 if (ref_2 == 0x0) else 0x0) # Zero flag
+ref_10 = 0x400003 # Parent Reg - Program Counter
+ref_11 = 0x400003 # Real Reg - Program Counter
 
 ~~~~~~~~~~~~~
 
