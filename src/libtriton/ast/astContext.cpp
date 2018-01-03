@@ -15,19 +15,19 @@ namespace triton {
   namespace ast {
 
     std::shared_ptr<AbstractNode> AstContext::bv(triton::uint512 value, triton::uint32 size) {
-      return BvNode::get(value, size, *this);
+      return BvNode::create(value, size, *this);
     }
 
     std::shared_ptr<AbstractNode> AstContext::bvadd(std::shared_ptr<AbstractNode> expr1, std::shared_ptr<AbstractNode> expr2) {
-      return BvaddNode::get(expr1, expr2);
+      return BvaddNode::create(expr1, expr2);
     }
 
     std::shared_ptr<AbstractNode> AstContext::bvand(std::shared_ptr<AbstractNode> expr1, std::shared_ptr<AbstractNode> expr2) {
-      return BvandNode::get(expr1, expr2);
+      return BvandNode::create(expr1, expr2);
     }
 
     std::shared_ptr<AbstractNode> AstContext::bvashr(std::shared_ptr<AbstractNode> expr1, std::shared_ptr<AbstractNode> expr2) {
-      return BvashrNode::get(expr1, expr2);
+      return BvashrNode::create(expr1, expr2);
     }
 
     std::shared_ptr<AbstractNode> AstContext::bvfalse(void) {
@@ -35,83 +35,83 @@ namespace triton {
     }
 
     std::shared_ptr<AbstractNode> AstContext::bvlshr(std::shared_ptr<AbstractNode> expr1, std::shared_ptr<AbstractNode> expr2) {
-      return BvlshrNode::get(expr1, expr2);
+      return BvlshrNode::create(expr1, expr2);
     }
 
     std::shared_ptr<AbstractNode> AstContext::bvmul(std::shared_ptr<AbstractNode> expr1, std::shared_ptr<AbstractNode> expr2) {
-      return BvmulNode::get(expr1, expr2);
+      return BvmulNode::create(expr1, expr2);
     }
 
     std::shared_ptr<AbstractNode> AstContext::bvnand(std::shared_ptr<AbstractNode> expr1, std::shared_ptr<AbstractNode> expr2) {
-      return BvnandNode::get(expr1, expr2);
+      return BvnandNode::create(expr1, expr2);
     }
 
     std::shared_ptr<AbstractNode> AstContext::bvneg(std::shared_ptr<AbstractNode> expr) {
-      return BvnegNode::get(expr);
+      return BvnegNode::create(expr);
     }
 
     std::shared_ptr<AbstractNode> AstContext::bvnor(std::shared_ptr<AbstractNode> expr1, std::shared_ptr<AbstractNode> expr2) {
-      return BvnorNode::get(expr1, expr2);
+      return BvnorNode::create(expr1, expr2);
     }
 
     std::shared_ptr<AbstractNode> AstContext::bvnot(std::shared_ptr<AbstractNode> expr) {
-      return BvnotNode::get(expr);
+      return BvnotNode::create(expr);
     }
 
     std::shared_ptr<AbstractNode> AstContext::bvor(std::shared_ptr<AbstractNode> expr1, std::shared_ptr<AbstractNode> expr2) {
-      return BvorNode::get(expr1, expr2);
+      return BvorNode::create(expr1, expr2);
     }
 
     std::shared_ptr<AbstractNode> AstContext::bvrol(triton::uint32 rot, std::shared_ptr<AbstractNode> expr) {
-      return BvrolNode::get(rot, expr);
+      return BvrolNode::create(rot, expr);
     }
 
     std::shared_ptr<AbstractNode> AstContext::bvrol(std::shared_ptr<AbstractNode> rot, std::shared_ptr<AbstractNode> expr) {
-      return BvrolNode::get(rot, expr);
+      return BvrolNode::create(rot, expr);
     }
 
     std::shared_ptr<AbstractNode> AstContext::bvror(triton::uint32 rot, std::shared_ptr<AbstractNode> expr) {
-      return BvrorNode::get(rot, expr);
+      return BvrorNode::create(rot, expr);
     }
 
     std::shared_ptr<AbstractNode> AstContext::bvror(std::shared_ptr<AbstractNode> rot, std::shared_ptr<AbstractNode> expr) {
-      return BvrorNode::get(rot, expr);
+      return BvrorNode::create(rot, expr);
     }
 
     std::shared_ptr<AbstractNode> AstContext::bvsdiv(std::shared_ptr<AbstractNode> expr1, std::shared_ptr<AbstractNode> expr2) {
-      return BvsdivNode::get(expr1, expr2);
+      return BvsdivNode::create(expr1, expr2);
     }
 
     std::shared_ptr<AbstractNode> AstContext::bvsge(std::shared_ptr<AbstractNode> expr1, std::shared_ptr<AbstractNode> expr2) {
-      return BvsgeNode::get(expr1, expr2);
+      return BvsgeNode::create(expr1, expr2);
     }
 
     std::shared_ptr<AbstractNode> AstContext::bvsgt(std::shared_ptr<AbstractNode> expr1, std::shared_ptr<AbstractNode> expr2) {
-      return BvsgtNode::get(expr1, expr2);
+      return BvsgtNode::create(expr1, expr2);
     }
 
     std::shared_ptr<AbstractNode> AstContext::bvshl(std::shared_ptr<AbstractNode> expr1, std::shared_ptr<AbstractNode> expr2) {
-      return BvshlNode::get(expr1, expr2);
+      return BvshlNode::create(expr1, expr2);
     }
 
     std::shared_ptr<AbstractNode> AstContext::bvsle(std::shared_ptr<AbstractNode> expr1, std::shared_ptr<AbstractNode> expr2) {
-      return BvsleNode::get(expr1, expr2);
+      return BvsleNode::create(expr1, expr2);
     }
 
     std::shared_ptr<AbstractNode> AstContext::bvslt(std::shared_ptr<AbstractNode> expr1, std::shared_ptr<AbstractNode> expr2) {
-      return BvsltNode::get(expr1, expr2);
+      return BvsltNode::create(expr1, expr2);
     }
 
     std::shared_ptr<AbstractNode> AstContext::bvsmod(std::shared_ptr<AbstractNode> expr1, std::shared_ptr<AbstractNode> expr2) {
-      return BvsmodNode::get(expr1, expr2);
+      return BvsmodNode::create(expr1, expr2);
     }
 
     std::shared_ptr<AbstractNode> AstContext::bvsrem(std::shared_ptr<AbstractNode> expr1, std::shared_ptr<AbstractNode> expr2) {
-      return BvsremNode::get(expr1, expr2);
+      return BvsremNode::create(expr1, expr2);
     }
 
     std::shared_ptr<AbstractNode> AstContext::bvsub(std::shared_ptr<AbstractNode> expr1, std::shared_ptr<AbstractNode> expr2) {
-      return BvsubNode::get(expr1, expr2);
+      return BvsubNode::create(expr1, expr2);
     }
 
     std::shared_ptr<AbstractNode> AstContext::bvtrue(void) {
@@ -119,58 +119,58 @@ namespace triton {
     }
 
     std::shared_ptr<AbstractNode> AstContext::bvudiv(std::shared_ptr<AbstractNode> expr1, std::shared_ptr<AbstractNode> expr2) {
-      return BvudivNode::get(expr1, expr2);
+      return BvudivNode::create(expr1, expr2);
     }
 
     std::shared_ptr<AbstractNode> AstContext::bvuge(std::shared_ptr<AbstractNode> expr1, std::shared_ptr<AbstractNode> expr2) {
-      return BvugeNode::get(expr1, expr2);
+      return BvugeNode::create(expr1, expr2);
     }
 
     std::shared_ptr<AbstractNode> AstContext::bvugt(std::shared_ptr<AbstractNode> expr1, std::shared_ptr<AbstractNode> expr2) {
-      return BvugtNode::get(expr1, expr2);
+      return BvugtNode::create(expr1, expr2);
     }
 
     std::shared_ptr<AbstractNode> AstContext::bvule(std::shared_ptr<AbstractNode> expr1, std::shared_ptr<AbstractNode> expr2) {
-      return BvuleNode::get(expr1, expr2);
+      return BvuleNode::create(expr1, expr2);
     }
 
     std::shared_ptr<AbstractNode> AstContext::bvult(std::shared_ptr<AbstractNode> expr1, std::shared_ptr<AbstractNode> expr2) {
-      return BvultNode::get(expr1, expr2);
+      return BvultNode::create(expr1, expr2);
     }
 
     std::shared_ptr<AbstractNode> AstContext::bvurem(std::shared_ptr<AbstractNode> expr1, std::shared_ptr<AbstractNode> expr2) {
-      return BvuremNode::get(expr1, expr2);
+      return BvuremNode::create(expr1, expr2);
     }
 
      std::shared_ptr<AbstractNode> AstContext::bvxnor(std::shared_ptr<AbstractNode> expr1, std::shared_ptr<AbstractNode> expr2) {
-      return BvxnorNode::get(expr1, expr2);
+      return BvxnorNode::create(expr1, expr2);
     }
 
     std::shared_ptr<AbstractNode> AstContext::bvxor(std::shared_ptr<AbstractNode> expr1, std::shared_ptr<AbstractNode> expr2) {
-      return BvxorNode::get(expr1, expr2);
+      return BvxorNode::create(expr1, expr2);
     }
 
     std::shared_ptr<AbstractNode> AstContext::concat(std::shared_ptr<AbstractNode> expr1, std::shared_ptr<AbstractNode> expr2) {
-      return ConcatNode::get(expr1, expr2);
+      return ConcatNode::create(expr1, expr2);
     }
 
     template std::shared_ptr<AbstractNode> AstContext::concat(const std::vector<std::shared_ptr<AbstractNode>>& exprs);
     template std::shared_ptr<AbstractNode> AstContext::concat(const std::list<std::shared_ptr<AbstractNode>>& exprs);
     template <typename T>
     std::shared_ptr<AbstractNode> AstContext::concat(const T& exprs) {
-      return ConcatNode::get(exprs, *this);
+      return ConcatNode::create(exprs, *this);
     }
 
     std::shared_ptr<AbstractNode> AstContext::decimal(triton::uint512 value) {
-      return DecimalNode::get(value, *this);
+      return DecimalNode::create(value, *this);
     }
 
     std::shared_ptr<AbstractNode> AstContext::distinct(std::shared_ptr<AbstractNode> expr1, std::shared_ptr<AbstractNode> expr2) {
-      return DistinctNode::get(expr1, expr2);
+      return DistinctNode::create(expr1, expr2);
     }
 
     std::shared_ptr<AbstractNode> AstContext::equal(std::shared_ptr<AbstractNode> expr1, std::shared_ptr<AbstractNode> expr2) {
-      return EqualNode::get(expr1, expr2);
+      return EqualNode::create(expr1, expr2);
     }
 
     std::shared_ptr<AbstractNode> AstContext::extract(triton::uint32 high, triton::uint32 low, std::shared_ptr<AbstractNode> expr) {
@@ -178,49 +178,49 @@ namespace triton {
       if (low == 0 && (high + 1) == expr->getBitvectorSize())
         return expr;
 
-      return ExtractNode::get(high, low, expr);
+      return ExtractNode::create(high, low, expr);
     }
 
     std::shared_ptr<AbstractNode> AstContext::ite(std::shared_ptr<AbstractNode> ifExpr, std::shared_ptr<AbstractNode> thenExpr, std::shared_ptr<AbstractNode> elseExpr) {
-      return IteNode::get(ifExpr, thenExpr, elseExpr);
+      return IteNode::create(ifExpr, thenExpr, elseExpr);
     }
 
     std::shared_ptr<AbstractNode> AstContext::land(std::shared_ptr<AbstractNode> expr1, std::shared_ptr<AbstractNode> expr2) {
-      return LandNode::get(expr1, expr2);
+      return LandNode::create(expr1, expr2);
     }
 
     template std::shared_ptr<AbstractNode> AstContext::land(const std::vector<std::shared_ptr<AbstractNode>>& exprs);
     template std::shared_ptr<AbstractNode> AstContext::land(const std::list<std::shared_ptr<AbstractNode>>& exprs);
     template <typename T>
     std::shared_ptr<AbstractNode> AstContext::land(const T& exprs) {
-      return LandNode::get(exprs, *this);
+      return LandNode::create(exprs, *this);
     }
 
     std::shared_ptr<AbstractNode> AstContext::let(std::string alias, std::shared_ptr<AbstractNode> expr2, std::shared_ptr<AbstractNode> expr3) {
-      return LetNode::get(alias, expr2, expr3);
+      return LetNode::create(alias, expr2, expr3);
     }
 
     std::shared_ptr<AbstractNode> AstContext::lnot(std::shared_ptr<AbstractNode> expr) {
-      return LnotNode::get(expr);
+      return LnotNode::create(expr);
     }
 
     std::shared_ptr<AbstractNode> AstContext::lor(std::shared_ptr<AbstractNode> expr1, std::shared_ptr<AbstractNode> expr2) {
-      return LorNode::get(expr1, expr2);
+      return LorNode::create(expr1, expr2);
     }
 
     template std::shared_ptr<AbstractNode> AstContext::lor(const std::vector<std::shared_ptr<AbstractNode>>& exprs);
     template std::shared_ptr<AbstractNode> AstContext::lor(const std::list<std::shared_ptr<AbstractNode>>& exprs);
     template <typename T>
     std::shared_ptr<AbstractNode> AstContext::lor(const T& exprs) {
-      return LorNode::get(exprs, *this);
+      return LorNode::create(exprs, *this);
     }
 
     std::shared_ptr<AbstractNode> AstContext::reference(std::shared_ptr<AbstractNode> ast, triton::usize id) {
-      return ReferenceNode::get(ast, id);
+      return ReferenceNode::create(ast, id);
     }
 
     std::shared_ptr<AbstractNode> AstContext::string(std::string value) {
-      return StringNode::get(value, *this);
+      return StringNode::create(value, *this);
     }
 
     std::shared_ptr<AbstractNode> AstContext::sx(triton::uint32 sizeExt, std::shared_ptr<AbstractNode> expr) {
@@ -228,7 +228,7 @@ namespace triton {
       if (sizeExt == 0)
         return expr;
 
-      return SxNode::get(sizeExt, expr);
+      return SxNode::create(sizeExt, expr);
     }
 
     std::shared_ptr<AbstractNode> AstContext::variable(std::string const& varName, triton::uint32 size) {
@@ -245,7 +245,7 @@ namespace triton {
         return node;
       } else {
         // if not found, create a new variable node
-        return VariableNode::get(varName, size, *this);
+        return VariableNode::create(varName, size, *this);
       }
     }
 
@@ -254,7 +254,7 @@ namespace triton {
       if (sizeExt == 0)
         return expr;
 
-      return ZxNode::get(sizeExt, expr);
+      return ZxNode::create(sizeExt, expr);
     }
 
     void AstContext::initVariable(const std::string& name, const triton::uint512& value, std::shared_ptr<AbstractNode> const& node) {
