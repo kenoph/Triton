@@ -385,7 +385,7 @@ namespace triton {
       };
 
 
-      PyObject* PySymbolicExpression(std::shared_ptr<triton::engines::symbolic::SymbolicExpression> symExpr) {
+      PyObject* PySymbolicExpression(std::shared_ptr<triton::engines::symbolic::SymbolicExpression> const& symExpr) {
         if (symExpr == nullptr) {
           Py_INCREF(Py_None);
           return Py_None;

@@ -390,7 +390,7 @@ namespace triton {
           triton::usize byteId = this->symbolicEngine->getSymbolicMemoryId(memAddrDst + i);
           if (byteId == triton::engines::symbolic::UNSET)
             continue;
-          std::shared_ptr<triton::engines::symbolic::SymbolicExpression> byte = this->symbolicEngine->getSymbolicExpressionFromId(byteId);
+          std::shared_ptr<triton::engines::symbolic::SymbolicExpression> const& byte = this->symbolicEngine->getSymbolicExpressionFromId(byteId);
           byte->isTainted = flag;
         }
 
@@ -411,7 +411,7 @@ namespace triton {
           triton::usize byteId = this->symbolicEngine->getSymbolicMemoryId(memAddrDst + i);
           if (byteId == triton::engines::symbolic::UNSET)
             continue;
-          std::shared_ptr<triton::engines::symbolic::SymbolicExpression> byte = this->symbolicEngine->getSymbolicExpressionFromId(byteId);
+          std::shared_ptr<triton::engines::symbolic::SymbolicExpression> const& byte = this->symbolicEngine->getSymbolicExpressionFromId(byteId);
           byte->isTainted = this->isMemoryTainted(memAddrDst + i) | this->isMemoryTainted(memAddrSrc + i);
         }
 
@@ -431,7 +431,7 @@ namespace triton {
           triton::usize byteId = this->symbolicEngine->getSymbolicMemoryId(memAddrDst + i);
           if (byteId == triton::engines::symbolic::UNSET)
             continue;
-          std::shared_ptr<triton::engines::symbolic::SymbolicExpression> byte = this->symbolicEngine->getSymbolicExpressionFromId(byteId);
+          std::shared_ptr<triton::engines::symbolic::SymbolicExpression> const& byte = this->symbolicEngine->getSymbolicExpressionFromId(byteId);
           byte->isTainted = flag;
         }
 
@@ -466,7 +466,7 @@ namespace triton {
           triton::usize byteId = this->symbolicEngine->getSymbolicMemoryId(memAddrDst + i);
           if (byteId == triton::engines::symbolic::UNSET)
             continue;
-          std::shared_ptr<triton::engines::symbolic::SymbolicExpression> byte = this->symbolicEngine->getSymbolicExpressionFromId(byteId);
+          std::shared_ptr<triton::engines::symbolic::SymbolicExpression> const& byte = this->symbolicEngine->getSymbolicExpressionFromId(byteId);
           byte->isTainted = flag;
         }
 
@@ -487,7 +487,7 @@ namespace triton {
           triton::usize byteId = this->symbolicEngine->getSymbolicMemoryId(memAddrDst + i);
           if (byteId == triton::engines::symbolic::UNSET)
             continue;
-          std::shared_ptr<triton::engines::symbolic::SymbolicExpression> byte = this->symbolicEngine->getSymbolicExpressionFromId(byteId);
+          std::shared_ptr<triton::engines::symbolic::SymbolicExpression> const& byte = this->symbolicEngine->getSymbolicExpressionFromId(byteId);
           byte->isTainted = this->isMemoryTainted(memAddrSrc + i);
         }
 
@@ -507,7 +507,7 @@ namespace triton {
           triton::usize byteId = this->symbolicEngine->getSymbolicMemoryId(memAddrDst + i);
           if (byteId == triton::engines::symbolic::UNSET)
             continue;
-          std::shared_ptr<triton::engines::symbolic::SymbolicExpression> byte = this->symbolicEngine->getSymbolicExpressionFromId(byteId);
+          std::shared_ptr<triton::engines::symbolic::SymbolicExpression> const& byte = this->symbolicEngine->getSymbolicExpressionFromId(byteId);
           byte->isTainted = flag;
         }
 

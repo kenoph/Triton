@@ -817,7 +817,7 @@ namespace triton {
 
 
       void x86Semantics::af_s(triton::arch::Instruction& inst,
-                              std::shared_ptr<triton::engines::symbolic::SymbolicExpression> parent,
+                              std::shared_ptr<triton::engines::symbolic::SymbolicExpression> const& parent,
                               triton::arch::OperandWrapper& dst,
                               triton::ast::SharedAbstractNode const& op1,
                               triton::ast::SharedAbstractNode const& op2,
@@ -855,7 +855,7 @@ namespace triton {
 
 
       void x86Semantics::afNeg_s(triton::arch::Instruction& inst,
-                                 std::shared_ptr<triton::engines::symbolic::SymbolicExpression> parent,
+                                 std::shared_ptr<triton::engines::symbolic::SymbolicExpression> const& parent,
                                  triton::arch::OperandWrapper& dst,
                                  triton::ast::SharedAbstractNode const& op1,
                                  bool vol) {
@@ -892,7 +892,7 @@ namespace triton {
 
 
       void x86Semantics::cfAdd_s(triton::arch::Instruction& inst,
-                                 std::shared_ptr<triton::engines::symbolic::SymbolicExpression> parent,
+                                 std::shared_ptr<triton::engines::symbolic::SymbolicExpression> const& parent,
                                  triton::arch::OperandWrapper& dst,
                                  triton::ast::SharedAbstractNode const& op1,
                                  triton::ast::SharedAbstractNode const& op2,
@@ -927,7 +927,7 @@ namespace triton {
 
 
       void x86Semantics::cfBlsi_s(triton::arch::Instruction& inst,
-                                  std::shared_ptr<triton::engines::symbolic::SymbolicExpression> parent,
+                                  std::shared_ptr<triton::engines::symbolic::SymbolicExpression> const& parent,
                                   triton::arch::OperandWrapper& dst,
                                   triton::ast::SharedAbstractNode const& op1,
                                   bool vol) {
@@ -954,7 +954,7 @@ namespace triton {
 
 
       void x86Semantics::cfBlsmsk_s(triton::arch::Instruction& inst,
-                                    std::shared_ptr<triton::engines::symbolic::SymbolicExpression> parent,
+                                    std::shared_ptr<triton::engines::symbolic::SymbolicExpression> const& parent,
                                     triton::arch::OperandWrapper& dst,
                                     triton::ast::SharedAbstractNode const& op1,
                                     bool vol) {
@@ -981,7 +981,7 @@ namespace triton {
 
 
       void x86Semantics::cfBlsr_s(triton::arch::Instruction& inst,
-                                  std::shared_ptr<triton::engines::symbolic::SymbolicExpression> parent,
+                                  std::shared_ptr<triton::engines::symbolic::SymbolicExpression> const& parent,
                                   triton::arch::OperandWrapper& dst,
                                   triton::ast::SharedAbstractNode const& op1,
                                   bool vol) {
@@ -1008,7 +1008,7 @@ namespace triton {
 
 
       void x86Semantics::cfImul_s(triton::arch::Instruction& inst,
-                                  std::shared_ptr<triton::engines::symbolic::SymbolicExpression> parent,
+                                  std::shared_ptr<triton::engines::symbolic::SymbolicExpression> const& parent,
                                   triton::arch::OperandWrapper& dst,
                                   triton::ast::SharedAbstractNode const& op1,
                                   triton::ast::SharedAbstractNode const& res,
@@ -1036,7 +1036,7 @@ namespace triton {
 
 
       void x86Semantics::cfMul_s(triton::arch::Instruction& inst,
-                                 std::shared_ptr<triton::engines::symbolic::SymbolicExpression> parent,
+                                 std::shared_ptr<triton::engines::symbolic::SymbolicExpression> const& parent,
                                  triton::arch::OperandWrapper& dst,
                                  triton::ast::SharedAbstractNode const& op1,
                                  bool vol) {
@@ -1063,7 +1063,7 @@ namespace triton {
 
 
       void x86Semantics::cfNeg_s(triton::arch::Instruction& inst,
-                                 std::shared_ptr<triton::engines::symbolic::SymbolicExpression> parent,
+                                 std::shared_ptr<triton::engines::symbolic::SymbolicExpression> const& parent,
                                  triton::arch::OperandWrapper& dst,
                                  triton::ast::SharedAbstractNode const& op1,
                                  bool vol) {
@@ -1090,7 +1090,7 @@ namespace triton {
 
 
       void x86Semantics::cfPtest_s(triton::arch::Instruction& inst,
-                                   std::shared_ptr<triton::engines::symbolic::SymbolicExpression> parent,
+                                   std::shared_ptr<triton::engines::symbolic::SymbolicExpression> const& parent,
                                    triton::arch::OperandWrapper& dst,
                                    bool vol) {
 
@@ -1120,7 +1120,7 @@ namespace triton {
 
 
       void x86Semantics::cfRcl_s(triton::arch::Instruction& inst,
-                                 std::shared_ptr<triton::engines::symbolic::SymbolicExpression> parent,
+                                 std::shared_ptr<triton::engines::symbolic::SymbolicExpression> const& parent,
                                  triton::ast::SharedAbstractNode const& result,
                                  triton::ast::SharedAbstractNode const& op2,
                                  bool vol) {
@@ -1144,7 +1144,7 @@ namespace triton {
 
 
       void x86Semantics::cfRcr_s(triton::arch::Instruction& inst,
-                                 std::shared_ptr<triton::engines::symbolic::SymbolicExpression> parent,
+                                 std::shared_ptr<triton::engines::symbolic::SymbolicExpression> const& parent,
                                  triton::arch::OperandWrapper& dst,
                                  triton::ast::SharedAbstractNode const& result,
                                  triton::ast::SharedAbstractNode const& op2,
@@ -1169,7 +1169,7 @@ namespace triton {
 
 
       void x86Semantics::cfRol_s(triton::arch::Instruction& inst,
-                                 std::shared_ptr<triton::engines::symbolic::SymbolicExpression> parent,
+                                 std::shared_ptr<triton::engines::symbolic::SymbolicExpression> const& parent,
                                  triton::arch::OperandWrapper& dst,
                                  triton::ast::SharedAbstractNode const& op2,
                                  bool vol) {
@@ -1193,7 +1193,7 @@ namespace triton {
 
 
       void x86Semantics::cfRor_s(triton::arch::Instruction& inst,
-                                 std::shared_ptr<triton::engines::symbolic::SymbolicExpression> parent,
+                                 std::shared_ptr<triton::engines::symbolic::SymbolicExpression> const& parent,
                                  triton::arch::OperandWrapper& dst,
                                  triton::ast::SharedAbstractNode const& op2,
                                  bool vol) {
@@ -1217,7 +1217,7 @@ namespace triton {
 
 
       void x86Semantics::cfSar_s(triton::arch::Instruction& inst,
-                                 std::shared_ptr<triton::engines::symbolic::SymbolicExpression> parent,
+                                 std::shared_ptr<triton::engines::symbolic::SymbolicExpression> const& parent,
                                  triton::arch::OperandWrapper& dst,
                                  triton::ast::SharedAbstractNode const& op1,
                                  triton::ast::SharedAbstractNode const& op2,
@@ -1253,7 +1253,7 @@ namespace triton {
 
 
       void x86Semantics::cfShl_s(triton::arch::Instruction& inst,
-                                 std::shared_ptr<triton::engines::symbolic::SymbolicExpression> parent,
+                                 std::shared_ptr<triton::engines::symbolic::SymbolicExpression> const& parent,
                                  triton::arch::OperandWrapper& dst,
                                  triton::ast::SharedAbstractNode const& op1,
                                  triton::ast::SharedAbstractNode const& op2,
@@ -1289,7 +1289,7 @@ namespace triton {
 
 
       void x86Semantics::cfShld_s(triton::arch::Instruction& inst,
-                                  std::shared_ptr<triton::engines::symbolic::SymbolicExpression> parent,
+                                  std::shared_ptr<triton::engines::symbolic::SymbolicExpression> const& parent,
                                   triton::arch::OperandWrapper& dst,
                                   triton::ast::SharedAbstractNode const& op1,
                                   triton::ast::SharedAbstractNode const& op2,
@@ -1324,7 +1324,7 @@ namespace triton {
 
 
       void x86Semantics::cfShr_s(triton::arch::Instruction& inst,
-                                 std::shared_ptr<triton::engines::symbolic::SymbolicExpression> parent,
+                                 std::shared_ptr<triton::engines::symbolic::SymbolicExpression> const& parent,
                                  triton::arch::OperandWrapper& dst,
                                  triton::ast::SharedAbstractNode const& op1,
                                  triton::ast::SharedAbstractNode const& op2,
@@ -1359,7 +1359,7 @@ namespace triton {
 
 
       void x86Semantics::cfShrd_s(triton::arch::Instruction& inst,
-                                  std::shared_ptr<triton::engines::symbolic::SymbolicExpression> parent,
+                                  std::shared_ptr<triton::engines::symbolic::SymbolicExpression> const& parent,
                                   triton::arch::OperandWrapper& dst,
                                   triton::ast::SharedAbstractNode const& op1,
                                   triton::ast::SharedAbstractNode const& op2,
@@ -1394,7 +1394,7 @@ namespace triton {
 
 
       void x86Semantics::cfSub_s(triton::arch::Instruction& inst,
-                                 std::shared_ptr<triton::engines::symbolic::SymbolicExpression> parent,
+                                 std::shared_ptr<triton::engines::symbolic::SymbolicExpression> const& parent,
                                  triton::arch::OperandWrapper& dst,
                                  triton::ast::SharedAbstractNode const& op1,
                                  triton::ast::SharedAbstractNode const& op2,
@@ -1427,7 +1427,7 @@ namespace triton {
 
 
       void x86Semantics::ofAdd_s(triton::arch::Instruction& inst,
-                                 std::shared_ptr<triton::engines::symbolic::SymbolicExpression> parent,
+                                 std::shared_ptr<triton::engines::symbolic::SymbolicExpression> const& parent,
                                  triton::arch::OperandWrapper& dst,
                                  triton::ast::SharedAbstractNode const& op1,
                                  triton::ast::SharedAbstractNode const& op2,
@@ -1457,7 +1457,7 @@ namespace triton {
 
 
       void x86Semantics::ofImul_s(triton::arch::Instruction& inst,
-                                  std::shared_ptr<triton::engines::symbolic::SymbolicExpression> parent,
+                                  std::shared_ptr<triton::engines::symbolic::SymbolicExpression> const& parent,
                                   triton::arch::OperandWrapper& dst,
                                   triton::ast::SharedAbstractNode const& op1,
                                   triton::ast::SharedAbstractNode const& res,
@@ -1484,7 +1484,7 @@ namespace triton {
 
 
       void x86Semantics::ofMul_s(triton::arch::Instruction& inst,
-                                 std::shared_ptr<triton::engines::symbolic::SymbolicExpression> parent,
+                                 std::shared_ptr<triton::engines::symbolic::SymbolicExpression> const& parent,
                                  triton::arch::OperandWrapper& dst,
                                  triton::ast::SharedAbstractNode const& op1,
                                  bool vol) {
@@ -1511,7 +1511,7 @@ namespace triton {
 
 
       void x86Semantics::ofNeg_s(triton::arch::Instruction& inst,
-                                 std::shared_ptr<triton::engines::symbolic::SymbolicExpression> parent,
+                                 std::shared_ptr<triton::engines::symbolic::SymbolicExpression> const& parent,
                                  triton::arch::OperandWrapper& dst,
                                  triton::ast::SharedAbstractNode const& op1,
                                  bool vol) {
@@ -1540,7 +1540,7 @@ namespace triton {
 
 
       void x86Semantics::ofRol_s(triton::arch::Instruction& inst,
-                                 std::shared_ptr<triton::engines::symbolic::SymbolicExpression> parent,
+                                 std::shared_ptr<triton::engines::symbolic::SymbolicExpression> const& parent,
                                  triton::arch::OperandWrapper& dst,
                                  triton::ast::SharedAbstractNode const& op2,
                                  bool vol) {
@@ -1568,7 +1568,7 @@ namespace triton {
 
 
       void x86Semantics::ofRor_s(triton::arch::Instruction& inst,
-                                 std::shared_ptr<triton::engines::symbolic::SymbolicExpression> parent,
+                                 std::shared_ptr<triton::engines::symbolic::SymbolicExpression> const& parent,
                                  triton::arch::OperandWrapper& dst,
                                  triton::ast::SharedAbstractNode const& op2,
                                  bool vol) {
@@ -1595,7 +1595,7 @@ namespace triton {
 
 
       void x86Semantics::ofRcr_s(triton::arch::Instruction& inst,
-                                 std::shared_ptr<triton::engines::symbolic::SymbolicExpression> parent,
+                                 std::shared_ptr<triton::engines::symbolic::SymbolicExpression> const& parent,
                                  triton::arch::OperandWrapper& dst,
                                  triton::ast::SharedAbstractNode const& op1,
                                  triton::ast::SharedAbstractNode const& op2,
@@ -1624,7 +1624,7 @@ namespace triton {
 
 
       void x86Semantics::ofSar_s(triton::arch::Instruction& inst,
-                                 std::shared_ptr<triton::engines::symbolic::SymbolicExpression> parent,
+                                 std::shared_ptr<triton::engines::symbolic::SymbolicExpression> const& parent,
                                  triton::arch::OperandWrapper& dst,
                                  triton::ast::SharedAbstractNode const& op2,
                                  bool vol) {
@@ -1653,7 +1653,7 @@ namespace triton {
 
 
       void x86Semantics::ofShl_s(triton::arch::Instruction& inst,
-                                 std::shared_ptr<triton::engines::symbolic::SymbolicExpression> parent,
+                                 std::shared_ptr<triton::engines::symbolic::SymbolicExpression> const& parent,
                                  triton::arch::OperandWrapper& dst,
                                  triton::ast::SharedAbstractNode const& op1,
                                  triton::ast::SharedAbstractNode const& op2,
@@ -1688,7 +1688,7 @@ namespace triton {
 
 
       void x86Semantics::ofShld_s(triton::arch::Instruction& inst,
-                                  std::shared_ptr<triton::engines::symbolic::SymbolicExpression> parent,
+                                  std::shared_ptr<triton::engines::symbolic::SymbolicExpression> const& parent,
                                   triton::arch::OperandWrapper& dst,
                                   triton::ast::SharedAbstractNode const& op1,
                                   triton::ast::SharedAbstractNode const& op2,
@@ -1728,7 +1728,7 @@ namespace triton {
 
 
       void x86Semantics::ofShr_s(triton::arch::Instruction& inst,
-                                 std::shared_ptr<triton::engines::symbolic::SymbolicExpression> parent,
+                                 std::shared_ptr<triton::engines::symbolic::SymbolicExpression> const& parent,
                                  triton::arch::OperandWrapper& dst,
                                  triton::ast::SharedAbstractNode const& op1,
                                  triton::ast::SharedAbstractNode const& op2,
@@ -1758,7 +1758,7 @@ namespace triton {
 
 
       void x86Semantics::ofShrd_s(triton::arch::Instruction& inst,
-                                  std::shared_ptr<triton::engines::symbolic::SymbolicExpression> parent,
+                                  std::shared_ptr<triton::engines::symbolic::SymbolicExpression> const& parent,
                                   triton::arch::OperandWrapper& dst,
                                   triton::ast::SharedAbstractNode const& op1,
                                   triton::ast::SharedAbstractNode const& op2,
@@ -1798,7 +1798,7 @@ namespace triton {
 
 
       void x86Semantics::ofSub_s(triton::arch::Instruction& inst,
-                                 std::shared_ptr<triton::engines::symbolic::SymbolicExpression> parent,
+                                 std::shared_ptr<triton::engines::symbolic::SymbolicExpression> const& parent,
                                  triton::arch::OperandWrapper& dst,
                                  triton::ast::SharedAbstractNode const& op1,
                                  triton::ast::SharedAbstractNode const& op2,
@@ -1828,7 +1828,7 @@ namespace triton {
 
 
       void x86Semantics::pf_s(triton::arch::Instruction& inst,
-                              std::shared_ptr<triton::engines::symbolic::SymbolicExpression> parent,
+                              std::shared_ptr<triton::engines::symbolic::SymbolicExpression> const& parent,
                               triton::arch::OperandWrapper& dst,
                               bool vol) {
 
@@ -1863,7 +1863,7 @@ namespace triton {
 
 
       void x86Semantics::pfShl_s(triton::arch::Instruction& inst,
-                                 std::shared_ptr<triton::engines::symbolic::SymbolicExpression> parent,
+                                 std::shared_ptr<triton::engines::symbolic::SymbolicExpression> const& parent,
                                  triton::arch::OperandWrapper& dst,
                                  triton::ast::SharedAbstractNode const& op2,
                                  bool vol) {
@@ -1905,7 +1905,7 @@ namespace triton {
 
 
       void x86Semantics::sf_s(triton::arch::Instruction& inst,
-                              std::shared_ptr<triton::engines::symbolic::SymbolicExpression> parent,
+                              std::shared_ptr<triton::engines::symbolic::SymbolicExpression> const& parent,
                               triton::arch::OperandWrapper& dst,
                               bool vol) {
 
@@ -1927,7 +1927,7 @@ namespace triton {
 
 
       void x86Semantics::sfShl_s(triton::arch::Instruction& inst,
-                                 std::shared_ptr<triton::engines::symbolic::SymbolicExpression> parent,
+                                 std::shared_ptr<triton::engines::symbolic::SymbolicExpression> const& parent,
                                  triton::arch::OperandWrapper& dst,
                                  triton::ast::SharedAbstractNode const& op2,
                                  bool vol) {
@@ -1955,7 +1955,7 @@ namespace triton {
 
 
       void x86Semantics::sfShld_s(triton::arch::Instruction& inst,
-                                  std::shared_ptr<triton::engines::symbolic::SymbolicExpression> parent,
+                                  std::shared_ptr<triton::engines::symbolic::SymbolicExpression> const& parent,
                                   triton::arch::OperandWrapper& dst,
                                   triton::ast::SharedAbstractNode const& op1,
                                   triton::ast::SharedAbstractNode const& op2,
@@ -1990,7 +1990,7 @@ namespace triton {
 
 
       void x86Semantics::sfShrd_s(triton::arch::Instruction& inst,
-                                  std::shared_ptr<triton::engines::symbolic::SymbolicExpression> parent,
+                                  std::shared_ptr<triton::engines::symbolic::SymbolicExpression> const& parent,
                                   triton::arch::OperandWrapper& dst,
                                   triton::ast::SharedAbstractNode const& op1,
                                   triton::ast::SharedAbstractNode const& op2,
@@ -2025,7 +2025,7 @@ namespace triton {
 
 
       void x86Semantics::zf_s(triton::arch::Instruction& inst,
-                              std::shared_ptr<triton::engines::symbolic::SymbolicExpression> parent,
+                              std::shared_ptr<triton::engines::symbolic::SymbolicExpression> const& parent,
                               triton::arch::OperandWrapper& dst,
                               bool vol) {
 
@@ -2055,7 +2055,7 @@ namespace triton {
 
 
       void x86Semantics::zfBsf_s(triton::arch::Instruction& inst,
-                                 std::shared_ptr<triton::engines::symbolic::SymbolicExpression> parent,
+                                 std::shared_ptr<triton::engines::symbolic::SymbolicExpression> const& parent,
                                  triton::arch::OperandWrapper& src,
                                  triton::ast::SharedAbstractNode const& op2,
                                  bool vol) {
@@ -2079,7 +2079,7 @@ namespace triton {
 
 
       void x86Semantics::zfShl_s(triton::arch::Instruction& inst,
-                                 std::shared_ptr<triton::engines::symbolic::SymbolicExpression> parent,
+                                 std::shared_ptr<triton::engines::symbolic::SymbolicExpression> const& parent,
                                  triton::arch::OperandWrapper& dst,
                                  triton::ast::SharedAbstractNode const& op2,
                                  bool vol) {

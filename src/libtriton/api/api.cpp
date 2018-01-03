@@ -625,7 +625,7 @@ namespace triton {
   }
 
 
-  std::shared_ptr<triton::engines::symbolic::SymbolicExpression> API::newSymbolicExpression(triton::ast::SharedAbstractNode const& node, const std::string& comment) {
+  std::shared_ptr<triton::engines::symbolic::SymbolicExpression> const& API::newSymbolicExpression(triton::ast::SharedAbstractNode const& node, const std::string& comment) {
     this->checkSymbolic();
     return this->symbolic->newSymbolicExpression(node, triton::engines::symbolic::UNDEF, comment);
   }
@@ -643,43 +643,43 @@ namespace triton {
   }
 
 
-  std::shared_ptr<triton::engines::symbolic::SymbolicExpression> API::createSymbolicExpression(triton::arch::Instruction& inst, triton::ast::SharedAbstractNode const& node, const triton::arch::OperandWrapper& dst, const std::string& comment) {
+  std::shared_ptr<triton::engines::symbolic::SymbolicExpression> const& API::createSymbolicExpression(triton::arch::Instruction& inst, triton::ast::SharedAbstractNode const& node, const triton::arch::OperandWrapper& dst, const std::string& comment) {
     this->checkSymbolic();
     return this->symbolic->createSymbolicExpression(inst, node, dst, comment);
   }
 
 
-  std::shared_ptr<triton::engines::symbolic::SymbolicExpression> API::createSymbolicMemoryExpression(triton::arch::Instruction& inst, triton::ast::SharedAbstractNode const& node, const triton::arch::MemoryAccess& mem, const std::string& comment) {
+  std::shared_ptr<triton::engines::symbolic::SymbolicExpression> const& API::createSymbolicMemoryExpression(triton::arch::Instruction& inst, triton::ast::SharedAbstractNode const& node, const triton::arch::MemoryAccess& mem, const std::string& comment) {
     this->checkSymbolic();
     return this->symbolic->createSymbolicMemoryExpression(inst, node, mem, comment);
   }
 
 
-  std::shared_ptr<triton::engines::symbolic::SymbolicExpression> API::createSymbolicRegisterExpression(triton::arch::Instruction& inst, triton::ast::SharedAbstractNode const& node, const triton::arch::Register& reg, const std::string& comment) {
+  std::shared_ptr<triton::engines::symbolic::SymbolicExpression> const& API::createSymbolicRegisterExpression(triton::arch::Instruction& inst, triton::ast::SharedAbstractNode const& node, const triton::arch::Register& reg, const std::string& comment) {
     this->checkSymbolic();
     return this->symbolic->createSymbolicRegisterExpression(inst, node, reg, comment);
   }
 
 
-  std::shared_ptr<triton::engines::symbolic::SymbolicExpression> API::createSymbolicFlagExpression(triton::arch::Instruction& inst, triton::ast::SharedAbstractNode const& node, const triton::arch::Register& flag, const std::string& comment) {
+  std::shared_ptr<triton::engines::symbolic::SymbolicExpression> const& API::createSymbolicFlagExpression(triton::arch::Instruction& inst, triton::ast::SharedAbstractNode const& node, const triton::arch::Register& flag, const std::string& comment) {
     this->checkSymbolic();
     return this->symbolic->createSymbolicFlagExpression(inst, node, flag, comment);
   }
 
 
-  std::shared_ptr<triton::engines::symbolic::SymbolicExpression> API::createSymbolicVolatileExpression(triton::arch::Instruction& inst, triton::ast::SharedAbstractNode const& node, const std::string& comment) {
+  std::shared_ptr<triton::engines::symbolic::SymbolicExpression> const& API::createSymbolicVolatileExpression(triton::arch::Instruction& inst, triton::ast::SharedAbstractNode const& node, const std::string& comment) {
     this->checkSymbolic();
     return this->symbolic->createSymbolicVolatileExpression(inst, node, comment);
   }
 
 
-  void API::assignSymbolicExpressionToMemory(std::shared_ptr<triton::engines::symbolic::SymbolicExpression> se, const triton::arch::MemoryAccess& mem) {
+  void API::assignSymbolicExpressionToMemory(std::shared_ptr<triton::engines::symbolic::SymbolicExpression> const& se, const triton::arch::MemoryAccess& mem) {
     this->checkSymbolic();
     this->symbolic->assignSymbolicExpressionToMemory(se, mem);
   }
 
 
-  void API::assignSymbolicExpressionToRegister(std::shared_ptr<triton::engines::symbolic::SymbolicExpression> se, const triton::arch::Register& reg) {
+  void API::assignSymbolicExpressionToRegister(std::shared_ptr<triton::engines::symbolic::SymbolicExpression> const& se, const triton::arch::Register& reg) {
     this->checkSymbolic();
     this->symbolic->assignSymbolicExpressionToRegister(se, reg);
   }
@@ -743,7 +743,7 @@ namespace triton {
   }
 
 
-  std::shared_ptr<triton::engines::symbolic::SymbolicExpression> API::getSymbolicExpressionFromId(triton::usize symExprId) const {
+  std::shared_ptr<triton::engines::symbolic::SymbolicExpression> const& API::getSymbolicExpressionFromId(triton::usize symExprId) const {
     this->checkSymbolic();
     return this->symbolic->getSymbolicExpressionFromId(symExprId);
   }
@@ -785,7 +785,7 @@ namespace triton {
   }
 
 
-  void API::addPathConstraint(const triton::arch::Instruction& inst, std::shared_ptr<triton::engines::symbolic::SymbolicExpression> expr) {
+  void API::addPathConstraint(const triton::arch::Instruction& inst, std::shared_ptr<triton::engines::symbolic::SymbolicExpression> const& expr) {
     this->checkSymbolic();
     this->symbolic->addPathConstraint(inst, expr);
   }

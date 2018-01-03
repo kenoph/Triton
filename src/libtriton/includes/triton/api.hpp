@@ -347,7 +347,7 @@ namespace triton {
         triton::ast::SharedAbstractNode const& buildSymbolicRegister(triton::arch::Instruction& inst, const triton::arch::Register& reg);
 
         //! [**symbolic api**] - Returns a new symbolic expression. Note that if there are simplification passes recorded, simplification will be applied.
-        std::shared_ptr<triton::engines::symbolic::SymbolicExpression> newSymbolicExpression(triton::ast::SharedAbstractNode const& node, const std::string& comment="");
+        std::shared_ptr<triton::engines::symbolic::SymbolicExpression> const& newSymbolicExpression(triton::ast::SharedAbstractNode const& node, const std::string& comment="");
 
         //! [**symbolic api**] - Returns a new symbolic variable.
         triton::engines::symbolic::SymbolicVariable* newSymbolicVariable(triton::uint32 varSize, const std::string& comment="");
@@ -356,31 +356,31 @@ namespace triton {
         void removeSymbolicExpression(triton::usize symExprId);
 
         //! [**symbolic api**] - Returns the new symbolic abstract expression and links this expression to the instruction.
-        std::shared_ptr<triton::engines::symbolic::SymbolicExpression> createSymbolicExpression(triton::arch::Instruction& inst, triton::ast::SharedAbstractNode const& node, const triton::arch::OperandWrapper& dst, const std::string& comment="");
+        std::shared_ptr<triton::engines::symbolic::SymbolicExpression> const& createSymbolicExpression(triton::arch::Instruction& inst, triton::ast::SharedAbstractNode const& node, const triton::arch::OperandWrapper& dst, const std::string& comment="");
 
         //! [**symbolic api**] - Returns the new symbolic memory expression and links this expression to the instruction.
-        std::shared_ptr<triton::engines::symbolic::SymbolicExpression> createSymbolicMemoryExpression(triton::arch::Instruction& inst, triton::ast::SharedAbstractNode const& node, const triton::arch::MemoryAccess& mem, const std::string& comment="");
+        std::shared_ptr<triton::engines::symbolic::SymbolicExpression> const& createSymbolicMemoryExpression(triton::arch::Instruction& inst, triton::ast::SharedAbstractNode const& node, const triton::arch::MemoryAccess& mem, const std::string& comment="");
 
         //! [**symbolic api**] - Returns the new symbolic register expression and links this expression to the instruction.
-        std::shared_ptr<triton::engines::symbolic::SymbolicExpression> createSymbolicRegisterExpression(triton::arch::Instruction& inst, triton::ast::SharedAbstractNode const& node, const triton::arch::Register& reg, const std::string& comment="");
+        std::shared_ptr<triton::engines::symbolic::SymbolicExpression> const& createSymbolicRegisterExpression(triton::arch::Instruction& inst, triton::ast::SharedAbstractNode const& node, const triton::arch::Register& reg, const std::string& comment="");
 
         //! [**symbolic api**] - Returns the new symbolic flag expression and links this expression to the instruction.
-        std::shared_ptr<triton::engines::symbolic::SymbolicExpression> createSymbolicFlagExpression(triton::arch::Instruction& inst, triton::ast::SharedAbstractNode const& node, const triton::arch::Register& flag, const std::string& comment="");
+        std::shared_ptr<triton::engines::symbolic::SymbolicExpression> const& createSymbolicFlagExpression(triton::arch::Instruction& inst, triton::ast::SharedAbstractNode const& node, const triton::arch::Register& flag, const std::string& comment="");
 
         //! [**symbolic api**] - Returns the new symbolic volatile expression and links this expression to the instruction.
-        std::shared_ptr<triton::engines::symbolic::SymbolicExpression> createSymbolicVolatileExpression(triton::arch::Instruction& inst, triton::ast::SharedAbstractNode const& node, const std::string& comment="");
+        std::shared_ptr<triton::engines::symbolic::SymbolicExpression> const& createSymbolicVolatileExpression(triton::arch::Instruction& inst, triton::ast::SharedAbstractNode const& node, const std::string& comment="");
 
         //! [**symbolic api**] - Assigns a symbolic expression to a memory.
-        void assignSymbolicExpressionToMemory(std::shared_ptr<triton::engines::symbolic::SymbolicExpression> se, const triton::arch::MemoryAccess& mem);
+        void assignSymbolicExpressionToMemory(std::shared_ptr<triton::engines::symbolic::SymbolicExpression> const& se, const triton::arch::MemoryAccess& mem);
 
         //! [**symbolic api**] - Assigns a symbolic expression to a register.
-        void assignSymbolicExpressionToRegister(std::shared_ptr<triton::engines::symbolic::SymbolicExpression> se, const triton::arch::Register& reg);
+        void assignSymbolicExpressionToRegister(std::shared_ptr<triton::engines::symbolic::SymbolicExpression> const& se, const triton::arch::Register& reg);
 
         //! [**symbolic api**] - Processes all recorded simplifications. Returns the simplified node.
         triton::ast::SharedAbstractNode processSimplification(triton::ast::SharedAbstractNode const& node, bool z3=false) const;
 
         //! [**symbolic api**] - Returns the symbolic expression corresponding to an id.
-        std::shared_ptr<triton::engines::symbolic::SymbolicExpression> getSymbolicExpressionFromId(triton::usize symExprId) const;
+        std::shared_ptr<triton::engines::symbolic::SymbolicExpression> const& getSymbolicExpressionFromId(triton::usize symExprId) const;
 
         //! [**symbolic api**] - Returns the symbolic variable corresponding to the symbolic variable id.
         triton::engines::symbolic::SymbolicVariable* getSymbolicVariableFromId(triton::usize symVarId) const;
@@ -395,7 +395,7 @@ namespace triton {
         triton::ast::SharedAbstractNode getPathConstraintsAst(void);
 
         //! [**symbolic api**] - Adds a path constraint.
-        void addPathConstraint(const triton::arch::Instruction& inst, std::shared_ptr<triton::engines::symbolic::SymbolicExpression> expr);
+        void addPathConstraint(const triton::arch::Instruction& inst, std::shared_ptr<triton::engines::symbolic::SymbolicExpression> const& expr);
 
         //! [**symbolic api**] - Clears the logical conjunction vector of path constraints.
         void clearPathConstraints(void);

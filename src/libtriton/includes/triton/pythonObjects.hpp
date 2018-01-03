@@ -88,7 +88,7 @@ namespace triton {
       PyObject* PySolverModel(const triton::engines::solver::SolverModel& model);
 
       //! Creates the SymbolicExpression python class.
-      PyObject* PySymbolicExpression(std::shared_ptr<triton::engines::symbolic::SymbolicExpression> expr);
+      PyObject* PySymbolicExpression(std::shared_ptr<triton::engines::symbolic::SymbolicExpression> const& expr);
 
       //! Creates the SymbolicVariable python class.
       PyObject* PySymbolicVariable(triton::engines::symbolic::SymbolicVariable* symVar);

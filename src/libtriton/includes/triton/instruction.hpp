@@ -164,31 +164,31 @@ namespace triton {
         triton::uint32 getSize(void) const;
 
         //! Sets a load access.
-        void setLoadAccess(const triton::arch::MemoryAccess& mem, std::shared_ptr<triton::engines::symbolic::SymbolicExpression> node);
+        void setLoadAccess(const triton::arch::MemoryAccess& mem, std::shared_ptr<triton::engines::symbolic::SymbolicExpression> const& node);
 
         //! Removes a load access.
         void removeLoadAccess(const triton::arch::MemoryAccess& mem);
 
         //! Sets a store access.
-        void setStoreAccess(const triton::arch::MemoryAccess& mem, std::shared_ptr<triton::engines::symbolic::SymbolicExpression> node);
+        void setStoreAccess(const triton::arch::MemoryAccess& mem, std::shared_ptr<triton::engines::symbolic::SymbolicExpression> const& node);
 
         //! Removes a store access.
         void removeStoreAccess(const triton::arch::MemoryAccess& mem);
 
         //! Sets a read register.
-        void setReadRegister(const triton::arch::Register& reg, std::shared_ptr<triton::engines::symbolic::SymbolicExpression> node);
+        void setReadRegister(const triton::arch::Register& reg, std::shared_ptr<triton::engines::symbolic::SymbolicExpression> const& node);
 
         //! Removes a read register.
         void removeReadRegister(const triton::arch::Register& reg);
 
         //! Sets a written register.
-        void setWrittenRegister(const triton::arch::Register& reg, std::shared_ptr<triton::engines::symbolic::SymbolicExpression> node);
+        void setWrittenRegister(const triton::arch::Register& reg, std::shared_ptr<triton::engines::symbolic::SymbolicExpression> const& node);
 
         //! Removes a written register.
         void removeWrittenRegister(const triton::arch::Register& reg);
 
         //! Sets a read immediate.
-        void setReadImmediate(const triton::arch::Immediate& imm, std::shared_ptr<triton::engines::symbolic::SymbolicExpression> node);
+        void setReadImmediate(const triton::arch::Immediate& imm, std::shared_ptr<triton::engines::symbolic::SymbolicExpression> const& node);
 
         //! Removes a read immediate.
         void removeReadImmediate(const triton::arch::Immediate& imm);
@@ -212,7 +212,7 @@ namespace triton {
         void setTaint(void);
 
         //! Adds a symbolic expression
-        void addSymbolicExpression(std::shared_ptr<triton::engines::symbolic::SymbolicExpression> expr);
+        void addSymbolicExpression(std::shared_ptr<triton::engines::symbolic::SymbolicExpression> const& expr);
 
         //! Returns true if this instruction is a branch
         bool isBranch(void) const;
