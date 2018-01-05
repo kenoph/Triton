@@ -16,7 +16,7 @@ namespace triton {
   namespace ast {
     namespace Z3Interface {
 
-      std::shared_ptr<triton::ast::AbstractNode> simplify(triton::ast::AbstractNode* node) {
+      triton::ast::SharedAbstractNode simplify(triton::ast::AbstractNode* node) {
       triton::ast::TritonToZ3Ast z3Ast{false};
       triton::ast::Z3ToTritonAst tritonAst{node->getContext()};
 

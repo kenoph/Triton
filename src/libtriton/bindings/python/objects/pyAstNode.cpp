@@ -679,7 +679,7 @@ namespace triton {
       };
 
 
-      PyObject* PyAstNode(std::shared_ptr<triton::ast::AbstractNode> node) {
+      PyObject* PyAstNode(triton::ast::SharedAbstractNode node) {
 
         if (node == nullptr) {
           Py_INCREF(Py_None);

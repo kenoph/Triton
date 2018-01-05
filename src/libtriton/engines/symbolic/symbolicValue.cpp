@@ -20,7 +20,7 @@ namespace triton {
   namespace engines {
     namespace symbolic {
 
-      SymbolicValue::SymbolicValue(std::shared_ptr<triton::ast::AbstractNode> node, triton::usize id, symkind_e kind, const std::string& comment):
+      SymbolicValue::SymbolicValue(triton::ast::SharedAbstractNode node, triton::usize id, symkind_e kind, const std::string& comment):
         kind(kind),
         ast(std::move(node)),
         comment(comment),
@@ -74,12 +74,12 @@ namespace triton {
         return this->ast.get();
       }
 
-      std::shared_ptr<triton::ast::AbstractNode> const& SymbolicValue::getShareAst(void) {
+      triton::ast::SharedAbstractNode const& SymbolicValue::getShareAst(void) {
         return this->ast;
       }
 
 
-      std::shared_ptr<triton::ast::AbstractNode> SymbolicValue::getNewAst(void) const {
+      triton::ast::SharedAbstractNode SymbolicValue::getNewAst(void) const {
         // FIXME: Check at build time
         if (this->ast == nullptr)
           // FIXME
@@ -88,7 +88,7 @@ namespace triton {
       }
 
 
-      void SymbolicValue::setAst(std::shared_ptr<triton::ast::AbstractNode> const& node) {
+      void SymbolicValue::setAst(triton::ast::SharedAbstractNode const& node) {
         if(node == nullptr)
           throw triton::exceptions::SymbolicVariable("SymbolicValue::setAst(): No AST defined.");
 

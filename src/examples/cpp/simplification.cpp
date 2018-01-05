@@ -27,7 +27,7 @@ struct op trace[] = {
 
 
 /* if (bvxor x x) -> (_ bv0 x_size) */
-std::shared_ptr<ast::AbstractNode> xor_simplification(API&, std::shared_ptr<ast::AbstractNode> const& snode) {
+ast::SharedAbstractNode xor_simplification(API&, ast::SharedAbstractNode const& snode) {
   ast::AbstractNode* node = snode.get();
 
   if (node->getKind() == ast::ZX_NODE) {

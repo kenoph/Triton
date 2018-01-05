@@ -54,7 +54,7 @@ namespace triton {
           void copy(const SymbolicSimplification& other);
 
           //! Processes all recorded simplifications. Returns the simplified node.
-          std::shared_ptr<triton::ast::AbstractNode> processSimplification(std::shared_ptr<triton::ast::AbstractNode> const& node) const;
+          triton::ast::SharedAbstractNode processSimplification(triton::ast::SharedAbstractNode const& node) const;
 
           //! Copies a SymbolicSimplification.
           void operator=(const SymbolicSimplification& other);

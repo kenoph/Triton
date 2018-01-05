@@ -42,7 +42,7 @@ namespace triton {
         Z3ToTritonAst(triton::ast::AstContext& ctxt);
 
         //! Converts to Triton's AST
-        std::shared_ptr<triton::ast::AbstractNode> convert(const z3::expr& expr);
+        triton::ast::SharedAbstractNode convert(const z3::expr& expr);
     };
 
   /*! @} End of ast namespace */

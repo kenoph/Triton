@@ -146,7 +146,7 @@ namespace triton {
         }
 
         case CONCAT_NODE: {
-          const std::vector<std::shared_ptr<triton::ast::AbstractNode>>& children = node->getChildren();
+          const std::vector<triton::ast::SharedAbstractNode>& children = node->getChildren();
 
           z3::expr currentValue = this->convert(node->getChildren()[0].get());
           z3::expr nextValue(this->context);
@@ -195,7 +195,7 @@ namespace triton {
         }
 
         case LAND_NODE: {
-          const std::vector<std::shared_ptr<triton::ast::AbstractNode>>& children = node->getChildren();
+          const std::vector<triton::ast::SharedAbstractNode>& children = node->getChildren();
 
           z3::expr currentValue = this->convert(node->getChildren()[0].get());
           if (!currentValue.get_sort().is_bool()) {
@@ -232,7 +232,7 @@ namespace triton {
         }
 
         case LOR_NODE: {
-          const std::vector<std::shared_ptr<triton::ast::AbstractNode>>& children = node->getChildren();
+          const std::vector<triton::ast::SharedAbstractNode>& children = node->getChildren();
 
           z3::expr currentValue = this->convert(node->getChildren()[0].get());
           if (!currentValue.get_sort().is_bool()) {

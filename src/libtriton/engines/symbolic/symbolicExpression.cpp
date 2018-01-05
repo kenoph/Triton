@@ -20,7 +20,7 @@ namespace triton {
   namespace engines {
     namespace symbolic {
 
-      SymbolicExpression::SymbolicExpression(std::shared_ptr<triton::ast::AbstractNode> const& node, triton::usize id, symkind_e kind, const std::string& comment)
+      SymbolicExpression::SymbolicExpression(triton::ast::SharedAbstractNode const& node, triton::usize id, symkind_e kind, const std::string& comment)
         : SymbolicValue(node, id, kind, comment),
         originRegister(),
         isTainted(false)

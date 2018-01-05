@@ -76,7 +76,7 @@ namespace triton {
           void setOriginRegister(const triton::arch::Register& reg);
 
           //! Constructor.
-          SymbolicExpression(std::shared_ptr<triton::ast::AbstractNode> const& expr, triton::usize id, symkind_e kind, const std::string& comment="");
+          SymbolicExpression(triton::ast::SharedAbstractNode const& expr, triton::usize id, symkind_e kind, const std::string& comment="");
       };
 
       //! Displays a symbolic expression.

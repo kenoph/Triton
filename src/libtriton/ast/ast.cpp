@@ -127,13 +127,13 @@ namespace triton {
     }
 
 
-    std::vector<std::shared_ptr<AbstractNode>>& AbstractNode::getChildren(void) {
+    std::vector<SharedAbstractNode>& AbstractNode::getChildren(void) {
       return this->children;
     }
 
 
-    std::vector<std::shared_ptr<AbstractNode>> AbstractNode::getParents(void) {
-      std::vector<std::shared_ptr<AbstractNode>> res;
+    std::vector<SharedAbstractNode> AbstractNode::getParents(void) {
+      std::vector<SharedAbstractNode> res;
       std::vector<AbstractNode*> toRemove;
       for(auto& kv: parents) {
         if(auto sp = kv.second.lock())
@@ -175,13 +175,13 @@ namespace triton {
     }
 
 
-    void AbstractNode::addChild(std::shared_ptr<AbstractNode> const& child) {
+    void AbstractNode::addChild(SharedAbstractNode const& child) {
       child->setParent(this);
       this->children.push_back(child);
     }
 
 
-    void AbstractNode::setChild(triton::uint32 index, std::shared_ptr<AbstractNode> const& child) {
+    void AbstractNode::setChild(triton::uint32 index, SharedAbstractNode const& child) {
       if (index >= this->children.size())
         throw triton::exceptions::Ast("AbstractNode::setChild(): Invalid index.");
 
@@ -212,7 +212,7 @@ namespace triton {
     {}
 
 
-    std::shared_ptr<AbstractNode> BvaddNode::create(std::shared_ptr<AbstractNode> const& expr1, std::shared_ptr<AbstractNode> const& expr2) {
+    SharedAbstractNode BvaddNode::create(SharedAbstractNode const& expr1, SharedAbstractNode const& expr2) {
       auto node = std::shared_ptr<BvaddNode>(new BvaddNode(expr1->getContext()));
       node->addChild(expr1);
       node->addChild(expr2);
@@ -259,7 +259,7 @@ namespace triton {
     {
     }
 
-    std::shared_ptr<BvandNode> BvandNode::create(std::shared_ptr<AbstractNode> const& expr1, std::shared_ptr<AbstractNode> const& expr2)
+    std::shared_ptr<BvandNode> BvandNode::create(SharedAbstractNode const& expr1, SharedAbstractNode const& expr2)
     {
       auto node = std::shared_ptr<BvandNode>(new BvandNode(expr1->getContext()));
       node->addChild(expr1);
@@ -309,7 +309,7 @@ namespace triton {
 
 
 
-    std::shared_ptr<AbstractNode> BvashrNode::create(std::shared_ptr<AbstractNode> const& expr1, std::shared_ptr<AbstractNode> const& expr2) {
+    SharedAbstractNode BvashrNode::create(SharedAbstractNode const& expr1, SharedAbstractNode const& expr2) {
       auto node = std::shared_ptr<BvashrNode>(new BvashrNode(expr1->getContext()));
       node->addChild(expr1);
       node->addChild(expr2);
@@ -389,7 +389,7 @@ namespace triton {
 
 
 
-    std::shared_ptr<AbstractNode> BvlshrNode::create(std::shared_ptr<AbstractNode> const& expr1, std::shared_ptr<AbstractNode> const& expr2) {
+    SharedAbstractNode BvlshrNode::create(SharedAbstractNode const& expr1, SharedAbstractNode const& expr2) {
       auto node = std::shared_ptr<BvlshrNode>(new BvlshrNode(expr1->getContext()));
       node->addChild(expr1);
       node->addChild(expr2);
@@ -437,7 +437,7 @@ namespace triton {
 
 
 
-    std::shared_ptr<AbstractNode> BvmulNode::create(std::shared_ptr<AbstractNode> const& expr1, std::shared_ptr<AbstractNode> const& expr2) {
+    SharedAbstractNode BvmulNode::create(SharedAbstractNode const& expr1, SharedAbstractNode const& expr2) {
       auto node = std::shared_ptr<BvmulNode>(new BvmulNode(expr1->getContext()));
       node->addChild(expr1);
       node->addChild(expr2);
@@ -485,7 +485,7 @@ namespace triton {
 
 
 
-    std::shared_ptr<AbstractNode> BvnandNode::create(std::shared_ptr<AbstractNode> const& expr1, std::shared_ptr<AbstractNode> const& expr2) {
+    SharedAbstractNode BvnandNode::create(SharedAbstractNode const& expr1, SharedAbstractNode const& expr2) {
       auto node = std::shared_ptr<BvnandNode>(new BvnandNode(expr1->getContext()));
       node->addChild(expr1);
       node->addChild(expr2);
@@ -534,7 +534,7 @@ namespace triton {
 
 
 
-    std::shared_ptr<AbstractNode> BvnegNode::create(std::shared_ptr<AbstractNode> const& expr) {
+    SharedAbstractNode BvnegNode::create(SharedAbstractNode const& expr) {
       auto node = std::shared_ptr<BvnegNode>(new BvnegNode(expr->getContext()));
       node->addChild(expr);
       node->init();
@@ -578,7 +578,7 @@ namespace triton {
 
 
 
-    std::shared_ptr<AbstractNode> BvnorNode::create(std::shared_ptr<AbstractNode> const& expr1, std::shared_ptr<AbstractNode> const& expr2) {
+    SharedAbstractNode BvnorNode::create(SharedAbstractNode const& expr1, SharedAbstractNode const& expr2) {
       auto node = std::shared_ptr<BvnorNode>(new BvnorNode(expr1->getContext()));
       node->addChild(expr1);
       node->addChild(expr2);
@@ -626,7 +626,7 @@ namespace triton {
 
 
 
-    std::shared_ptr<AbstractNode> BvnotNode::create(std::shared_ptr<AbstractNode> const& expr) {
+    SharedAbstractNode BvnotNode::create(SharedAbstractNode const& expr) {
       auto node = std::shared_ptr<BvnotNode>(new BvnotNode(expr->getContext()));
       node->addChild(expr);
       node->init();
@@ -670,7 +670,7 @@ namespace triton {
 
 
 
-    std::shared_ptr<AbstractNode> BvorNode::create(std::shared_ptr<AbstractNode> const& expr1, std::shared_ptr<AbstractNode> const& expr2) {
+    SharedAbstractNode BvorNode::create(SharedAbstractNode const& expr1, SharedAbstractNode const& expr2) {
       auto node = std::shared_ptr<BvorNode>(new BvorNode(expr1->getContext()));
       node->addChild(expr1);
       node->addChild(expr2);
@@ -717,12 +717,12 @@ namespace triton {
     {}
 
 
-    std::shared_ptr<AbstractNode> BvrolNode::create(triton::uint32 rot, std::shared_ptr<AbstractNode> const& expr) {
+    SharedAbstractNode BvrolNode::create(triton::uint32 rot, SharedAbstractNode const& expr) {
       return BvrolNode::create(expr->getContext().decimal(rot), expr);
     }
 
 
-    std::shared_ptr<AbstractNode> BvrolNode::create(std::shared_ptr<AbstractNode> const& rot, std::shared_ptr<AbstractNode> const& expr) {
+    SharedAbstractNode BvrolNode::create(SharedAbstractNode const& rot, SharedAbstractNode const& expr) {
       auto node = std::shared_ptr<BvrolNode>(new BvrolNode(rot->getContext()));
       node->addChild(rot);
       node->addChild(expr);
@@ -777,11 +777,11 @@ namespace triton {
     }
 
 
-    std::shared_ptr<AbstractNode> BvrorNode::create(triton::uint32 rot, std::shared_ptr<AbstractNode> const& expr) {
+    SharedAbstractNode BvrorNode::create(triton::uint32 rot, SharedAbstractNode const& expr) {
       return BvrorNode::create(expr->getContext().decimal(rot), expr);
     }
 
-    std::shared_ptr<AbstractNode> BvrorNode::create(std::shared_ptr<AbstractNode> const& rot, std::shared_ptr<AbstractNode> const& expr) {
+    SharedAbstractNode BvrorNode::create(SharedAbstractNode const& rot, SharedAbstractNode const& expr) {
       auto node = std::shared_ptr<BvrorNode>(new BvrorNode(rot->getContext()));
       node->addChild(rot);
       node->addChild(expr);
@@ -836,7 +836,7 @@ namespace triton {
 
 
 
-    std::shared_ptr<AbstractNode> BvsdivNode::create(std::shared_ptr<AbstractNode> const& expr1, std::shared_ptr<AbstractNode> const& expr2) {
+    SharedAbstractNode BvsdivNode::create(SharedAbstractNode const& expr1, SharedAbstractNode const& expr2) {
       auto node = std::shared_ptr<BvsdivNode>(new BvsdivNode(expr1->getContext()));
       node->addChild(expr1);
       node->addChild(expr2);
@@ -897,7 +897,7 @@ namespace triton {
 
 
 
-    std::shared_ptr<AbstractNode> BvsgeNode::create(std::shared_ptr<AbstractNode> const& expr1, std::shared_ptr<AbstractNode> const& expr2) {
+    SharedAbstractNode BvsgeNode::create(SharedAbstractNode const& expr1, SharedAbstractNode const& expr2) {
       auto node = std::shared_ptr<BvsgeNode>(new BvsgeNode(expr1->getContext()));
       node->addChild(expr1);
       node->addChild(expr2);
@@ -952,7 +952,7 @@ namespace triton {
 
 
 
-    std::shared_ptr<AbstractNode> BvsgtNode::create(std::shared_ptr<AbstractNode> const& expr1, std::shared_ptr<AbstractNode> const& expr2) {
+    SharedAbstractNode BvsgtNode::create(SharedAbstractNode const& expr1, SharedAbstractNode const& expr2) {
       auto node = std::shared_ptr<BvsgtNode>(new BvsgtNode(expr1->getContext()));
       node->addChild(expr1);
       node->addChild(expr2);
@@ -1006,7 +1006,7 @@ namespace triton {
 
 
 
-    std::shared_ptr<AbstractNode> BvshlNode::create(std::shared_ptr<AbstractNode> const& expr1, std::shared_ptr<AbstractNode> const& expr2) {
+    SharedAbstractNode BvshlNode::create(SharedAbstractNode const& expr1, SharedAbstractNode const& expr2) {
       auto node = std::shared_ptr<BvshlNode>(new BvshlNode(expr1->getContext()));
       node->addChild(expr1);
       node->addChild(expr2);
@@ -1054,7 +1054,7 @@ namespace triton {
 
 
 
-    std::shared_ptr<AbstractNode> BvsleNode::create(std::shared_ptr<AbstractNode> const& expr1, std::shared_ptr<AbstractNode> const& expr2) {
+    SharedAbstractNode BvsleNode::create(SharedAbstractNode const& expr1, SharedAbstractNode const& expr2) {
       auto node = std::shared_ptr<BvsleNode>(new BvsleNode(expr1->getContext()));
       node->addChild(expr1);
       node->addChild(expr2);
@@ -1108,7 +1108,7 @@ namespace triton {
 
 
 
-    std::shared_ptr<AbstractNode> BvsltNode::create(std::shared_ptr<AbstractNode> const& expr1, std::shared_ptr<AbstractNode> const& expr2) {
+    SharedAbstractNode BvsltNode::create(SharedAbstractNode const& expr1, SharedAbstractNode const& expr2) {
       auto node = std::shared_ptr<BvsltNode>(new BvsltNode(expr1->getContext()));
       node->addChild(expr1);
       node->addChild(expr2);
@@ -1163,7 +1163,7 @@ namespace triton {
 
 
 
-    std::shared_ptr<AbstractNode> BvsmodNode::create(std::shared_ptr<AbstractNode> const& expr1, std::shared_ptr<AbstractNode> const& expr2) {
+    SharedAbstractNode BvsmodNode::create(SharedAbstractNode const& expr1, SharedAbstractNode const& expr2) {
       auto node = std::shared_ptr<BvsmodNode>(new BvsmodNode(expr1->getContext()));
       node->addChild(expr1);
       node->addChild(expr2);
@@ -1221,7 +1221,7 @@ namespace triton {
 
 
 
-    std::shared_ptr<AbstractNode> BvsremNode::create(std::shared_ptr<AbstractNode> const& expr1, std::shared_ptr<AbstractNode> const& expr2) {
+    SharedAbstractNode BvsremNode::create(SharedAbstractNode const& expr1, SharedAbstractNode const& expr2) {
       auto node = std::shared_ptr<BvsremNode>(new BvsremNode(expr1->getContext()));
       node->addChild(expr1);
       node->addChild(expr2);
@@ -1280,7 +1280,7 @@ namespace triton {
 
 
 
-    std::shared_ptr<AbstractNode> BvsubNode::create(std::shared_ptr<AbstractNode> const& expr1, std::shared_ptr<AbstractNode> const& expr2) {
+    SharedAbstractNode BvsubNode::create(SharedAbstractNode const& expr1, SharedAbstractNode const& expr2) {
       auto node = std::shared_ptr<BvsubNode>(new BvsubNode(expr1->getContext()));
       node->addChild(expr1);
       node->addChild(expr2);
@@ -1328,7 +1328,7 @@ namespace triton {
 
 
 
-    std::shared_ptr<AbstractNode> BvudivNode::create(std::shared_ptr<AbstractNode> const& expr1, std::shared_ptr<AbstractNode> const& expr2) {
+    SharedAbstractNode BvudivNode::create(SharedAbstractNode const& expr1, SharedAbstractNode const& expr2) {
       auto node = std::shared_ptr<BvudivNode>(new BvudivNode(expr1->getContext()));
       node->addChild(expr1);
       node->addChild(expr2);
@@ -1380,7 +1380,7 @@ namespace triton {
 
 
 
-    std::shared_ptr<AbstractNode> BvugeNode::create(std::shared_ptr<AbstractNode> const& expr1, std::shared_ptr<AbstractNode> const& expr2) {
+    SharedAbstractNode BvugeNode::create(SharedAbstractNode const& expr1, SharedAbstractNode const& expr2) {
       auto node = std::shared_ptr<BvugeNode>(new BvugeNode(expr1->getContext()));
       node->addChild(expr1);
       node->addChild(expr2);
@@ -1428,7 +1428,7 @@ namespace triton {
 
 
 
-    std::shared_ptr<AbstractNode> BvugtNode::create(std::shared_ptr<AbstractNode> const& expr1, std::shared_ptr<AbstractNode> const& expr2) {
+    SharedAbstractNode BvugtNode::create(SharedAbstractNode const& expr1, SharedAbstractNode const& expr2) {
       auto node = std::shared_ptr<BvugtNode>(new BvugtNode(expr1->getContext()));
       node->addChild(expr1);
       node->addChild(expr2);
@@ -1476,7 +1476,7 @@ namespace triton {
 
 
 
-    std::shared_ptr<AbstractNode> BvuleNode::create(std::shared_ptr<AbstractNode> const& expr1, std::shared_ptr<AbstractNode> const& expr2) {
+    SharedAbstractNode BvuleNode::create(SharedAbstractNode const& expr1, SharedAbstractNode const& expr2) {
       auto node = std::shared_ptr<BvuleNode>(new BvuleNode(expr1->getContext()));
       node->addChild(expr1);
       node->addChild(expr2);
@@ -1524,7 +1524,7 @@ namespace triton {
 
 
 
-    std::shared_ptr<AbstractNode> BvultNode::create(std::shared_ptr<AbstractNode> const& expr1, std::shared_ptr<AbstractNode> const& expr2) {
+    SharedAbstractNode BvultNode::create(SharedAbstractNode const& expr1, SharedAbstractNode const& expr2) {
       auto node = std::shared_ptr<BvultNode>(new BvultNode(expr1->getContext()));
       node->addChild(expr1);
       node->addChild(expr2);
@@ -1572,7 +1572,7 @@ namespace triton {
 
 
 
-    std::shared_ptr<AbstractNode> BvuremNode::create(std::shared_ptr<AbstractNode> const& expr1, std::shared_ptr<AbstractNode> const& expr2) {
+    SharedAbstractNode BvuremNode::create(SharedAbstractNode const& expr1, SharedAbstractNode const& expr2) {
       auto node = std::shared_ptr<BvuremNode>(new BvuremNode(expr1->getContext()));
       node->addChild(expr1);
       node->addChild(expr2);
@@ -1624,7 +1624,7 @@ namespace triton {
 
 
 
-    std::shared_ptr<AbstractNode> BvxnorNode::create(std::shared_ptr<AbstractNode> const& expr1, std::shared_ptr<AbstractNode> const& expr2) {
+    SharedAbstractNode BvxnorNode::create(SharedAbstractNode const& expr1, SharedAbstractNode const& expr2) {
       auto node = std::shared_ptr<BvxnorNode>(new BvxnorNode(expr1->getContext()));
       node->addChild(expr1);
       node->addChild(expr2);
@@ -1672,7 +1672,7 @@ namespace triton {
 
 
 
-    std::shared_ptr<AbstractNode> BvxorNode::create(std::shared_ptr<AbstractNode> const& expr1, std::shared_ptr<AbstractNode> const& expr2) {
+    SharedAbstractNode BvxorNode::create(SharedAbstractNode const& expr1, SharedAbstractNode const& expr2) {
       auto node = std::shared_ptr<BvxorNode>(new BvxorNode(expr1->getContext()));
       node->addChild(expr1);
       node->addChild(expr2);
@@ -1720,7 +1720,7 @@ namespace triton {
 
 
 
-    std::shared_ptr<AbstractNode> BvNode::create(triton::uint512 value, triton::uint32 size, AstContext& ctxt) {
+    SharedAbstractNode BvNode::create(triton::uint512 value, triton::uint32 size, AstContext& ctxt) {
       auto node = std::shared_ptr<BvNode>(new BvNode(ctxt));
       node->addChild(ctxt.decimal(value));
       node->addChild(ctxt.decimal(size));
@@ -1780,7 +1780,7 @@ namespace triton {
 
 
 
-    std::shared_ptr<AbstractNode> ConcatNode::create(std::shared_ptr<AbstractNode> const& expr1, std::shared_ptr<AbstractNode> const& expr2) {
+    SharedAbstractNode ConcatNode::create(SharedAbstractNode const& expr1, SharedAbstractNode const& expr2) {
       auto node = std::shared_ptr<ConcatNode>(new ConcatNode(expr1->getContext()));
       node->addChild(expr1);
       node->addChild(expr2);
@@ -1788,10 +1788,10 @@ namespace triton {
       return node;
     }
 
-    template std::shared_ptr<AbstractNode> ConcatNode::create(const std::vector<std::shared_ptr<AbstractNode>>& exprs, AstContext& ctxt);
-    template std::shared_ptr<AbstractNode> ConcatNode::create(const std::list<std::shared_ptr<AbstractNode>>& exprs, AstContext& ctxt);
+    template SharedAbstractNode ConcatNode::create(const std::vector<SharedAbstractNode>& exprs, AstContext& ctxt);
+    template SharedAbstractNode ConcatNode::create(const std::list<SharedAbstractNode>& exprs, AstContext& ctxt);
     template <class T>
-    std::shared_ptr<AbstractNode> ConcatNode::create(T const& exprs, AstContext& ctxt) {
+    SharedAbstractNode ConcatNode::create(T const& exprs, AstContext& ctxt) {
       auto node = std::shared_ptr<ConcatNode>(new ConcatNode(ctxt));
       for (auto expr : exprs)
         node->addChild(expr);
@@ -1845,7 +1845,7 @@ namespace triton {
 
 
 
-    std::shared_ptr<AbstractNode> DecimalNode::create(triton::uint512 value, AstContext& ctxt) {
+    SharedAbstractNode DecimalNode::create(triton::uint512 value, AstContext& ctxt) {
       auto node = std::shared_ptr<DecimalNode>(new DecimalNode(ctxt));
       node->value = value;
       node->init();
@@ -1884,7 +1884,7 @@ namespace triton {
 
 
 
-    std::shared_ptr<AbstractNode> DistinctNode::create(std::shared_ptr<AbstractNode> const& expr1, std::shared_ptr<AbstractNode> const& expr2) {
+    SharedAbstractNode DistinctNode::create(SharedAbstractNode const& expr1, SharedAbstractNode const& expr2) {
       auto node = std::shared_ptr<DistinctNode>(new DistinctNode(expr1->getContext()));
       node->addChild(expr1);
       node->addChild(expr2);
@@ -1929,7 +1929,7 @@ namespace triton {
 
 
 
-    std::shared_ptr<AbstractNode> EqualNode::create(std::shared_ptr<AbstractNode> const& expr1, std::shared_ptr<AbstractNode> const& expr2) {
+    SharedAbstractNode EqualNode::create(SharedAbstractNode const& expr1, SharedAbstractNode const& expr2) {
       auto node = std::shared_ptr<EqualNode>(new EqualNode(expr1->getContext()));
       node->addChild(expr1);
       node->addChild(expr2);
@@ -1974,7 +1974,7 @@ namespace triton {
 
 
 
-    std::shared_ptr<AbstractNode> ExtractNode::create(triton::uint32 high, triton::uint32 low, std::shared_ptr<AbstractNode> const& expr) {
+    SharedAbstractNode ExtractNode::create(triton::uint32 high, triton::uint32 low, SharedAbstractNode const& expr) {
       auto node = std::shared_ptr<ExtractNode>(new ExtractNode(expr->getContext()));
       node->addChild(node->ctxt.decimal(high));
       node->addChild(node->ctxt.decimal(low));
@@ -2035,7 +2035,7 @@ namespace triton {
 
 
 
-    std::shared_ptr<AbstractNode> IteNode::create(std::shared_ptr<AbstractNode> const& ifExpr, std::shared_ptr<AbstractNode> const& thenExpr, std::shared_ptr<AbstractNode> const& elseExpr) {
+    SharedAbstractNode IteNode::create(SharedAbstractNode const& ifExpr, SharedAbstractNode const& thenExpr, SharedAbstractNode const& elseExpr) {
       auto node = std::shared_ptr<IteNode>(new IteNode(ifExpr->getContext()));
       node->addChild(ifExpr);
       node->addChild(thenExpr);
@@ -2087,7 +2087,7 @@ namespace triton {
 
 
 
-    std::shared_ptr<AbstractNode> LandNode::create(std::shared_ptr<AbstractNode> const& expr1, std::shared_ptr<AbstractNode> const& expr2) {
+    SharedAbstractNode LandNode::create(SharedAbstractNode const& expr1, SharedAbstractNode const& expr2) {
       auto node = std::shared_ptr<LandNode>(new LandNode(expr1->getContext()));
       node->addChild(expr1);
       node->addChild(expr2);
@@ -2096,10 +2096,10 @@ namespace triton {
     }
 
 
-    template std::shared_ptr<AbstractNode> LandNode::create(const std::vector<std::shared_ptr<AbstractNode>>& exprs, AstContext& ctxt);
-    template std::shared_ptr<AbstractNode> LandNode::create(const std::list<std::shared_ptr<AbstractNode>>& exprs, AstContext& ctxt);
+    template SharedAbstractNode LandNode::create(const std::vector<SharedAbstractNode>& exprs, AstContext& ctxt);
+    template SharedAbstractNode LandNode::create(const std::list<SharedAbstractNode>& exprs, AstContext& ctxt);
     template <typename T>
-    std::shared_ptr<AbstractNode> LandNode::create(const T& exprs, AstContext& ctxt) {
+    SharedAbstractNode LandNode::create(const T& exprs, AstContext& ctxt) {
       auto node = std::shared_ptr<LandNode>(new LandNode(ctxt));
       for (auto expr : exprs)
         node->addChild(expr);
@@ -2148,7 +2148,7 @@ namespace triton {
 
 
 
-    std::shared_ptr<AbstractNode> LetNode::create(std::string alias, std::shared_ptr<AbstractNode> const& expr2, std::shared_ptr<AbstractNode> const& expr3) {
+    SharedAbstractNode LetNode::create(std::string alias, SharedAbstractNode const& expr2, SharedAbstractNode const& expr3) {
       auto node = std::shared_ptr<LetNode>(new LetNode(expr2->getContext()));
       node->addChild(expr2->getContext().string(alias));
       node->addChild(expr2);
@@ -2197,7 +2197,7 @@ namespace triton {
 
 
 
-    std::shared_ptr<AbstractNode> LnotNode::create(std::shared_ptr<AbstractNode> const& expr) {
+    SharedAbstractNode LnotNode::create(SharedAbstractNode const& expr) {
       auto node = std::shared_ptr<LnotNode>(new LnotNode(expr->getContext()));
       node->addChild(expr);
       node->init();
@@ -2245,7 +2245,7 @@ namespace triton {
 
 
 
-    std::shared_ptr<AbstractNode> LorNode::create(std::shared_ptr<AbstractNode> const& expr1, std::shared_ptr<AbstractNode> const& expr2) {
+    SharedAbstractNode LorNode::create(SharedAbstractNode const& expr1, SharedAbstractNode const& expr2) {
       auto node = std::shared_ptr<LorNode>(new LorNode(expr1->getContext()));
       node->addChild(expr1);
       node->addChild(expr2);
@@ -2254,10 +2254,10 @@ namespace triton {
     }
 
 
-    template std::shared_ptr<AbstractNode> LorNode::create(const std::vector<std::shared_ptr<AbstractNode>>& exprs, AstContext& ctxt);
-    template std::shared_ptr<AbstractNode> LorNode::create(const std::list<std::shared_ptr<AbstractNode>>& exprs, AstContext& ctxt);
+    template SharedAbstractNode LorNode::create(const std::vector<SharedAbstractNode>& exprs, AstContext& ctxt);
+    template SharedAbstractNode LorNode::create(const std::list<SharedAbstractNode>& exprs, AstContext& ctxt);
     template <typename T>
-    std::shared_ptr<AbstractNode> LorNode::create(const T& exprs, AstContext& ctxt) {
+    SharedAbstractNode LorNode::create(const T& exprs, AstContext& ctxt) {
       auto node = std::shared_ptr<LorNode>(new LorNode(ctxt));
       for (auto expr : exprs)
         node->addChild(expr);
@@ -2300,7 +2300,7 @@ namespace triton {
     /* ====== Reference node */
 
 
-    ReferenceNode::ReferenceNode(std::shared_ptr<AbstractNode> const& ast, triton::usize id):
+    ReferenceNode::ReferenceNode(SharedAbstractNode const& ast, triton::usize id):
       AbstractNode(REFERENCE_NODE, ast->getContext()),
       id(id),
       ast(ast)
@@ -2308,7 +2308,7 @@ namespace triton {
 
 
 
-    std::shared_ptr<AbstractNode> ReferenceNode::create(std::shared_ptr<AbstractNode> const& ast, triton::usize id) {
+    SharedAbstractNode ReferenceNode::create(SharedAbstractNode const& ast, triton::usize id) {
       auto node = std::shared_ptr<ReferenceNode>(new ReferenceNode(ast, id));
       // FIXME: use children to store ast
       ast->setParent(node.get());
@@ -2338,7 +2338,7 @@ namespace triton {
       return this->id;
     }
 
-    std::shared_ptr<AbstractNode> const& ReferenceNode::getAst()
+    SharedAbstractNode const& ReferenceNode::getAst()
     {
       return this->ast;
     }
@@ -2353,7 +2353,7 @@ namespace triton {
 
 
 
-    std::shared_ptr<AbstractNode> StringNode::create(std::string value, AstContext& ctxt) {
+    SharedAbstractNode StringNode::create(std::string value, AstContext& ctxt) {
       auto node = std::shared_ptr<StringNode>(new StringNode(value, ctxt));
       node->init();
       return node;
@@ -2394,7 +2394,7 @@ namespace triton {
 
 
 
-    std::shared_ptr<AbstractNode> SxNode::create(triton::uint32 sizeExt, std::shared_ptr<AbstractNode> const& expr) {
+    SharedAbstractNode SxNode::create(triton::uint32 sizeExt, SharedAbstractNode const& expr) {
       auto node = std::shared_ptr<SxNode>(new SxNode(expr->getContext()));
       node->addChild(node->ctxt.decimal(sizeExt));
       node->addChild(expr);
@@ -2451,7 +2451,7 @@ namespace triton {
 
 
 
-    std::shared_ptr<AbstractNode> VariableNode::create(std::string const& varName, triton::uint32 size, AstContext& ctxt) {
+    SharedAbstractNode VariableNode::create(std::string const& varName, triton::uint32 size, AstContext& ctxt) {
       auto node = std::shared_ptr<VariableNode>(new VariableNode(varName, ctxt));
       node->setBitvectorSize(size);
       ctxt.initVariable(varName, 0, node);
@@ -2494,7 +2494,7 @@ namespace triton {
 
 
 
-    std::shared_ptr<AbstractNode> ZxNode::create(triton::uint32 sizeExt, std::shared_ptr<AbstractNode> const& expr) {
+    SharedAbstractNode ZxNode::create(triton::uint32 sizeExt, SharedAbstractNode const& expr) {
       auto node = std::shared_ptr<ZxNode>(new ZxNode(expr->getContext()));
       node->addChild(node->ctxt.decimal(sizeExt));
       node->addChild(expr);
@@ -2603,8 +2603,8 @@ namespace triton {
 namespace triton {
   namespace ast {
 
-    std::shared_ptr<AbstractNode> newInstance(AbstractNode* node) {
-      std::shared_ptr<AbstractNode> newNode = nullptr;
+    SharedAbstractNode newInstance(AbstractNode* node) {
+      SharedAbstractNode newNode = nullptr;
 
       if (node == nullptr)
         return nullptr;

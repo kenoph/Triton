@@ -41,7 +41,7 @@ namespace triton {
 
 
       /* Returns the logical conjunction AST of path constraint */
-      std::shared_ptr<triton::ast::AbstractNode> PathManager::getPathConstraintsAst(void) const {
+      triton::ast::SharedAbstractNode PathManager::getPathConstraintsAst(void) const {
         // Every constraint should have the same context otherwise, we can't know
         // which one to use for the current node computation.
         std::vector<triton::engines::symbolic::PathConstraint>::const_iterator it;
@@ -101,10 +101,10 @@ namespace triton {
           triton::uint64 bb1 = pc->getChildren()[1]->evaluate().convert_to<triton::uint64>();
           triton::uint64 bb2 = pc->getChildren()[2]->evaluate().convert_to<triton::uint64>();
 
-          std::shared_ptr<triton::ast::AbstractNode> bb1pc = (bb1 == dstAddr) ? this->astCtxt.equal(pc, this->astCtxt.bv(dstAddr, size)) :
+          triton::ast::SharedAbstractNode bb1pc = (bb1 == dstAddr) ? this->astCtxt.equal(pc, this->astCtxt.bv(dstAddr, size)) :
                                                                 this->astCtxt.lnot(this->astCtxt.equal(pc, this->astCtxt.bv(dstAddr, size)));
 
-          std::shared_ptr<triton::ast::AbstractNode> bb2pc = (bb2 == dstAddr) ? this->astCtxt.equal(pc, this->astCtxt.bv(dstAddr, size)) :
+          triton::ast::SharedAbstractNode bb2pc = (bb2 == dstAddr) ? this->astCtxt.equal(pc, this->astCtxt.bv(dstAddr, size)) :
                                                                 this->astCtxt.lnot(this->astCtxt.equal(pc, this->astCtxt.bv(dstAddr, size)));
 
           pco.addBranchConstraint(bb1 == dstAddr, srcAddr, bb1, bb1pc);

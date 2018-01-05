@@ -1152,7 +1152,7 @@ namespace triton {
 
 
       static PyObject* AstContext_concat(PyObject* self, PyObject* exprsList) {
-        std::vector<std::shared_ptr<triton::ast::AbstractNode>> exprs;
+        std::vector<triton::ast::SharedAbstractNode> exprs;
 
         if (exprsList == nullptr || !PyList_Check(exprsList))
           return PyErr_Format(PyExc_TypeError, "concat(): expected a list of AstNodes as first argument");
@@ -1251,7 +1251,7 @@ namespace triton {
 
 
       static PyObject* AstContext_land(PyObject* self, PyObject* exprsList) {
-        std::vector<std::shared_ptr<triton::ast::AbstractNode>> exprs;
+        std::vector<triton::ast::SharedAbstractNode> exprs;
 
         if (exprsList == nullptr || !PyList_Check(exprsList))
           return PyErr_Format(PyExc_TypeError, "land(): expected a list of AstNodes as first argument");
@@ -1315,7 +1315,7 @@ namespace triton {
 
 
       static PyObject* AstContext_lor(PyObject* self, PyObject* exprsList) {
-        std::vector<std::shared_ptr<triton::ast::AbstractNode>> exprs;
+        std::vector<triton::ast::SharedAbstractNode> exprs;
 
         if (exprsList == nullptr || !PyList_Check(exprsList))
           return PyErr_Format(PyExc_TypeError, "lor(): expected a list of AstNodes as first argument");

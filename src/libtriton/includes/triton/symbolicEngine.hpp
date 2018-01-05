@@ -147,7 +147,7 @@ namespace triton {
           triton::usize* symbolicReg;
 
           //! Creates a new symbolic expression.
-          SymbolicExpression* newSymbolicExpression(std::shared_ptr<triton::ast::AbstractNode> const& node, symkind_e kind, const std::string& comment="");
+          SymbolicExpression* newSymbolicExpression(triton::ast::SharedAbstractNode const& node, symkind_e kind, const std::string& comment="");
 
           //! Removes the symbolic expression corresponding to the id.
           void removeSymbolicExpression(triton::usize symExprId);
@@ -234,19 +234,19 @@ namespace triton {
           triton::engines::symbolic::SymbolicExpression* buildSymbolicRegister(triton::arch::Instruction& inst, const triton::arch::Register& reg);
 
           //! Returns the new symbolic abstract expression and links this expression to the instruction.
-          SymbolicExpression* createSymbolicExpression(triton::arch::Instruction& inst, std::shared_ptr<triton::ast::AbstractNode> const& node, const triton::arch::OperandWrapper& dst, const std::string& comment="");
+          SymbolicExpression* createSymbolicExpression(triton::arch::Instruction& inst, triton::ast::SharedAbstractNode const& node, const triton::arch::OperandWrapper& dst, const std::string& comment="");
 
           //! Returns the new symbolic memory expression expression and links this expression to the instruction.
-          SymbolicExpression* createSymbolicMemoryExpression(triton::arch::Instruction& inst, std::shared_ptr<triton::ast::AbstractNode> const& node, const triton::arch::MemoryAccess& mem, const std::string& comment="");
+          SymbolicExpression* createSymbolicMemoryExpression(triton::arch::Instruction& inst, triton::ast::SharedAbstractNode const& node, const triton::arch::MemoryAccess& mem, const std::string& comment="");
 
           //! Returns the new symbolic register expression expression and links this expression to the instruction.
-          SymbolicExpression* createSymbolicRegisterExpression(triton::arch::Instruction& inst, std::shared_ptr<triton::ast::AbstractNode> const& node, const triton::arch::Register& reg, const std::string& comment="");
+          SymbolicExpression* createSymbolicRegisterExpression(triton::arch::Instruction& inst, triton::ast::SharedAbstractNode const& node, const triton::arch::Register& reg, const std::string& comment="");
 
           //! Returns the new symbolic flag expression expression and links this expression to the instruction.
-          SymbolicExpression* createSymbolicFlagExpression(triton::arch::Instruction& inst, std::shared_ptr<triton::ast::AbstractNode> const& node, const triton::arch::Register& flag, const std::string& comment="");
+          SymbolicExpression* createSymbolicFlagExpression(triton::arch::Instruction& inst, triton::ast::SharedAbstractNode const& node, const triton::arch::Register& flag, const std::string& comment="");
 
           //! Returns the new symbolic volatile expression expression and links this expression to the instruction.
-          SymbolicExpression* createSymbolicVolatileExpression(triton::arch::Instruction& inst, std::shared_ptr<triton::ast::AbstractNode> const& node, const std::string& comment="");
+          SymbolicExpression* createSymbolicVolatileExpression(triton::arch::Instruction& inst, triton::ast::SharedAbstractNode const& node, const std::string& comment="");
 
           //! Returns an unique symbolic expression id.
           triton::usize getUniqueSymExprId(void);
@@ -261,7 +261,7 @@ namespace triton {
           void assignSymbolicExpressionToMemory(SymbolicExpression *se, const triton::arch::MemoryAccess& mem);
 
           //! Unrolls the SSA form of a given AST.
-          std::shared_ptr<triton::ast::AbstractNode> unrollAst(std::shared_ptr<triton::ast::AbstractNode> node);
+          triton::ast::SharedAbstractNode unrollAst(triton::ast::SharedAbstractNode node);
 
           //! Slices all expressions from a given one.
           std::map<triton::usize, SymbolicExpression*> sliceExpressions(SymbolicExpression* expr);

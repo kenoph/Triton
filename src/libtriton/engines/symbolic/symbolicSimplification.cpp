@@ -175,7 +175,7 @@ namespace triton {
       }
 
 
-      std::shared_ptr<triton::ast::AbstractNode> SymbolicSimplification::processSimplification(std::shared_ptr<triton::ast::AbstractNode> const& node) const {
+      triton::ast::SharedAbstractNode SymbolicSimplification::processSimplification(triton::ast::SharedAbstractNode const& node) const {
         if (node == nullptr)
           throw triton::exceptions::SymbolicSimplification("SymbolicSimplification::processSimplification(): node cannot be null.");
 

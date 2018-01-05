@@ -386,7 +386,7 @@ namespace triton {
 
 
       /* Creates a new symbolic expression with comment */
-      SymbolicExpression* SymbolicEngine::newSymbolicExpression(std::shared_ptr<triton::ast::AbstractNode> const& in_node, triton::engines::symbolic::symkind_e kind, const std::string& comment) {
+      SymbolicExpression* SymbolicEngine::newSymbolicExpression(triton::ast::SharedAbstractNode const& in_node, triton::engines::symbolic::symkind_e kind, const std::string& comment) {
         triton::usize id = this->getUniqueSymExprId();
         auto node = this->processSimplification(in_node);
         SymbolicExpression* expr = new(std::nothrow) SymbolicExpression(node, id, kind, comment);
@@ -442,7 +442,7 @@ namespace triton {
 
 
       /* Returns the full symbolic expression backtracked. */
-      std::shared_ptr<triton::ast::AbstractNode> SymbolicEngine::unrollAst(std::shared_ptr<triton::ast::AbstractNode> node) {
+      triton::ast::SharedAbstractNode SymbolicEngine::unrollAst(triton::ast::SharedAbstractNode node) {
         // FIXME: Is it normal that we modify input? sometimes...
         // As we may or not return input and return value is an owning ptr, input has to be owning too...
 
@@ -450,7 +450,7 @@ namespace triton {
           return reinterpret_cast<triton::ast::ReferenceNode*>(node.get())->getAst();
         }
 
-        std::vector<std::shared_ptr<triton::ast::AbstractNode>>& children = node->getChildren();
+        std::vector<triton::ast::SharedAbstractNode>& children = node->getChildren();
         for (triton::uint32 index = 0; index < children.size(); index++)
           children[index] = this->unrollAst(children[index]);
 
@@ -460,7 +460,7 @@ namespace triton {
 
       /* [private method] Slices all expressions from a given node */
       void SymbolicEngine::sliceExpressions(triton::ast::AbstractNode* node, std::map<triton::usize, SymbolicExpression*>& exprs) {
-        std::vector<std::shared_ptr<triton::ast::AbstractNode>>& children = node->getChildren();
+        std::vector<triton::ast::SharedAbstractNode>& children = node->getChildren();
 
         if (node->getKind() == triton::ast::REFERENCE_NODE) {
           triton::ast::ReferenceNode* ref_node = reinterpret_cast<triton::ast::ReferenceNode*>(node);
@@ -694,18 +694,15 @@ namespace triton {
       triton::engines::symbolic::SymbolicExpression* SymbolicEngine::buildSymbolicImmediate(triton::arch::Instruction& inst, const triton::arch::Immediate& imm) {
         triton::engines::symbolic::SymbolicExpression* se = this->buildSymbolicImmediate(imm);
         inst.setReadImmediate(imm, se);
-        // FIXME What should we do here? buildSymbolicImmediate doesn't build any "real symbolicExpression" so should we save this dummy one? and then, should we use
-        // a reference Node for later use?
-        // inst.addSymbolicExpression(se);
         return se;
       }
 
 
       /* Returns a symbolic memory */
       triton::engines::symbolic::SymbolicExpression* SymbolicEngine::buildSymbolicMemory(const triton::arch::MemoryAccess& mem) {
-        std::list<std::shared_ptr<triton::ast::AbstractNode>> opVec;
+        std::list<triton::ast::SharedAbstractNode> opVec;
 
-        std::shared_ptr<triton::ast::AbstractNode> tmp = nullptr;
+        triton::ast::SharedAbstractNode tmp = nullptr;
         triton::uint64 address                    = mem.getAddress();
         triton::uint32 size                       = mem.getSize();
         triton::usize symMem                      = triton::engines::symbolic::UNSET;
@@ -776,7 +773,7 @@ namespace triton {
 
       /* Returns a symbolic register */
       triton::engines::symbolic::SymbolicExpression* SymbolicEngine::buildSymbolicRegister(const triton::arch::Register& reg) {
-        std::shared_ptr<triton::ast::AbstractNode> op = nullptr;
+        triton::ast::SharedAbstractNode op = nullptr;
         triton::usize symReg          = this->getSymbolicRegisterId(reg);
         triton::uint32 bvSize         = reg.getBitSize();
         triton::uint32 high           = reg.getHigh();
@@ -810,7 +807,7 @@ namespace triton {
 
 
       /* Returns the new symbolic abstract expression and links this expression to the instruction. */
-      SymbolicExpression* SymbolicEngine::createSymbolicExpression(triton::arch::Instruction& inst, std::shared_ptr<triton::ast::AbstractNode> const& node, const triton::arch::OperandWrapper& dst, const std::string& comment) {
+      SymbolicExpression* SymbolicEngine::createSymbolicExpression(triton::arch::Instruction& inst, triton::ast::SharedAbstractNode const& node, const triton::arch::OperandWrapper& dst, const std::string& comment) {
         switch (dst.getType()) {
           case triton::arch::OP_MEM: return this->createSymbolicMemoryExpression(inst, node, dst.getConstMemory(), comment);
           case triton::arch::OP_REG: return this->createSymbolicRegisterExpression(inst, node, dst.getConstRegister(), comment);
@@ -822,8 +819,8 @@ namespace triton {
 
 
       /* Returns the new symbolic memory expression */
-      SymbolicExpression* SymbolicEngine::createSymbolicMemoryExpression(triton::arch::Instruction& inst, std::shared_ptr<triton::ast::AbstractNode> const& node, const triton::arch::MemoryAccess& mem, const std::string& comment) {
-        std::list<std::shared_ptr<triton::ast::AbstractNode>> ret;
+      SymbolicExpression* SymbolicEngine::createSymbolicMemoryExpression(triton::arch::Instruction& inst, triton::ast::SharedAbstractNode const& node, const triton::arch::MemoryAccess& mem, const std::string& comment) {
+        std::list<triton::ast::SharedAbstractNode> ret;
 
         SymbolicExpression* se   = nullptr;
         triton::uint64 address   = mem.getAddress();
@@ -887,9 +884,9 @@ namespace triton {
 
 
       /* Returns the new symbolic register expression */
-      SymbolicExpression* SymbolicEngine::createSymbolicRegisterExpression(triton::arch::Instruction& inst, std::shared_ptr<triton::ast::AbstractNode> const& node, const triton::arch::Register& reg, const std::string& comment) {
+      SymbolicExpression* SymbolicEngine::createSymbolicRegisterExpression(triton::arch::Instruction& inst, triton::ast::SharedAbstractNode const& node, const triton::arch::Register& reg, const std::string& comment) {
         const triton::arch::Register& parentReg   = this->architecture->getParentRegister(reg);
-        std::shared_ptr<triton::ast::AbstractNode> finalExpr = nullptr;
+        triton::ast::SharedAbstractNode finalExpr = nullptr;
         triton::engines::symbolic::SymbolicExpression* origReg        = nullptr;
         triton::uint32 regSize                    = reg.getSize();
 
@@ -937,7 +934,7 @@ namespace triton {
 
 
       /* Returns the new symbolic flag expression */
-      SymbolicExpression* SymbolicEngine::createSymbolicFlagExpression(triton::arch::Instruction& inst, std::shared_ptr<triton::ast::AbstractNode> const& node, const triton::arch::Register& flag, const std::string& comment) {
+      SymbolicExpression* SymbolicEngine::createSymbolicFlagExpression(triton::arch::Instruction& inst, triton::ast::SharedAbstractNode const& node, const triton::arch::Register& flag, const std::string& comment) {
         if (!this->architecture->isFlag(flag))
           throw triton::exceptions::SymbolicEngine("SymbolicEngine::createSymbolicFlagExpression(): The register must be a flag.");
 
@@ -951,7 +948,7 @@ namespace triton {
 
 
       /* Returns the new symbolic volatile expression */
-      SymbolicExpression* SymbolicEngine::createSymbolicVolatileExpression(triton::arch::Instruction& inst, std::shared_ptr<triton::ast::AbstractNode> const& node, const std::string& comment) {
+      SymbolicExpression* SymbolicEngine::createSymbolicVolatileExpression(triton::arch::Instruction& inst, triton::ast::SharedAbstractNode const& node, const std::string& comment) {
         triton::engines::symbolic::SymbolicExpression* se = this->newSymbolicExpression(node, triton::engines::symbolic::UNDEF, comment);
         inst.addSymbolicExpression(se);
         return se;
