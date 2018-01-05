@@ -24,12 +24,12 @@ class TestSymbolicExpression(unittest.TestCase):
         self.ctx.processing(self.inst1)
         self.ctx.processing(self.inst2)
 
-        self.expr1 = self.inst1.getSymbolicExpressions()[0]
-        self.expr2 = self.inst2.getSymbolicExpressions()[8]
+        self.expr1 = self.inst1.getSymbolicExpressions()[2]
+        self.expr2 = self.inst2.getSymbolicExpressions()[9]
 
     def test_expressions(self):
         """Test expressions"""
-        self.assertEqual(len(self.inst1.getSymbolicExpressions()), 9)
+        self.assertEqual(len(self.inst1.getSymbolicExpressions()), 11)
 
     def test_getAst(self):
         """Test getAst"""
@@ -41,7 +41,7 @@ class TestSymbolicExpression(unittest.TestCase):
 
     def test_getId(self):
         """Test getId"""
-        self.assertEqual(self.expr1.getId(), 2)
+        self.assertEqual(self.expr1.getId(), 4)
 
     def test_getKind(self):
         """Test getKind"""

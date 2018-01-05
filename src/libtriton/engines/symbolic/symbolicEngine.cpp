@@ -786,8 +786,9 @@ namespace triton {
         if (symReg != triton::engines::symbolic::UNSET)
           op = this->astCtxt.extract(high, low, this->astCtxt.reference(this->getSymbolicExpressionFromId(symReg)->getShareAst(), symReg));
         /* Otherwise, use the concerte value */
-        else
+        else {
           op = this->astCtxt.bv(this->architecture->getConcreteRegisterValue(reg), bvSize);
+        }
 
         return this->newSymbolicExpression(op, triton::engines::symbolic::REG, "Symbolic Register");
       }
@@ -797,9 +798,12 @@ namespace triton {
       triton::engines::symbolic::SymbolicExpression* SymbolicEngine::buildSymbolicRegister(triton::arch::Instruction& inst, const triton::arch::Register& reg) {
         triton::engines::symbolic::SymbolicExpression* expr = this->buildSymbolicRegister(reg);
         inst.setReadRegister(reg, expr);
-        // FIXME What should we do here? buildSymbolicRegister doesn't build any "real symbolicExpression" so should we save this dummy one? and then, should we use
-        // a reference Node for later use?
-  //      inst.addSymbolicExpression(expr);
+        inst.addSymbolicExpression(expr);
+
+        if(dynamic_cast<triton::ast::BvNode*>(expr->getAst())) {
+          auto op = this->astCtxt.reference(expr->getShareAst(), expr->getId());
+          return this->newSymbolicExpression(op, triton::engines::symbolic::REG, "Symbolic Register ref");
+        }
 
         return expr;
       }

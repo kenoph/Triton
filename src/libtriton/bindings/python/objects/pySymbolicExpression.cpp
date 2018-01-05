@@ -45,30 +45,32 @@ True
 >>> for expr in inst.getSymbolicExpressions():
 ...     print expr
 ...
-ref!2 = (bvxor (_ bv12345 64) (_ bv67890 64)) ; Parent Reg - XOR operation
-ref!3 = (bvxor (_ bv12345 64) (_ bv67890 64)) ; Real Reg - XOR operation
-ref!4 = (_ bv0 1) ; Clears carry flag
-ref!5 = (_ bv0 1) ; Clears overflow flag
-ref!6 = (bvxor (bvxor (bvxor (bvxor (bvxor (bvxor (bvxor (bvxor (_ bv1 1) ((_ extract 0 0) (bvlshr ((_ extract 7 0) ref!2) (_ bv0 8)))) ((_ extract 0 0) (bvlshr ((_ extract 7 0) ref!2) (_ bv1 8)))) ((_ extract 0 0) (bvlshr ((_ extract 7 0) ref!2) (_ bv2 8)))) ((_ extract 0 0) (bvlshr ((_ extract 7 0) ref!2) (_ bv3 8)))) ((_ extract 0 0) (bvlshr ((_ extract 7 0) ref!2) (_ bv4 8)))) ((_ extract 0 0) (bvlshr ((_ extract 7 0) ref!2) (_ bv5 8)))) ((_ extract 0 0) (bvlshr ((_ extract 7 0) ref!2) (_ bv6 8)))) ((_ extract 0 0) (bvlshr ((_ extract 7 0) ref!2) (_ bv7 8)))) ; Parity flag
-ref!7 = ((_ extract 63 63) ref!2) ; Sign flag
-ref!8 = (ite (= ref!2 (_ bv0 64)) (_ bv1 1) (_ bv0 1)) ; Zero flag
-ref!9 = (_ bv4194307 64) ; Parent Reg - Program Counter
-ref!10 = (_ bv4194307 64) ; Real Reg - Program Counter
+ref!0 = (_ bv12345 64) ; Symbolic Register
+ref!2 = (_ bv67890 64) ; Symbolic Register
+ref!4 = (bvxor ref!0 ref!2) ; Parent Reg - XOR operation
+ref!5 = (bvxor ref!0 ref!2) ; Real Reg - XOR operation
+ref!6 = (_ bv0 1) ; Clears carry flag
+ref!7 = (_ bv0 1) ; Clears overflow flag
+ref!8 = (bvxor (bvxor (bvxor (bvxor (bvxor (bvxor (bvxor (bvxor (_ bv1 1) ((_ extract 0 0) (bvlshr ((_ extract 7 0) ref!4) (_ bv0 8)))) ((_ extract 0 0) (bvlshr ((_ extract 7 0) ref!4) (_ bv1 8)))) ((_ extract 0 0) (bvlshr ((_ extract 7 0) ref!4) (_ bv2 8)))) ((_ extract 0 0) (bvlshr ((_ extract 7 0) ref!4) (_ bv3 8)))) ((_ extract 0 0) (bvlshr ((_ extract 7 0) ref!4) (_ bv4 8)))) ((_ extract 0 0) (bvlshr ((_ extract 7 0) ref!4) (_ bv5 8)))) ((_ extract 0 0) (bvlshr ((_ extract 7 0) ref!4) (_ bv6 8)))) ((_ extract 0 0) (bvlshr ((_ extract 7 0) ref!4) (_ bv7 8)))) ; Parity flag
+ref!9 = ((_ extract 63 63) ref!4) ; Sign flag
+ref!10 = (ite (= ref!4 (_ bv0 64)) (_ bv1 1) (_ bv0 1)) ; Zero flag
+ref!11 = (_ bv4194307 64) ; Parent Reg - Program Counter
+ref!12 = (_ bv4194307 64) ; Real Reg - Program Counter
 
 >>> expr_1 = inst.getSymbolicExpressions()[0]
 >>> expr_1 # doctest: +ELLIPSIS
 <SymbolicExpression object at 0x...>
 >>> print expr_1
-ref!2 = (bvxor (_ bv12345 64) (_ bv67890 64)) ; Parent Reg - XOR operation
+ref!0 = (_ bv12345 64) ; Symbolic Register
 
 >>> print expr_1.getId()
-2
+0
 
 >>> ast = expr_1.getAst()
 >>> ast # doctest: +ELLIPSIS
 <AstNode object at 0x...>
 >>> print ast
-(bvxor (_ bv12345 64) (_ bv67890 64))
+(_ bv12345 64)
 
 
 >>> expr_1.isMemory()
@@ -78,7 +80,7 @@ False
 True
 
 >>> print expr_1.getOrigin()
-rax:64 bv[63..0]
+unknown:1 bv[0..0]
 
 ~~~~~~~~~~~~~
 

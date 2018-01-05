@@ -119,11 +119,11 @@ The only way to jump from a reference node to the targeted node is to use the tr
 >>> zfId = ctxt.getSymbolicRegisterId(ctxt.registers.zf)
 >>> partialTree = ctxt.getSymbolicExpressionFromId(zfId).getAst()
 >>> print partialTree
-(ite (= ref!2 (_ bv0 64)) (_ bv1 1) (_ bv0 1))
+(ite (= ref!4 (_ bv0 64)) (_ bv1 1) (_ bv0 1))
 
 >>> fullTree = ctxt.unrollAst(partialTree)
 >>> print fullTree
-(ite (= (bvxor (_ bv12345 64) (_ bv67890 64)) (_ bv0 64)) (_ bv1 1) (_ bv0 1))
+(ite (= (bvxor ref!0 ref!2) (_ bv0 64)) (_ bv1 1) (_ bv0 1))
 
 ~~~~~~~~~~~~~
 
@@ -150,16 +150,18 @@ True
 >>> for expr in inst.getSymbolicExpressions():
 ...     print expr
 ...
-ref_2 = ((0x1122334455667788 + 0x8877665544332211) & 0xFFFFFFFFFFFFFFFF) # Parent Reg - ADD operation
-ref_3 = ((0x1122334455667788 + 0x8877665544332211) & 0xFFFFFFFFFFFFFFFF) # Real Reg - ADD operation
-ref_4 = (0x1 if (0x10 == (0x10 & (ref_2 ^ (0x1122334455667788 ^ 0x8877665544332211)))) else 0x0) # Adjust flag
-ref_5 = ((((0x1122334455667788 & 0x8877665544332211) ^ (((0x1122334455667788 ^ 0x8877665544332211) ^ ref_2) & (0x1122334455667788 ^ 0x8877665544332211))) >> 63) & 0x1) # Carry flag
-ref_6 = ((((0x1122334455667788 ^ (~(0x8877665544332211) & 0xFFFFFFFFFFFFFFFF)) & (0x1122334455667788 ^ ref_2)) >> 63) & 0x1) # Overflow flag
-ref_7 = ((((((((0x1 ^ (((ref_2 & 0xFF) >> 0x0) & 0x1)) ^ (((ref_2 & 0xFF) >> 0x1) & 0x1)) ^ (((ref_2 & 0xFF) >> 0x2) & 0x1)) ^ (((ref_2 & 0xFF) >> 0x3) & 0x1)) ^ (((ref_2 & 0xFF) >> 0x4) & 0x1)) ^ (((ref_2 & 0xFF) >> 0x5) & 0x1)) ^ (((ref_2 & 0xFF) >> 0x6) & 0x1)) ^ (((ref_2 & 0xFF) >> 0x7) & 0x1)) # Parity flag
-ref_8 = ((ref_2 >> 63) & 0x1) # Sign flag
-ref_9 = (0x1 if (ref_2 == 0x0) else 0x0) # Zero flag
-ref_10 = 0x400003 # Parent Reg - Program Counter
-ref_11 = 0x400003 # Real Reg - Program Counter
+ref_0 = 0x1122334455667788 # Symbolic Register
+ref_2 = 0x8877665544332211 # Symbolic Register
+ref_4 = ((ref_0 + ref_2) & 0xFFFFFFFFFFFFFFFF) # Parent Reg - ADD operation
+ref_5 = ((ref_0 + ref_2) & 0xFFFFFFFFFFFFFFFF) # Real Reg - ADD operation
+ref_6 = (0x1 if (0x10 == (0x10 & (ref_4 ^ (ref_0 ^ ref_2)))) else 0x0) # Adjust flag
+ref_7 = ((((ref_0 & ref_2) ^ (((ref_0 ^ ref_2) ^ ref_4) & (ref_0 ^ ref_2))) >> 63) & 0x1) # Carry flag
+ref_8 = ((((ref_0 ^ (~(ref_2) & 0xFFFFFFFFFFFFFFFF)) & (ref_0 ^ ref_4)) >> 63) & 0x1) # Overflow flag
+ref_9 = ((((((((0x1 ^ (((ref_4 & 0xFF) >> 0x0) & 0x1)) ^ (((ref_4 & 0xFF) >> 0x1) & 0x1)) ^ (((ref_4 & 0xFF) >> 0x2) & 0x1)) ^ (((ref_4 & 0xFF) >> 0x3) & 0x1)) ^ (((ref_4 & 0xFF) >> 0x4) & 0x1)) ^ (((ref_4 & 0xFF) >> 0x5) & 0x1)) ^ (((ref_4 & 0xFF) >> 0x6) & 0x1)) ^ (((ref_4 & 0xFF) >> 0x7) & 0x1)) # Parity flag
+ref_10 = ((ref_4 >> 63) & 0x1) # Sign flag
+ref_11 = (0x1 if (ref_4 == 0x0) else 0x0) # Zero flag
+ref_12 = 0x400003 # Parent Reg - Program Counter
+ref_13 = 0x400003 # Real Reg - Program Counter
 
 ~~~~~~~~~~~~~
 
