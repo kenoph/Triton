@@ -127,32 +127,32 @@ namespace triton {
     }
 
 
-    std::set<std::pair<triton::arch::MemoryAccess, triton::engines::symbolic::SymbolicExpression*>>& Instruction::getLoadAccess(void) {
+    std::set<std::pair<triton::arch::MemoryAccess, std::shared_ptr<triton::engines::symbolic::SymbolicExpression>>>& Instruction::getLoadAccess(void) {
       return this->loadAccess;
     }
 
 
-    std::set<std::pair<triton::arch::MemoryAccess, triton::engines::symbolic::SymbolicExpression*>>& Instruction::getStoreAccess(void) {
+    std::set<std::pair<triton::arch::MemoryAccess, std::shared_ptr<triton::engines::symbolic::SymbolicExpression>>>& Instruction::getStoreAccess(void) {
       return this->storeAccess;
     }
 
 
-    std::set<std::pair<triton::arch::Register, triton::engines::symbolic::SymbolicExpression*>>& Instruction::getReadRegisters(void) {
+    std::set<std::pair<triton::arch::Register, std::shared_ptr<triton::engines::symbolic::SymbolicExpression>>>& Instruction::getReadRegisters(void) {
       return this->readRegisters;
     }
 
 
-    std::set<std::pair<triton::arch::Register, triton::engines::symbolic::SymbolicExpression*>>& Instruction::getWrittenRegisters(void) {
+    std::set<std::pair<triton::arch::Register, std::shared_ptr<triton::engines::symbolic::SymbolicExpression>>>& Instruction::getWrittenRegisters(void) {
       return this->writtenRegisters;
     }
 
 
-    std::set<std::pair<triton::arch::Immediate, triton::engines::symbolic::SymbolicExpression*>>& Instruction::getReadImmediates(void) {
+    std::set<std::pair<triton::arch::Immediate, std::shared_ptr<triton::engines::symbolic::SymbolicExpression>>>& Instruction::getReadImmediates(void) {
       return this->readImmediates;
     }
 
 
-    void Instruction::setLoadAccess(const triton::arch::MemoryAccess& mem, triton::engines::symbolic::SymbolicExpression* expr) {
+    void Instruction::setLoadAccess(const triton::arch::MemoryAccess& mem, std::shared_ptr<triton::engines::symbolic::SymbolicExpression> expr) {
       this->loadAccess.insert(std::make_pair(mem, expr));
     }
 
@@ -169,7 +169,7 @@ namespace triton {
     }
 
 
-    void Instruction::setStoreAccess(const triton::arch::MemoryAccess& mem, triton::engines::symbolic::SymbolicExpression* node) {
+    void Instruction::setStoreAccess(const triton::arch::MemoryAccess& mem, std::shared_ptr<triton::engines::symbolic::SymbolicExpression> node) {
       this->storeAccess.insert(std::make_pair(mem, node));
     }
 
@@ -186,7 +186,7 @@ namespace triton {
     }
 
 
-    void Instruction::setReadRegister(const triton::arch::Register& reg, triton::engines::symbolic::SymbolicExpression* node) {
+    void Instruction::setReadRegister(const triton::arch::Register& reg, std::shared_ptr<triton::engines::symbolic::SymbolicExpression> node) {
       this->readRegisters.insert(std::make_pair(reg, node));
     }
 
@@ -203,7 +203,7 @@ namespace triton {
     }
 
 
-    void Instruction::setWrittenRegister(const triton::arch::Register& reg, triton::engines::symbolic::SymbolicExpression* node) {
+    void Instruction::setWrittenRegister(const triton::arch::Register& reg, std::shared_ptr<triton::engines::symbolic::SymbolicExpression> node) {
       this->writtenRegisters.insert(std::make_pair(reg, node));
     }
 
@@ -220,7 +220,7 @@ namespace triton {
     }
 
 
-    void Instruction::setReadImmediate(const triton::arch::Immediate& imm, triton::engines::symbolic::SymbolicExpression* node) {
+    void Instruction::setReadImmediate(const triton::arch::Immediate& imm, std::shared_ptr<triton::engines::symbolic::SymbolicExpression> node) {
       this->readImmediates.insert(std::make_pair(imm, node));
     }
 
@@ -264,7 +264,7 @@ namespace triton {
 
 
     void Instruction::setTaint(void) {
-      std::vector<triton::engines::symbolic::SymbolicExpression*>::const_iterator it;
+      std::vector<std::shared_ptr<triton::engines::symbolic::SymbolicExpression>>::const_iterator it;
       for (it = this->symbolicExpressions.begin(); it != this->symbolicExpressions.end(); it++) {
         if ((*it)->isTainted == true) {
           this->tainted = true;
@@ -274,7 +274,7 @@ namespace triton {
     }
 
 
-    void Instruction::addSymbolicExpression(triton::engines::symbolic::SymbolicExpression* expr) {
+    void Instruction::addSymbolicExpression(std::shared_ptr<triton::engines::symbolic::SymbolicExpression> expr) {
       if (expr == nullptr)
         throw triton::exceptions::Instruction("Instruction::addSymbolicExpression(): Cannot add a null expression.");
       this->symbolicExpressions.push_back(expr);
@@ -302,7 +302,7 @@ namespace triton {
 
 
     bool Instruction::isSymbolized(void) const {
-      std::vector<triton::engines::symbolic::SymbolicExpression*>::const_iterator it;
+      std::vector<std::shared_ptr<triton::engines::symbolic::SymbolicExpression>>::const_iterator it;
       for (it = this->symbolicExpressions.begin(); it != this->symbolicExpressions.end(); it++) {
         if ((*it)->isSymbolized() == true)
           return true;

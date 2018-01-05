@@ -597,7 +597,7 @@ namespace triton {
         if (mem == nullptr || (!PyMemoryAccess_Check(mem)))
           return PyErr_Format(PyExc_TypeError, "assignSymbolicExpressionToMemory(): Expects a MemoryAccess as second argument.");
 
-        triton::engines::symbolic::SymbolicExpression* arg1 = PySymbolicExpression_AsSymbolicExpression(se);
+        std::shared_ptr<triton::engines::symbolic::SymbolicExpression> arg1 = PySymbolicExpression_AsSymbolicExpression(se);
         triton::arch::MemoryAccess arg2 = *PyMemoryAccess_AsMemoryAccess(mem);
 
         try {
@@ -629,7 +629,7 @@ namespace triton {
         if (reg == nullptr || (!PyRegister_Check(reg)))
           return PyErr_Format(PyExc_TypeError, "assignSymbolicExpressionToRegister(): Expects a Register as second argument.");
 
-        triton::engines::symbolic::SymbolicExpression* arg1 = PySymbolicExpression_AsSymbolicExpression(se);
+        std::shared_ptr<triton::engines::symbolic::SymbolicExpression> arg1 = PySymbolicExpression_AsSymbolicExpression(se);
         triton::arch::Register arg2 = *PyRegister_AsRegister(reg);
 
         try {

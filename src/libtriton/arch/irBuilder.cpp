@@ -107,7 +107,7 @@ namespace triton {
 
 
     void IrBuilder::postIrInit(triton::arch::Instruction& inst) {
-      std::vector<triton::engines::symbolic::SymbolicExpression*> newVector;
+      std::vector<std::shared_ptr<triton::engines::symbolic::SymbolicExpression>> newVector;
 
       auto& loadAccess        = inst.getLoadAccess();
       auto& readRegisters     = inst.getReadRegisters();
@@ -170,7 +170,7 @@ namespace triton {
         this->collectUnsymbolizedNodes(writtenRegisters);
 
         /* Clear symbolic expressions */
-        for (auto* se : inst.symbolicExpressions) {
+        for (auto const& se : inst.symbolicExpressions) {
           if (se->isSymbolized() == false) {
             this->symbolicEngine->removeSymbolicExpression(se->getId());
           }
@@ -213,7 +213,7 @@ namespace triton {
 
 
     void IrBuilder::removeSymbolicExpressions(triton::arch::Instruction& inst) {
-      for (const auto* se : inst.symbolicExpressions) {
+      for (const auto& se : inst.symbolicExpressions) {
         this->symbolicEngine->removeSymbolicExpression(se->getId());
       }
       inst.symbolicExpressions.clear();

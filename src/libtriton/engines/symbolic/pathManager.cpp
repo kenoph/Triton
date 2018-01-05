@@ -67,7 +67,7 @@ namespace triton {
 
 
       /* Add a path constraint */
-      void PathManager::addPathConstraint(const triton::arch::Instruction& inst, triton::engines::symbolic::SymbolicExpression* expr) {
+      void PathManager::addPathConstraint(const triton::arch::Instruction& inst, std::shared_ptr<triton::engines::symbolic::SymbolicExpression> expr) {
         triton::engines::symbolic::PathConstraint pco;
         triton::uint64 srcAddr        = 0;
         triton::uint64 dstAddr        = 0;

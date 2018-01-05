@@ -1345,7 +1345,7 @@ namespace triton {
 
         try {
           // FIXME: we should remove this interface and use only ast, id interface to have a distinct ast library
-          auto* se = PySymbolicExpression_AsSymbolicExpression(symExpr);
+          auto se = PySymbolicExpression_AsSymbolicExpression(symExpr);
           return PyAstNode(PyAstContext_AsAstContext(self)->reference(se->getShareAst(), se->getId()));
         }
         catch (const triton::exceptions::Exception& e) {
