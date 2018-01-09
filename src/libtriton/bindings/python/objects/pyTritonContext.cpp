@@ -413,7 +413,8 @@ namespace triton {
     namespace python {
 
       static void TritonContext_dealloc(PyObject* self) {
-        delete PyTritonContext_AsTritonContext(self);
+        if(!((TritonContext_Object*)self)->ref)
+          delete PyTritonContext_AsTritonContext(self);
         Py_XDECREF(((TritonContext_Object*)self)->regAttr);
         Py_TYPE(self)->tp_free((PyObject*)self);
       }
@@ -3123,6 +3124,7 @@ namespace triton {
         if (object != nullptr) {
           object->api = new triton::API();
           object->regAttr = nullptr;
+          object->ref = false;
         }
 
         return (PyObject*)object;
@@ -3135,11 +3137,10 @@ namespace triton {
 
         if (object != nullptr) {
           object->api = &api;
+          object->ref = true;
           object->regAttr = nullptr;
         }
 
-        Py_INCREF(object); // We don't have ownership of the API so don't call the dealloc
-        // FIXME: we should define a context without dealloc for this
         return (PyObject*)object;
       }
 
