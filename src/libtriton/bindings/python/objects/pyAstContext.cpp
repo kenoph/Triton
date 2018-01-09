@@ -450,6 +450,11 @@ namespace triton {
   namespace bindings {
     namespace python {
 
+      void AstContext_dealloc(PyObject* self) {
+        std::cout << std::flush;
+        Py_TYPE(self)->tp_free((PyObject*)self);
+      }
+
 
       static PyObject* AstContext_bv(PyObject* self, PyObject* args) {
         PyObject* op1 = nullptr;
@@ -1486,7 +1491,7 @@ namespace triton {
         "AstContext",                               /* tp_name */
         sizeof(AstContext_Object),                  /* tp_basicsize */
         0,                                          /* tp_itemsize */
-        0,                                          /* tp_dealloc */
+        AstContext_dealloc,                         /* tp_dealloc */
         0,                                          /* tp_print */
         0,                                          /* tp_getattr */
         0,                                          /* tp_setattr */

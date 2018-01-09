@@ -415,7 +415,7 @@ namespace triton {
       static void TritonContext_dealloc(PyObject* self) {
         delete PyTritonContext_AsTritonContext(self);
         Py_XDECREF(((TritonContext_Object*)self)->regAttr);
-        Py_DECREF(self);
+        Py_TYPE(self)->tp_free((PyObject*)self);
       }
 
 
@@ -424,8 +424,11 @@ namespace triton {
         auto& regs = PyTritonContext_AsTritonContext(self)->getAllRegisters();
 
         PyObject* registersDict = xPyDict_New();
-        for (auto& reg : regs)
-          PyDict_SetItem(registersDict, PyString_FromString(reg.second.getName().c_str()), PyRegister(reg.second));
+        for (auto& reg : regs) {
+          PyObject* PReg = PyRegister(reg.second);
+          PyDict_SetItem(registersDict, PyString_FromString(reg.second.getName().c_str()), PReg);
+          Py_DECREF(PReg);
+        }
 
         Py_XDECREF(((TritonContext_Object*)(self))->regAttr);
         ((TritonContext_Object*)(self))->regAttr = xPyClass_New(nullptr, registersDict, xPyString_FromString("registers"));

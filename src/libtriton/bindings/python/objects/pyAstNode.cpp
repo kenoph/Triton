@@ -133,7 +133,7 @@ namespace triton {
       //! AstNode destructor.
       void AstNode_dealloc(PyObject* self) {
         std::cout << std::flush;
-        Py_DECREF(self);
+        Py_TYPE(self)->tp_free((PyObject*)self);
       }
 
 
@@ -688,7 +688,7 @@ namespace triton {
 
         PyType_Ready(&AstNode_Type);
         // Build the new object the python way (calling operator() on the type) as
-        // it crash otherwise (certainly due to incorrect shared_ptr initialization.
+        // it crash otherwise (certainly due to incorrect shared_ptr initialization).
         auto* object = (triton::bindings::python::AstNode_Object*)PyObject_CallObject((PyObject *) &AstNode_Type, nullptr);
 
         if (object != NULL) {
