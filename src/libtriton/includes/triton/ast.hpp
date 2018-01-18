@@ -120,9 +120,6 @@ namespace triton {
 
         /*!
          * \brief Returns the parents of node or an empty set if there is still no parent defined.
-         *
-         * Note that if there is the `AST_DICTIONARIES` optimization enabled, this feature will
-         * probably not represent the real tree of your expression.
          */
         std::vector<SharedAbstractNode> getParents(void);
 
